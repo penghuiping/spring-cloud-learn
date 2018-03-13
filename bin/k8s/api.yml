@@ -1,0 +1,433 @@
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/iconUrl: img/icons/spring-boot.svg
+      fabric8.io/git-branch: new-master
+    labels:
+      app: sewing-api-service
+      provider: fabric8
+      version: 0.0.8-test
+      group: com.joinsoft
+    name: sewing-api-service
+  spec:
+    ports:
+    - name: sewing-api-service
+      port: 20001
+      protocol: TCP
+      targetPort: 20001
+    selector:
+      app: api
+      provider: fabric8
+      group: com.joinsoft
+    type: NodePort
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: api
+      provider: fabric8
+      version: 0.0.8-test
+      group: com.joinsoft
+    name: application-file-api
+    namespace: default
+  data:
+    application.properties: |
+      spring.profiles.active=development
+    application-development.properties: |
+      ########################################################
+      ###common
+      ########################################################
+      app.name=sewing-repair
+      app.db.ip=192.168.99.100
+      app.db.port=30006
+      app.db.username=root
+      app.db.password=root
+      app.db.name=test
+
+      app.rabbitmq.ip=192.168.99.100
+      app.rabbitmq.port=30002
+      app.rabbitmq.username=guest
+      app.rabbitmq.password=guest
+      app.rabbitmq.virtualHost=/
+
+      app.redis.ip=192.168.99.100
+      app.redis.port=30001
+      app.redis.db=9
+
+      app.filesever.ip=192.168.99.100
+      app.filesever.nginx.html=/home/joinsoft/html/
+
+      ########################################################
+      ###datasource
+      ########################################################
+      spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+      spring.datasource.driverClassName=com.mysql.jdbc.Driver
+      spring.datasource.url=jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
+      spring.datasource.username=${app.db.username}
+      spring.datasource.password=${app.db.password}
+      spring.datasource.initialSize=5
+      spring.datasource.minIdle=5
+      spring.datasource.maxActive=20
+      spring.datasource.maxWait=60000
+      spring.datasource.timeBetweenEvictionRunsMillis=60000
+      spring.datasource.validationQuery=SELECT 1 FROM DUAL
+      spring.datasource.testWhileIdle=true
+      spring.datasource.testOnBorrow=false
+      spring.datasource.testOnReturn=false
+      spring.datasource.poolPreparedStatements=true
+      spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
+      spring.datasource.filters=stat,wall,log4j
+      spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      #spring.datasource.useGlobalDataSourceStat=true
+      ########################################################
+      ### Java Persistence Api
+      ########################################################
+      # Specify the DBMS
+      spring.jpa.database=MYSQL
+      # Show or not log for each sql query
+      spring.jpa.show-sql=true
+      spring.jpa.format-sql=true
+      # Hibernate ddl auto (create, create-drop, update)
+      spring.jpa.hibernate.ddl-auto=none
+      spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+      spring.jpa.properties.hibernate.cache.use_second_level_cache=false
+      ########################################################
+      ### JMS Rabbitmq
+      ########################################################
+      spring.rabbitmq.host=${app.rabbitmq.ip}
+      spring.rabbitmq.port=${app.rabbitmq.port}
+      spring.rabbitmq.username=${app.rabbitmq.username}
+      spring.rabbitmq.password=${app.rabbitmq.password}
+      spring.rabbitmq.virtualHost=${app.rabbitmq.virtualHost}
+
+
+      ########################################################
+      ### LOG
+      ########################################################
+      logging.path=logs/api.log
+      logging.level.root=INFO
+      logging.level.org.springframework.web=INFO
+      logging.level.org.hibernate=INFO
+      logging.level.com.joinsoft=INFO
+
+      ########################################################
+      ### static resources and upload load file
+      ########################################################
+      base_assets_url=http://${app.filesever.ip}/${app.name}/assets/
+      base_assets_upload_path=${app.filesever.nginx.html}/${app.name}/upload/
+      base_assets_upload_url=http://${app.filesever.ip}/${app.name}/upload/
+
+
+      ########################################################
+      ### redis
+      ########################################################
+      spring.redis.host=${app.redis.ip}
+      spring.redis.port=${app.redis.port}
+      spring.redis.database=${app.redis.db}
+
+
+      ########################################################
+      ### jpush
+      ########################################################
+      MASTER_SECRET_0=
+      APP_KEY_0=
+      jiguang.sms.APP_KEY=
+      jiguang.sms.MASTER_SECRET=
+
+      ########################################################
+      ### fileupload
+      ########################################################
+      spring.http.multipart.maxFileSize=10Mb
+      spring.http.multipart.maxRequestSize=1000Mb
+    application-test.properties: |
+      ########################################################
+      ###common
+      ########################################################
+      app.name=sewing-repair
+      app.db.ip=192.168.99.100
+      app.db.port=30006
+      app.db.username=root
+      app.db.password=root
+      app.db.name=test
+
+      app.rabbitmq.ip=192.168.99.100
+      app.rabbitmq.port=30002
+      app.rabbitmq.username=guest
+      app.rabbitmq.password=guest
+      app.rabbitmq.virtualHost=/
+
+      app.redis.ip=192.168.99.100
+      app.redis.port=30001
+      app.redis.db=9
+
+      app.filesever.ip=192.168.99.100
+      app.filesever.nginx.html=/home/joinsoft/html/
+      ########################################################
+      ###datasource
+      ########################################################
+      spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+      spring.datasource.driverClassName=com.mysql.jdbc.Driver
+      spring.datasource.url=jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
+      spring.datasource.username=${app.db.username}
+      spring.datasource.password=${app.db.password}
+      spring.datasource.initialSize=5
+      spring.datasource.minIdle=5
+      spring.datasource.maxActive=20
+      spring.datasource.maxWait=60000
+      spring.datasource.timeBetweenEvictionRunsMillis=60000
+      spring.datasource.validationQuery=SELECT 1 FROM DUAL
+      spring.datasource.testWhileIdle=true
+      spring.datasource.testOnBorrow=false
+      spring.datasource.testOnReturn=false
+      spring.datasource.poolPreparedStatements=true
+      spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
+      spring.datasource.filters=stat,wall,log4j
+      spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      #spring.datasource.useGlobalDataSourceStat=true
+      ########################################################
+      ### Java Persistence Api
+      ########################################################
+      # Specify the DBMS
+      spring.jpa.database=MYSQL
+      # Show or not log for each sql query
+      spring.jpa.show-sql=true
+      spring.jpa.format-sql=true
+      # Hibernate ddl auto (create, create-drop, update)
+      spring.jpa.hibernate.ddl-auto=none
+      spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+      spring.jpa.properties.hibernate.cache.use_second_level_cache=false
+      ########################################################
+      ### JMS Rabbitmq
+      ########################################################
+      spring.rabbitmq.host=${app.rabbitmq.ip}
+      spring.rabbitmq.port=${app.rabbitmq.port}
+      spring.rabbitmq.username=${app.rabbitmq.username}
+      spring.rabbitmq.password=${app.rabbitmq.password}
+      spring.rabbitmq.virtualHost=${app.rabbitmq.virtualHost}
+
+
+      ########################################################
+      ### LOG
+      ########################################################
+      logging.path=logs/api.log
+      logging.level.root=INFO
+      logging.level.org.springframework.web=INFO
+      logging.level.org.hibernate=INFO
+      logging.level.com.joinsoft=INFO
+
+      ########################################################
+      ### static resources and upload load file
+      ########################################################
+      base_assets_url=http://${app.filesever.ip}/${app.name}/assets/
+      base_assets_upload_path=${app.filesever.nginx.html}/${app.name}/upload/
+      base_assets_upload_url=http://${app.filesever.ip}/${app.name}/upload/
+
+
+      ########################################################
+      ### redis
+      ########################################################
+      spring.redis.host=${app.redis.ip}
+      spring.redis.port=${app.redis.port}
+      spring.redis.database=${app.redis.db}
+
+
+      ########################################################
+      ### jpush
+      ########################################################
+      MASTER_SECRET_0=
+      APP_KEY_0=
+      jiguang.sms.APP_KEY=
+      jiguang.sms.MASTER_SECRET=
+
+      ########################################################
+      ### fileupload
+      ########################################################
+      spring.http.multipart.maxFileSize=10Mb
+      spring.http.multipart.maxRequestSize=1000Mb
+    application-product.properties: |
+      ########################################################
+      ###common
+      ########################################################
+      app.name=sewing-repair
+      app.db.ip=192.168.99.100
+      app.db.port=30006
+      app.db.username=root
+      app.db.password=root
+      app.db.name=test
+
+      app.rabbitmq.ip=192.168.99.100
+      app.rabbitmq.port=30002
+      app.rabbitmq.username=guest
+      app.rabbitmq.password=guest
+      app.rabbitmq.virtualHost=/
+
+      app.redis.ip=192.168.99.100
+      app.redis.port=30001
+      app.redis.db=9
+
+      app.filesever.ip=192.168.99.100
+      app.filesever.nginx.html=/home/joinsoft/html/
+      ########################################################
+      ###datasource
+      ########################################################
+      spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+      spring.datasource.driverClassName=com.mysql.jdbc.Driver
+      spring.datasource.url=jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
+      spring.datasource.username=${app.db.username}
+      spring.datasource.password=${app.db.password}
+      spring.datasource.initialSize=5
+      spring.datasource.minIdle=5
+      spring.datasource.maxActive=20
+      spring.datasource.maxWait=60000
+      spring.datasource.timeBetweenEvictionRunsMillis=60000
+      spring.datasource.validationQuery=SELECT 1 FROM DUAL
+      spring.datasource.testWhileIdle=true
+      spring.datasource.testOnBorrow=false
+      spring.datasource.testOnReturn=false
+      spring.datasource.poolPreparedStatements=true
+      spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
+      spring.datasource.filters=stat,wall,log4j
+      spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      #spring.datasource.useGlobalDataSourceStat=true
+      ########################################################
+      ### Java Persistence Api
+      ########################################################
+      # Specify the DBMS
+      spring.jpa.database=MYSQL
+      # Show or not log for each sql query
+      spring.jpa.show-sql=true
+      spring.jpa.format-sql=true
+      # Hibernate ddl auto (create, create-drop, update)
+      spring.jpa.hibernate.ddl-auto=none
+      spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+      spring.jpa.properties.hibernate.cache.use_second_level_cache=false
+      ########################################################
+      ### JMS Rabbitmq
+      ########################################################
+      spring.rabbitmq.host=${app.rabbitmq.ip}
+      spring.rabbitmq.port=${app.rabbitmq.port}
+      spring.rabbitmq.username=${app.rabbitmq.username}
+      spring.rabbitmq.password=${app.rabbitmq.password}
+      spring.rabbitmq.virtualHost=${app.rabbitmq.virtualHost}
+
+
+      ########################################################
+      ### LOG
+      ########################################################
+      logging.path=logs/api.log
+      logging.level.root=INFO
+      logging.level.org.springframework.web=INFO
+      logging.level.org.hibernate=INFO
+      logging.level.com.joinsoft=INFO
+
+      ########################################################
+      ### static resources and upload load file
+      ########################################################
+      base_assets_url=http://${app.filesever.ip}/${app.name}/assets/
+      base_assets_upload_path=${app.filesever.nginx.html}/${app.name}/upload/
+      base_assets_upload_url=http://${app.filesever.ip}/${app.name}/upload/
+
+
+      ########################################################
+      ### redis
+      ########################################################
+      spring.redis.host=${app.redis.ip}
+      spring.redis.port=${app.redis.port}
+      spring.redis.database=${app.redis.db}
+
+
+      ########################################################
+      ### jpush
+      ########################################################
+      MASTER_SECRET_0=
+      APP_KEY_0=
+      jiguang.sms.APP_KEY=
+      jiguang.sms.MASTER_SECRET=
+
+      ########################################################
+      ### fileupload
+      ########################################################
+      spring.http.multipart.maxFileSize=10Mb
+      spring.http.multipart.maxRequestSize=1000Mb
+- apiVersion: apps/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/iconUrl: img/icons/spring-boot.svg
+      fabric8.io/git-branch: new-master
+      fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=api&var-version=0.0.8-test
+    labels:
+      app: sewing-api-deployment
+      provider: fabric8
+      version: 0.0.8-test
+      group: com.joinsoft
+    name: sewing-api-deployment
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 2
+    selector:
+      matchLabels:
+        app: api
+        provider: fabric8
+        group: com.joinsoft
+    template:
+      metadata:
+        annotations:
+          fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+          fabric8.io/iconUrl: img/icons/spring-boot.svg
+          fabric8.io/git-branch: new-master
+          fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=api&var-version=0.0.8-test
+        labels:
+          app: api
+          provider: fabric8
+          version: 0.0.8-test
+          group: com.joinsoft
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          image: 10.111.66.241:5000/sewing-api:0.0.8-test
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 20000
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          name: sewing-api
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 20000
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+          securityContext:
+            privileged: false
+          volumeMounts:
+          - mountPath: /maven/config
+            name: config
+        volumes:
+        - configMap:
+            items:
+            - key: application.properties
+              path: application.properties
+            - key: application-development.properties
+              path: application-development.properties
+            - key: application-test.properties
+              path: application-test.properties
+            - key: application-product.properties
+              path: application-product.properties
+            name: application-file-api
+          name: config
