@@ -6,9 +6,9 @@ items:
   kind: Service
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
     labels:
       app: sewing-admin-service
       provider: fabric8
@@ -369,9 +369,9 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
       fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
     labels:
       app: sewing-admin-deployment
@@ -390,9 +390,9 @@ items:
     template:
       metadata:
         annotations:
-          fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+          fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
           fabric8.io/iconUrl: img/icons/spring-boot.svg
-          fabric8.io/git-branch: new-master
+          fabric8.io/git-branch: develop
           fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
         labels:
           app: admin
