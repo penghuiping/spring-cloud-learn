@@ -6,7 +6,7 @@ items:
   kind: Service
   metadata:
     annotations:
-      fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
+      fabric8.io/git-commit: bebda87f34314ac6d51e5e4f3591e6d60924c8a0
       fabric8.io/iconUrl: img/icons/spring-boot.svg
       fabric8.io/git-branch: develop
     labels:
@@ -369,7 +369,7 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
+      fabric8.io/git-commit: bebda87f34314ac6d51e5e4f3591e6d60924c8a0
       fabric8.io/iconUrl: img/icons/spring-boot.svg
       fabric8.io/git-branch: develop
       fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
@@ -390,7 +390,7 @@ items:
     template:
       metadata:
         annotations:
-          fabric8.io/git-commit: 7031656e5f2466f6b6cc574cf9d408dbaaa2941d
+          fabric8.io/git-commit: bebda87f34314ac6d51e5e4f3591e6d60924c8a0
           fabric8.io/iconUrl: img/icons/spring-boot.svg
           fabric8.io/git-branch: develop
           fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
