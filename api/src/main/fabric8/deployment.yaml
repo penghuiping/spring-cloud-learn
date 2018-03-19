@@ -26,14 +26,14 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 20000
+            port: 20001
             scheme: HTTP
           initialDelaySeconds: 5
           timeoutSeconds: 1
         readinessProbe:
           httpGet:
             path: /health
-            port: 20000
+            port: 20001
             scheme: HTTP
           initialDelaySeconds: 15
           timeoutSeconds: 1

@@ -15,7 +15,7 @@ public class AdminProxyApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.101:30120/";
+    private static final String baseUrl = "http://192.168.99.100:30120/";
 
     private static final String virtualHost = "php.test.com";
 
@@ -53,9 +53,9 @@ public class AdminProxyApiTest {
     public void addKongApi() throws Exception {
         String url = baseUrl+"apis/";
         RequestBody body = new FormBody.Builder()
-                .add("name", "kongtest")
-                .add("upstream_url", "http://"+virtualHost)
-                .add("uris", "/kongtest")
+                .add("name", "kong_api_insecure")
+                .add("upstream_url", "http://"+virtualHost+"/api/insecure")
+                .add("uris", "/kongtest/api/insecure")
                 .build();
         Request request = new Request.Builder().url(url).post(body).build();
         Response response = client.newCall(request).execute();
@@ -92,11 +92,11 @@ public class AdminProxyApiTest {
      */
     @Test
     public void updateKongApi() throws Exception {
-        String url = baseUrl+"apis/kongtest";
+        String url = baseUrl+"apis/kong_secure";
         RequestBody body = new FormBody.Builder()
-                .add("name", "kongtest")
-                .add("upstream_url", "https://www.baidu.com")
-                .add("uris", "/kongtest")
+                .add("name", "kong_secure")
+                .add("upstream_url", "http://"+virtualHost+"/api/secure")
+                .add("uris", "/kongtest/api/secure")
                 .build();
         Request request = new Request.Builder().url(url).patch(body).build();
         Response response = client.newCall(request).execute();
@@ -104,12 +104,12 @@ public class AdminProxyApiTest {
     }
 
     /**
-     * 更新某个反向代理api列表
+     * 删除某个反向代理api
      * @throws Exception
      */
     @Test
     public void deleteKongApi() throws Exception {
-        String url = baseUrl+"apis/kongtest";
+        String url = baseUrl+"apis/example-api";
         Request request = new Request.Builder().url(url).delete().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());

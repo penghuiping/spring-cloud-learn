@@ -18,19 +18,34 @@ public class ApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://www.lamago.net/mijiemonitor/api/";
+    private static final String baseUrl = "http://localhost:20001/api/";
+
+    private static final String proxyBaseUrl = "http://192.168.99.100:30971/kongtest/api/";
 
 
     @Test
     public void SSOLogin() throws Exception {
-        String url = baseUrl+"SSOLogin.do";
+        String url = proxyBaseUrl+"/common/SSOLogin.do";
         RequestBody body = new FormBody.Builder()
-                .add("username", "test").add("password", "e10adc3949ba59abbe56e057f20f883e")
+                .add("mobile", "18812345678").add("password", "e10adc3949ba59abbe56e057f20f883e")
                 .build();
         Request request = new Request.Builder().url(url).post(body).build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
     }
+
+    @Test
+    public void logout() throws Exception {
+        String url = proxyBaseUrl+"secure/common/SSOLogout.do";
+        RequestBody body = new FormBody.Builder()
+                .add("token", "18812345678").add("refreshToken", "e10adc3949ba59abbe56e057f20f883e")
+                .build();
+        Request request = new Request.Builder().url(url).post(body).build();
+        Response response = client.newCall(request).execute();
+        System.out.println(response.body().string());
+    }
+
+
 
 
     @Test

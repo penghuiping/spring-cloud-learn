@@ -36,6 +36,11 @@
             <version>${gson}</version>
         </dependency>
         <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+        <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jiguang-common</artifactId>
             <version>${jiguang-common}</version>

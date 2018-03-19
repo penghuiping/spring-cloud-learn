@@ -23,7 +23,7 @@
         <java.version>1.8</java.version>
         <joinsoft.common>1.1.1-RELEASE</joinsoft.common>
         <image.version>0.0.8-test</image.version>
-        <docker.registry.ip>192.168.99.101</docker.registry.ip>
+        <docker.registry.ip>192.168.99.100</docker.registry.ip>
         <docker.registry.port>30007</docker.registry.port>
         <spring.boot.maven.plugin>2.0.0.RELEASE</spring.boot.maven.plugin>
         <fabric8.maven.plugin>3.5.33</fabric8.maven.plugin>

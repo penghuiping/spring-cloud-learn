@@ -15,7 +15,7 @@ public class AdminTargetApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.101:30120/";
+    private static final String baseUrl = "http://192.168.99.100:30120/";
 
     private static final String virtualHost = "php.test.com";
 
@@ -27,7 +27,7 @@ public class AdminTargetApiTest {
     public void addUpstreamTarget() throws Exception {
         String url = baseUrl+"upstreams/"+virtualHost+"/targets";
         RequestBody body = new FormBody.Builder()
-                .add("target", "192.168.1.127:80")
+                .add("target", "10.96.38.210:20001")
                 .add("weight", "100")
                 .build();
         Request request = new Request.Builder().url(url).post(body).build();
@@ -65,7 +65,7 @@ public class AdminTargetApiTest {
      */
     @Test
     public void deleteUpstreamTarget() throws Exception {
-        String url = baseUrl+"upstreams/"+virtualHost+"/targets/b154051c-b057-448a-b167-5d21d9fac1c7/";
+        String url = baseUrl+"upstreams/"+virtualHost+"/targets/9cad2f22-b5af-4fa9-ae6d-4fe813561c70/";
         Request request = new Request.Builder().url(url).delete().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());

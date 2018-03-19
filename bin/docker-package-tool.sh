@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-dockerRepositoryIp=192.168.99.101
+dockerRepositoryIp=192.168.99.100
 dockerRepositoryPort=30007
 tag=0.0.8-test
 moduleName="sewing-admin sewing-api"
