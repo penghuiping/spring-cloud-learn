@@ -2,7 +2,6 @@ package com.joinsoft.api.base.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joinsoft.api.base.constant.AccessRequired;
-import com.joinsoft.api.base.vo.ApiCustomerVo;
 import com.joinsoft.common.controller.JSONController;
 import com.joinsoft.common.dto.JSONResponse;
 import com.joinsoft.common.exception.JsonException;
@@ -11,19 +10,12 @@ import com.joinsoft.userservice.dto.JwtCredentialDto;
 import com.joinsoft.userservice.service.CustomerService;
 import com.joinsoft.userservice.service.KongJwtService;
 import com.joinsoft.userservice.service.TokenService;
-import okhttp3.*;
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by penghuiping on 2018/3/15.
