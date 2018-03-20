@@ -32,8 +32,29 @@ public class JwtTest  {
         String url = baseUrl+"";
         RequestBody body = new FormBody.Builder()
                 .add("name", "jwt")
+                .add("config.claims_to_verify", "exp,nbf")
                 .add("config.secret_is_base64", "true").build();
         Request request = new Request.Builder().url(url).post(body).build();
+        Response response = client.newCall(request).execute();
+        System.out.println(response.body().string());
+    }
+
+    @Test
+    public void updateApiJwt() throws Exception {
+        String url = baseUrl+"/0c6c4162-3c3c-4d56-8eeb-ed5234e0bafd";
+        RequestBody body = new FormBody.Builder()
+                .add("name", "jwt")
+                .add("config.claims_to_verify", "exp,nbf")
+                .add("config.secret_is_base64", "true").build();
+        Request request = new Request.Builder().url(url).patch(body).build();
+        Response response = client.newCall(request).execute();
+        System.out.println(response.body().string());
+    }
+
+    @Test
+    public void getJwtList() throws Exception {
+        String url = "http://192.168.99.100:30120"+"/consumers/11111111111111111111111111111111/jwt";
+        Request request = new Request.Builder().url(url).get().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
     }

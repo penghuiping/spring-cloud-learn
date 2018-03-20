@@ -21,11 +21,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
     ApiAuthenticationInterceptor apiAuthenticationInterceptor;
 
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
         registry.addInterceptor(commonInterceptor).addPathPatterns("/**/*");
-        registry.addInterceptor(apiAuthenticationInterceptor).addPathPatterns("/api/**");
     }
 
     @Override

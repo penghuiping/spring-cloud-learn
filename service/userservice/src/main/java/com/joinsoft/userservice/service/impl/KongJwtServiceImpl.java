@@ -3,14 +3,15 @@ package com.joinsoft.userservice.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joinsoft.common.exception.JsonException;
 import com.joinsoft.common.service.RedisService;
-import com.joinsoft.common.util.DigestUtil;
+import com.joinsoft.common.util.TimeUtil;
 import com.joinsoft.userservice.dto.CustomerDto;
 import com.joinsoft.userservice.dto.JwtCredentialDto;
-import com.joinsoft.userservice.service.IdGeneratorService;
+import com.joinsoft.userservice.service.CustomerService;
 import com.joinsoft.userservice.service.KongJwtService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import okhttp3.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +20,8 @@ import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -41,18 +44,16 @@ public class KongJwtServiceImpl implements KongJwtService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private IdGeneratorService idGeneratorService;
+    private RedisService redisService;
 
     @Autowired
-    private RedisService redisService;
+    private CustomerService customerService;
 
     @Override
     public String generateJwtCustomerId(CustomerDto customerDto) throws JsonException {
         Assert.notNull(customerDto, "customerDto不能为null");
         //生成jwtCustomerId
-        String jwtCustomerId = "t" + new String(DigestUtil.bytes2hex(DigestUtil.MD5(idGeneratorService.generateLoginToken())));
-        //放入redis缓存,设置过期时间
-        redisService.set(jwtCustomerId, customerDto, jwtTokenExpireTime);
+        String jwtCustomerId = customerDto.getId();
         return jwtCustomerId;
     }
 
@@ -61,10 +62,18 @@ public class KongJwtServiceImpl implements KongJwtService {
         Assert.hasLength(jwtCustomerId, "jwtCustomer不能为空");
         try {
             String url = kongAdminBaseUrl + "/consumers";
-            RequestBody body = new FormBody.Builder().add("username", jwtCustomerId).build();
-            Request request = new Request.Builder().url(url).post(body).build();
+            Request request = new Request.Builder().url(url+"/"+jwtCustomerId).get().build();
             Response response = okHttpClient.newCall(request).execute();
-            if (201 != response.code()) {
+            if(200 == response.code()) {
+                return;
+            }
+
+            RequestBody body = new FormBody.Builder().add("username", jwtCustomerId).build();
+            request = new Request.Builder().url(url).put(body).build();
+            response = okHttpClient.newCall(request).execute();
+            if (201 == response.code() || 200 == response.code()) {
+                Logger.getLogger(KongJwtServiceImpl.class).debug("创建或者更新成功");
+            }else {
                 throw new JsonException("创建kong的customer对象失败");
             }
         } catch (IOException e) {
@@ -92,7 +101,7 @@ public class KongJwtServiceImpl implements KongJwtService {
     public String generateJwtToken(JwtCredentialDto jwtCredentialDto) throws JsonException {
         Assert.notNull(jwtCredentialDto, "jwtCredentialDto不能为null");
         String header = "{\"alg\": \"HS256\",\"typ\": \"JWT\"}";
-        String payload = String.format("{\"iss\":\"%s\"}", jwtCredentialDto.getKey());
+        String payload = String.format("{\"iss\":\"%s\",\"exp\":\"%s\"}", jwtCredentialDto.getKey(), TimeUtil.offsiteDate(new Date(), Calendar.MINUTE, 3).getTime()/1000);
         String secret = jwtCredentialDto.getSecret();
 
         try {
@@ -102,5 +111,34 @@ public class KongJwtServiceImpl implements KongJwtService {
         } catch (Exception e) {
             throw new JsonException("生成jwt的token失败", e);
         }
+    }
+
+    @Override
+    public CustomerDto getByJwtCustomerId(String jwtCustomerId) throws JsonException {
+        Assert.hasLength(jwtCustomerId, "jwtCustomerId不能为空");
+        CustomerDto customerDto = redisService.get(jwtCustomerId, CustomerDto.class);
+        if(null == customerDto) {
+            customerDto = customerService.findOne(jwtCustomerId);
+            redisService.set(jwtCustomerId,customerDto,3600*24l);
+        }
+        return customerDto;
+    }
+
+    @Override
+    public void cleanJwtToken(String jwtCustomerId) throws JsonException {
+        Assert.hasLength(jwtCustomerId, "jwtCustomerId不能为空");
+        try {
+            //kong清除jwtCustomerId
+            String url = kongAdminBaseUrl + "/consumers/" + jwtCustomerId;
+            Request request = new Request.Builder().url(url).delete().build();
+            Response response = okHttpClient.newCall(request).execute();
+            if (204 != response.code()) {
+                throw new JsonException("清除jwt的token失败");
+            }
+        } catch (IOException e) {
+            throw new JsonException("清除jwt的token失败", e);
+        }
+
+
     }
 }

@@ -15,7 +15,7 @@ public class AdminCustomerApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.101:30120/consumers";
+    private static final String baseUrl = "http://192.168.99.100:30120/consumers";
 
 
     /**
@@ -71,7 +71,7 @@ public class AdminCustomerApiTest {
     }
 
     /**
-     * 更新某个反向代理api列表
+     * 删除用户
      * @throws Exception
      */
     @Test

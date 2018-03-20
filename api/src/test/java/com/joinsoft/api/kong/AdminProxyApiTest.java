@@ -53,9 +53,9 @@ public class AdminProxyApiTest {
     public void addKongApi() throws Exception {
         String url = baseUrl+"apis/";
         RequestBody body = new FormBody.Builder()
-                .add("name", "kong_api_insecure")
-                .add("upstream_url", "http://"+virtualHost+"/api/insecure")
-                .add("uris", "/kongtest/api/insecure")
+                .add("name", "kong_api_secure")
+                .add("upstream_url", "http://"+virtualHost+"/api/secure")
+                .add("uris", "/kongtest/api/secure")
                 .build();
         Request request = new Request.Builder().url(url).post(body).build();
         Response response = client.newCall(request).execute();

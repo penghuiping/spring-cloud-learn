@@ -43,4 +43,20 @@ public interface KongJwtService {
      */
     public String generateJwtToken(JwtCredentialDto jwtCredentialDto) throws JsonException;
 
+
+    /**
+     * 根据JwtCustomerId获取customerDto
+     * @param jwtCustomerId
+     * @return
+     * @throws JsonException
+     */
+    public CustomerDto getByJwtCustomerId(String jwtCustomerId) throws JsonException;
+
+    /**
+     * 清除jwtToken
+     * @param jwtCustomerId
+     * @throws JsonException
+     */
+    public void cleanJwtToken(String jwtCustomerId) throws JsonException;
+
 }

@@ -27,7 +27,7 @@ public class AdminTargetApiTest {
     public void addUpstreamTarget() throws Exception {
         String url = baseUrl+"upstreams/"+virtualHost+"/targets";
         RequestBody body = new FormBody.Builder()
-                .add("target", "10.96.38.210:20001")
+                .add("target", "192.168.1.47:20001")
                 .add("weight", "100")
                 .build();
         Request request = new Request.Builder().url(url).post(body).build();
