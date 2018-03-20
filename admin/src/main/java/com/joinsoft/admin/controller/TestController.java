@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by penghuiping on 2018/3/8.
  */
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/admin/test")
 public class TestController extends JSONController{
 
     @Value("${k8s.value}")
