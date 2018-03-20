@@ -92,9 +92,9 @@ public class AdminProxyApiTest {
      */
     @Test
     public void updateKongApi() throws Exception {
-        String url = baseUrl+"apis/kong_secure";
+        String url = baseUrl+"apis/kong_api_secure";
         RequestBody body = new FormBody.Builder()
-                .add("name", "kong_secure")
+                .add("name", "kong_api_secure")
                 .add("upstream_url", "http://"+virtualHost+"/api/secure")
                 .add("uris", "/kongtest/api/secure")
                 .build();
@@ -109,7 +109,7 @@ public class AdminProxyApiTest {
      */
     @Test
     public void deleteKongApi() throws Exception {
-        String url = baseUrl+"apis/example-api";
+        String url = baseUrl+"apis/kong_api_secure";
         Request request = new Request.Builder().url(url).delete().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());

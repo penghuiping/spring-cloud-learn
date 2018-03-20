@@ -36,7 +36,7 @@ public class KongJwtServiceImpl implements KongJwtService {
     private String kongAdminBaseUrl;
 
     @Value("${app.kong.jwtTokenExpireTime:3600}")
-    private Long jwtTokenExpireTime;
+    private Integer jwtTokenExpireTime;
 
     private static OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -62,9 +62,9 @@ public class KongJwtServiceImpl implements KongJwtService {
         Assert.hasLength(jwtCustomerId, "jwtCustomer不能为空");
         try {
             String url = kongAdminBaseUrl + "/consumers";
-            Request request = new Request.Builder().url(url+"/"+jwtCustomerId).get().build();
+            Request request = new Request.Builder().url(url + "/" + jwtCustomerId).get().build();
             Response response = okHttpClient.newCall(request).execute();
-            if(200 == response.code()) {
+            if (200 == response.code()) {
                 return;
             }
 
@@ -73,7 +73,7 @@ public class KongJwtServiceImpl implements KongJwtService {
             response = okHttpClient.newCall(request).execute();
             if (201 == response.code() || 200 == response.code()) {
                 Logger.getLogger(KongJwtServiceImpl.class).debug("创建或者更新成功");
-            }else {
+            } else {
                 throw new JsonException("创建kong的customer对象失败");
             }
         } catch (IOException e) {
@@ -101,7 +101,7 @@ public class KongJwtServiceImpl implements KongJwtService {
     public String generateJwtToken(JwtCredentialDto jwtCredentialDto) throws JsonException {
         Assert.notNull(jwtCredentialDto, "jwtCredentialDto不能为null");
         String header = "{\"alg\": \"HS256\",\"typ\": \"JWT\"}";
-        String payload = String.format("{\"iss\":\"%s\",\"exp\":\"%s\"}", jwtCredentialDto.getKey(), TimeUtil.offsiteDate(new Date(), Calendar.MINUTE, 3).getTime()/1000);
+        String payload = String.format("{\"iss\":\"%s\",\"exp\":%s}", jwtCredentialDto.getKey(), TimeUtil.offsiteDate(new Date(), Calendar.SECOND, jwtTokenExpireTime).getTime() / 1000);
         String secret = jwtCredentialDto.getSecret();
 
         try {
@@ -117,9 +117,9 @@ public class KongJwtServiceImpl implements KongJwtService {
     public CustomerDto getByJwtCustomerId(String jwtCustomerId) throws JsonException {
         Assert.hasLength(jwtCustomerId, "jwtCustomerId不能为空");
         CustomerDto customerDto = redisService.get(jwtCustomerId, CustomerDto.class);
-        if(null == customerDto) {
+        if (null == customerDto) {
             customerDto = customerService.findOne(jwtCustomerId);
-            redisService.set(jwtCustomerId,customerDto,3600*24l);
+            redisService.set(jwtCustomerId, customerDto, 3600 * 24l);
         }
         return customerDto;
     }

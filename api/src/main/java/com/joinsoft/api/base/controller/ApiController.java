@@ -70,4 +70,18 @@ public class ApiController extends JSONController {
         kongJwtService.cleanJwtToken(jwtCustomerId);
         return succeed(jwtCustomerId);
     }
+
+    /**
+     *
+     * 显示客户信息
+     * @return
+     * @throws Throwable
+     */
+    @RequestMapping(value = "/secure/common/showCustomerInfo.do", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    JSONResponse showCustomerInfo(@NotEmpty @RequestHeader("X-Consumer-Username") String jwtCustomerId) throws JsonException {
+        CustomerDto customerDto = kongJwtService.getByJwtCustomerId(jwtCustomerId);
+        return succeed(customerDto);
+    }
 }

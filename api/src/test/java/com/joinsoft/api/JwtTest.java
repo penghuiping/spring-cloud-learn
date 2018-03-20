@@ -32,7 +32,7 @@ public class JwtTest  {
         String url = baseUrl+"";
         RequestBody body = new FormBody.Builder()
                 .add("name", "jwt")
-                .add("config.claims_to_verify", "exp,nbf")
+                .add("config.claims_to_verify", "exp")
                 .add("config.secret_is_base64", "true").build();
         Request request = new Request.Builder().url(url).post(body).build();
         Response response = client.newCall(request).execute();
@@ -44,7 +44,7 @@ public class JwtTest  {
         String url = baseUrl+"/0c6c4162-3c3c-4d56-8eeb-ed5234e0bafd";
         RequestBody body = new FormBody.Builder()
                 .add("name", "jwt")
-                .add("config.claims_to_verify", "exp,nbf")
+                .add("config.claims_to_verify", "exp")
                 .add("config.secret_is_base64", "true").build();
         Request request = new Request.Builder().url(url).patch(body).build();
         Response response = client.newCall(request).execute();
