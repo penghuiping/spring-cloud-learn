@@ -27,6 +27,8 @@
         <docker.registry.port>30007</docker.registry.port>
         <spring.boot.maven.plugin>2.0.0.RELEASE</spring.boot.maven.plugin>
         <fabric8.maven.plugin>3.5.33</fabric8.maven.plugin>
+        <userservice.version>0.0.1-SNAPSHOT</userservice.version>
+        <notifyservice.version>0.0.1-SNAPSHOT</notifyservice.version>
         <!--极光推送-->
         <jsms-client>1.2.0</jsms-client>
         <gson>2.3</gson>

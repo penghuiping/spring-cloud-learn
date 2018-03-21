@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.joinsoft</groupId>
-            <artifactId>userservice</artifactId>
+            <artifactId>userservice-server</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

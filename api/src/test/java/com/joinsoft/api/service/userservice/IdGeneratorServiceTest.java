@@ -1,7 +1,7 @@
 package com.joinsoft.api.service.userservice;
 
 import com.joinsoft.api.BaseTest;
-import com.joinsoft.userservice.service.IdGeneratorService;
+import com.joinsoft.userservice.server.service.IdGeneratorService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

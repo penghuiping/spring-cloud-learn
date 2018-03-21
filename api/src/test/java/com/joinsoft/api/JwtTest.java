@@ -1,7 +1,7 @@
 package com.joinsoft.api;
 
-import com.joinsoft.userservice.dto.JwtCredentialDto;
-import com.joinsoft.userservice.service.KongJwtService;
+import com.joinsoft.userservice.client.dto.JwtCredentialDto;
+import com.joinsoft.userservice.server.service.KongJwtService;
 import okhttp3.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by penghuiping on 2018/3/15.
  */
-public class JwtTest  {
+public class JwtTest {
 
     @Autowired
     private KongJwtService kongJwtService;
@@ -29,7 +29,7 @@ public class JwtTest  {
 
     @Test
     public void settingApiJwt() throws Exception {
-        String url = baseUrl+"";
+        String url = baseUrl + "";
         RequestBody body = new FormBody.Builder()
                 .add("name", "jwt")
                 .add("config.claims_to_verify", "exp")
@@ -41,7 +41,7 @@ public class JwtTest  {
 
     @Test
     public void updateApiJwt() throws Exception {
-        String url = baseUrl+"/0c6c4162-3c3c-4d56-8eeb-ed5234e0bafd";
+        String url = baseUrl + "/0c6c4162-3c3c-4d56-8eeb-ed5234e0bafd";
         RequestBody body = new FormBody.Builder()
                 .add("name", "jwt")
                 .add("config.claims_to_verify", "exp")
@@ -53,7 +53,7 @@ public class JwtTest  {
 
     @Test
     public void getJwtList() throws Exception {
-        String url = "http://192.168.99.100:30120"+"/consumers/11111111111111111111111111111111/jwt";
+        String url = "http://192.168.99.100:30120" + "/consumers/11111111111111111111111111111111/jwt";
         Request request = new Request.Builder().url(url).get().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
