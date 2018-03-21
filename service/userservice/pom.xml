@@ -9,12 +9,14 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>com.joinsoft</groupId>
     <artifactId>userservice</artifactId>
-    <version>${userservice.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <modules>
         <module>userservice-server</module>
         <module>userservice-client</module>
     </modules>
+
     <packaging>pom</packaging>
 </project>

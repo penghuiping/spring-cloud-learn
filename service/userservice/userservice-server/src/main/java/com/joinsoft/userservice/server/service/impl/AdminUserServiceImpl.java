@@ -1,9 +1,9 @@
 package com.joinsoft.userservice.server.service.impl;
 
 import com.google.common.collect.Lists;
-import com.joinsoft.common.dto.DataGridPageDto;
-import com.joinsoft.common.service.impl.BaseServiceImpl;
-import com.joinsoft.common.specification.BaseSpecs;
+import com.php25.common.dto.DataGridPageDto;
+import com.php25.common.service.impl.BaseServiceImpl;
+import com.php25.common.specification.BaseSpecs;
 import com.joinsoft.userservice.client.dto.AdminRoleDto;
 import com.joinsoft.userservice.client.dto.AdminUserDto;
 import com.joinsoft.userservice.server.model.AdminRole;

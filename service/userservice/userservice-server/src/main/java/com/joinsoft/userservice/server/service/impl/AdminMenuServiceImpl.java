@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.service.impl;
 
-import com.joinsoft.common.service.impl.BaseServiceImpl;
+import com.php25.common.service.impl.BaseServiceImpl;
 import com.joinsoft.userservice.client.dto.AdminMenuButtonDto;
 import com.joinsoft.userservice.client.dto.AdminRoleDto;
 import com.joinsoft.userservice.server.model.AdminMenuButton;

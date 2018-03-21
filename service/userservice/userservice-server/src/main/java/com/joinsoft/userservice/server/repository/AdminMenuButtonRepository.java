@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.repository;
 
-import com.joinsoft.common.repository.BaseRepository;
+import com.php25.common.repository.BaseRepository;
 import com.joinsoft.userservice.server.model.AdminMenuButton;
 import com.joinsoft.userservice.server.model.AdminRole;
 import org.springframework.data.jpa.repository.Query;

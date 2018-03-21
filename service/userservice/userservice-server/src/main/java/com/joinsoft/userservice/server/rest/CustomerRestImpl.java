@@ -1,11 +1,11 @@
 package com.joinsoft.userservice.server.rest;
 
-import com.joinsoft.distributedtransaction.dto.DistributedTransactionMsgLogDto;
-import com.joinsoft.distributedtransaction.service.DistributedTransactionMsgService;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.CustomerWrapperDto;
 import com.joinsoft.userservice.client.rest.CustomerRest;
 import com.joinsoft.userservice.server.service.CustomerService;
+import com.php25.distributedtransaction.dto.DistributedTransactionMsgLogDto;
+import com.php25.distributedtransaction.service.DistributedTransactionMsgService;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;

@@ -1,8 +1,8 @@
 package com.joinsoft.admin.controller;
 
-import com.joinsoft.common.controller.JSONController;
-import com.joinsoft.common.dto.JSONResponse;
-import com.joinsoft.common.exception.JsonException;
+import com.php25.common.controller.JSONController;
+import com.php25.common.dto.JSONResponse;
+import com.php25.common.exception.JsonException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

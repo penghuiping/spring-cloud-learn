@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.client.rest;
 
-import com.joinsoft.common.exception.JsonException;
+import com.php25.common.exception.JsonException;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
 import org.hibernate.validator.constraints.NotBlank;

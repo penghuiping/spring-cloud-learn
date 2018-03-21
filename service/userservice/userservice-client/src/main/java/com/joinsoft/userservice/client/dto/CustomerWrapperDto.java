@@ -1,7 +1,7 @@
 package com.joinsoft.userservice.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.joinsoft.distributedtransaction.dto.DistributedTransactionMsgLogDto;
+import com.php25.distributedtransaction.dto.DistributedTransactionMsgLogDto;
 
 import java.io.Serializable;
 import java.util.List;

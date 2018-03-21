@@ -1,6 +1,6 @@
 package com.joinsoft.api.base.interceptor;
 
-import com.joinsoft.common.util.StringUtil;
+import com.php25.common.util.StringUtil;
 import com.joinsoft.api.base.constant.AccessRequired;
 import com.joinsoft.userservice.server.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;

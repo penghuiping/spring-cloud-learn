@@ -1,7 +1,7 @@
 package com.joinsoft.userservice.server.service;
 
-import com.joinsoft.common.service.BaseService;
-import com.joinsoft.common.service.SoftDeletable;
+import com.php25.common.service.BaseService;
+import com.php25.common.service.SoftDeletable;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.server.model.Customer;
 

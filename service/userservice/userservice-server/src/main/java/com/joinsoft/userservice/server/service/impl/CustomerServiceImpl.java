@@ -1,8 +1,8 @@
 package com.joinsoft.userservice.server.service.impl;
 
-import com.joinsoft.common.dto.DataGridPageDto;
-import com.joinsoft.common.service.impl.BaseServiceImpl;
-import com.joinsoft.common.specification.BaseSpecs;
+import com.php25.common.dto.DataGridPageDto;
+import com.php25.common.service.impl.BaseServiceImpl;
+import com.php25.common.specification.BaseSpecs;
 import com.joinsoft.userservice.client.constant.CustomerUuidType;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.server.model.Customer;

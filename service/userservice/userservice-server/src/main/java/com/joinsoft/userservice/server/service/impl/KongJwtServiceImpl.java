@@ -1,8 +1,8 @@
 package com.joinsoft.userservice.server.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joinsoft.common.service.RedisService;
-import com.joinsoft.common.util.TimeUtil;
+import com.php25.common.service.RedisService;
+import com.php25.common.util.TimeUtil;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
 import com.joinsoft.userservice.server.service.CustomerService;

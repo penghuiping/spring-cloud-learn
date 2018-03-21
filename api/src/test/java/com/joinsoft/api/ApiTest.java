@@ -3,9 +3,6 @@ package com.joinsoft.api;
 import okhttp3.*;
 import org.junit.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 /**
  * Created by penghuiping on 2017/6/22.
  */

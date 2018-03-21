@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.client.rest;
 
-import com.joinsoft.common.dto.DataGridPageDto;
+import com.php25.common.dto.DataGridPageDto;
 import com.joinsoft.userservice.client.dto.AdminMenuButtonDto;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.bind.annotation.RequestBody;

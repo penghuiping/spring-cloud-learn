@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.model;
 
-import com.joinsoft.common.model.BaseSoftDeleteModel;
+import com.php25.common.model.BaseSoftDeleteModel;
 
 import javax.persistence.*;
 import java.util.Date;

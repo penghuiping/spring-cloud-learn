@@ -2,9 +2,9 @@ package com.joinsoft.notifyservice.service.impl;
 
 import cn.jsms.api.common.SMSClient;
 import cn.jsms.api.common.model.SMSPayload;
-import com.joinsoft.common.service.RedisService;
-import com.joinsoft.common.util.RandomUtil;
-import com.joinsoft.common.util.StringUtil;
+import com.php25.common.service.RedisService;
+import com.php25.common.util.RandomUtil;
+import com.php25.common.util.StringUtil;
 import com.joinsoft.notifyservice.client.contant.Constant;
 import com.joinsoft.notifyservice.service.MobileMessageService;
 import org.apache.log4j.Logger;

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.joinsoft</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>userservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -20,36 +20,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.joinsoft</groupId>
-            <artifactId>common</artifactId>
+            <groupId>com.php25</groupId>
+            <artifactId>common-spring-boot-starter</artifactId>
             <version>${joinsoft.common}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-jpa</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-test</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.nutz</groupId>
-                    <artifactId>nutz-plugins-spring-boot-starter</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>distributedtransaction-spring-boot-starter</artifactId>
+            <groupId>com.php25</groupId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <artifactId>distributedtransaction</artifactId>
-            <groupId>com.joinsoft</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>6.0.7.Final</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.repository;
 
-import com.joinsoft.common.repository.BaseRepository;
+import com.php25.common.repository.BaseRepository;
 import com.joinsoft.userservice.server.model.AdminUser;
 import org.springframework.stereotype.Repository;
 

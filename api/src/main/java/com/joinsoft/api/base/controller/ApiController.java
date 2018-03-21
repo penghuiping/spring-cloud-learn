@@ -1,8 +1,8 @@
 package com.joinsoft.api.base.controller;
 
-import com.joinsoft.common.controller.JSONController;
-import com.joinsoft.common.dto.JSONResponse;
-import com.joinsoft.common.exception.JsonException;
+import com.php25.common.controller.JSONController;
+import com.php25.common.dto.JSONResponse;
+import com.php25.common.exception.JsonException;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
 import com.joinsoft.userservice.client.rest.CustomerRest;

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.joinsoft</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>notifyservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -14,15 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.joinsoft</groupId>
-            <artifactId>common</artifactId>
+            <groupId>com.php25</groupId>
+            <artifactId>common-spring-boot-starter</artifactId>
             <version>${joinsoft.common}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>cn.jpush.api</groupId>

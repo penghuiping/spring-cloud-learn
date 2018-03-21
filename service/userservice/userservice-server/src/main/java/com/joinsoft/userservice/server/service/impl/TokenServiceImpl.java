@@ -1,10 +1,10 @@
 package com.joinsoft.userservice.server.service.impl;
 
-import com.joinsoft.common.service.RedisService;
-import com.joinsoft.common.service.impl.RedisServiceImpl;
-import com.joinsoft.common.util.DigestUtil;
-import com.joinsoft.common.util.StringUtil;
-import com.joinsoft.common.util.TimeUtil;
+import com.php25.common.service.RedisService;
+import com.php25.common.service.impl.RedisServiceImpl;
+import com.php25.common.util.DigestUtil;
+import com.php25.common.util.StringUtil;
+import com.php25.common.util.TimeUtil;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.server.service.CustomerService;
 import com.joinsoft.userservice.server.service.IdGeneratorService;

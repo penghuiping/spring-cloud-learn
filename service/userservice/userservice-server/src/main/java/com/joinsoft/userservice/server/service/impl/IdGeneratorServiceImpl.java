@@ -1,7 +1,7 @@
 package com.joinsoft.userservice.server.service.impl;
 
-import com.joinsoft.common.util.RandomUtil;
-import com.joinsoft.common.util.TimeUtil;
+import com.php25.common.util.RandomUtil;
+import com.php25.common.util.TimeUtil;
 import com.joinsoft.userservice.client.constant.Constant;
 import com.joinsoft.userservice.server.service.IdGeneratorService;
 import org.springframework.context.annotation.Primary;

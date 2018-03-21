@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.model;
 
-import com.joinsoft.common.model.BaseModel;
+import com.php25.common.model.BaseModel;
 
 import javax.persistence.*;
 

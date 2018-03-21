@@ -1,6 +1,6 @@
 package com.joinsoft.userservice.server.rest;
 
-import com.joinsoft.common.dto.DataGridPageDto;
+import com.php25.common.dto.DataGridPageDto;
 import com.joinsoft.userservice.client.dto.AdminUserDto;
 import com.joinsoft.userservice.client.rest.AdminUserRest;
 import com.joinsoft.userservice.server.service.AdminUserService;
