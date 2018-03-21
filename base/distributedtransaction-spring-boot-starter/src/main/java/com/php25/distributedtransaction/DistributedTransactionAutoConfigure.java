@@ -2,7 +2,10 @@ package com.php25.distributedtransaction;
 
 import com.php25.common.repository.impl.BaseRepositoryImpl;
 import com.php25.distributedtransaction.config.RabbitmqConfigProperties;
+import com.php25.distributedtransaction.config.SpringJobFactory;
+import com.php25.distributedtransaction.jms.DistributedTransactionJms;
 import com.php25.distributedtransaction.task.PullMessageJob;
+import com.php25.distributedtransaction.task.PushMessageJob;
 import com.rabbitmq.client.Channel;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -12,9 +15,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.util.List;
 
@@ -33,6 +38,26 @@ public class DistributedTransactionAutoConfigure implements InitializingBean {
     @Autowired
     private RabbitmqConfigProperties rabbitmqConfigProperties;
 
+    @Autowired
+    private DistributedTransactionJms distributedTransactionJms;
+
+    @Autowired
+    private SpringJobFactory springJobFactory;
+
+    @Autowired
+    private Scheduler scheduler;
+
+    @Bean
+    public SchedulerFactoryBean schedulerFactoryBean() {
+        SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
+        schedulerFactoryBean.setJobFactory(springJobFactory);
+        return schedulerFactoryBean;
+    }
+
+    @Bean
+    public Scheduler scheduler() {
+        return schedulerFactoryBean().getScheduler();
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -56,28 +81,36 @@ public class DistributedTransactionAutoConfigure implements InitializingBean {
         connection.close();
 
 
-        // Grab the Scheduler instance from the Factory
-        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-        // and start it off
-        scheduler.start();
-
-        // define the job and tie it to our MyJob class
-        JobDetail job = JobBuilder.newJob(PullMessageJob.class)
+        //创建一个job
+        JobDetail job1 = JobBuilder.newJob(PullMessageJob.class)
                 .withIdentity("job1", "group1")
                 .build();
 
-        // Trigger the job to run now, and then repeat every 40 seconds
-        Trigger trigger = TriggerBuilder.newTrigger()
+        JobDetail job2 = JobBuilder.newJob(PushMessageJob.class)
+                .withIdentity("job2", "group1")
+                .build();
+
+        //创建一个trigger
+        Trigger trigger1 = TriggerBuilder.newTrigger()
                 .withIdentity("trigger1", "group1")
                 .startNow()
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(3)
+                        .withIntervalInSeconds(4)
                         .repeatForever())
                 .build();
 
-        // Tell quartz to schedule the job using our trigger
-        scheduler.scheduleJob(job, trigger);
+        Trigger trigger2 = TriggerBuilder.newTrigger()
+                .withIdentity("trigger2", "group1")
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInSeconds(4)
+                        .repeatForever())
+                .build();
+
+        //绑定一个job与trigger
+        scheduler.scheduleJob(job1, trigger1);
+        scheduler.scheduleJob(job2, trigger2);
     }
 
 

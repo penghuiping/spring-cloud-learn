@@ -90,31 +90,6 @@ public class DistributedTransactionJms {
 
 
     /**
-     * 客户端主动拉取模式
-     * 每4秒处理拉取一次消息队列中的消息进行处理
-     *
-     * @throws Exception
-     */
-    @Scheduled(cron = "0/4 * * * * ?")
-    private void scheduledPullMessage() throws Exception {
-        Logger.getLogger(DistributedTransactionJms.class).info("每4秒处理拉取一次消息队列中的消息进行处理");
-        ConnectionFactory connectionFactory = this.rabbitTemplate.getConnectionFactory();
-        Connection connection1 = connectionFactory.createConnection();
-        Channel channel1 = connection1.createChannel(false);
-        boolean autoAck = false;
-        while (true) {
-            GetResponse getResponse = channel1.basicGet(rabbitmqConfigProperties.getTargetQueue(), autoAck);
-            if (null != getResponse) {
-                handleMsg(channel1, getResponse.getEnvelope(), getResponse.getBody());
-            } else {
-                break;
-            }
-        }
-        channel1.close();
-        connection1.close();
-    }
-
-    /**
      * 不同service对应不同数据，使用此方法
      *
      * @param channel
@@ -122,7 +97,7 @@ public class DistributedTransactionJms {
      * @param body
      * @throws IOException
      */
-    private void handleMsgDistribute(Channel channel, Envelope envelope, byte[] body) throws IOException {
+    public void handleMsgDistribute(Channel channel, Envelope envelope, byte[] body) throws IOException {
         //判断消息头信息中的消息类型，分发消息处理
         //为了降低复杂度,目前只支持单参数方法
         // 处理消息
@@ -206,7 +181,7 @@ public class DistributedTransactionJms {
      * @param body
      * @throws IOException
      */
-    private void handleMsg(Channel channel, Envelope envelope, byte[] body) throws IOException {
+    public void handleMsg(Channel channel, Envelope envelope, byte[] body) throws IOException {
         //判断消息头信息中的消息类型，分发消息处理
         //为了降低复杂度,目前只支持单参数方法
         // 处理消息

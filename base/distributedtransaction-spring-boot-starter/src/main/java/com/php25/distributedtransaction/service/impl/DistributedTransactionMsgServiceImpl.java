@@ -11,7 +11,6 @@ import com.php25.distributedtransaction.dto.MessageTypeDto;
 import com.php25.distributedtransaction.model.DistributedTransactionMsgLog;
 import com.php25.distributedtransaction.repository.DistributedTransactionMsgLogRepository;
 import com.php25.distributedtransaction.service.DistributedTransactionMsgService;
-import com.php25.distributedtransaction.task.PublishMessageTask;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import org.apache.log4j.Logger;
@@ -142,7 +141,7 @@ public class DistributedTransactionMsgServiceImpl extends BaseServiceImpl<Distri
                     this.save(a);
                 }
             } catch (Exception e) {
-                Logger.getLogger(PublishMessageTask.class).error(e);
+                Logger.getLogger(DistributedTransactionMsgServiceImpl.class).error(e);
             }
         });
 
@@ -151,7 +150,7 @@ public class DistributedTransactionMsgServiceImpl extends BaseServiceImpl<Distri
             connection.close();
             return true;
         } catch (Exception e) {
-            Logger.getLogger(PublishMessageTask.class).error(e);
+            Logger.getLogger(DistributedTransactionMsgServiceImpl.class).error(e);
             return true;
         }
     }
