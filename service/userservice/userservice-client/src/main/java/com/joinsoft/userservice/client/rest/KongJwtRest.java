@@ -1,12 +1,12 @@
 package com.joinsoft.userservice.client.rest;
 
-import com.php25.common.exception.JsonException;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
+import com.php25.common.exception.JsonException;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,6 +17,9 @@ import javax.validation.constraints.NotNull;
 
 public interface KongJwtRest {
 
+    String baseUri = "/kongJwt";
+
+
     /**
      * 0. 生成jwtCustomerId
      *
@@ -24,8 +27,9 @@ public interface KongJwtRest {
      * @return
      * @throws JsonException
      */
-    @RequestMapping(value = "/generateJwtCustomerId")
-    public String generateJwtCustomerId(@NotNull @RequestBody CustomerDto customerDto);
+    @RequestLine("POST " + baseUri + "/generateJwtCustomerId")
+    @Headers("Content-Type: application/json")
+    public String generateJwtCustomerId(@NotNull CustomerDto customerDto);
 
 
     /**
@@ -34,8 +38,8 @@ public interface KongJwtRest {
      * @param jwtCustomerId
      * @throws JsonException
      */
-    @RequestMapping(value = "/createJwtCustomer")
-    public void createJwtCustomer(@NotBlank @RequestParam("jwtCustomerId") String jwtCustomerId);
+    @RequestLine("GET " + baseUri + "/createJwtCustomer?jwtCustomerId={jwtCustomerId}")
+    public void createJwtCustomer(@NotBlank @Param("jwtCustomerId") String jwtCustomerId);
 
 
     /**
@@ -45,8 +49,8 @@ public interface KongJwtRest {
      * @return
      * @throws JsonException
      */
-    @RequestMapping(value = "/generateJwtCredential")
-    public JwtCredentialDto generateJwtCredential(@NotBlank @RequestParam("jwtCustomerId") String jwtCustomerId);
+    @RequestLine("GET " + baseUri + "/generateJwtCredential?jwtCustomerId={jwtCustomerId}")
+    public JwtCredentialDto generateJwtCredential(@NotBlank @Param("jwtCustomerId") String jwtCustomerId);
 
 
     /**
@@ -55,8 +59,9 @@ public interface KongJwtRest {
      * @return
      * @throws JsonException
      */
-    @RequestMapping(value = "/generateJwtToken")
-    public String generateJwtToken(@NotNull @RequestBody JwtCredentialDto jwtCredentialDto);
+    @RequestLine("POST " + baseUri + "/generateJwtToken")
+    @Headers("Content-Type: application/json")
+    public String generateJwtToken(@NotNull JwtCredentialDto jwtCredentialDto);
 
 
     /**
@@ -66,8 +71,8 @@ public interface KongJwtRest {
      * @return
      * @throws JsonException
      */
-    @RequestMapping(value = "/getByJwtCustomerId")
-    public CustomerDto getByJwtCustomerId(@NotBlank @RequestParam("jwtCustomerId") String jwtCustomerId);
+    @RequestLine("GET " + baseUri + "/getByJwtCustomerId?jwtCustomerId={jwtCustomerId}")
+    public CustomerDto getByJwtCustomerId(@NotBlank @Param("jwtCustomerId") String jwtCustomerId);
 
     /**
      * 清除jwtToken
@@ -75,6 +80,6 @@ public interface KongJwtRest {
      * @param jwtCustomerId
      * @throws JsonException
      */
-    @RequestMapping(value = "/cleanJwtToken")
-    public void cleanJwtToken(@NotBlank @RequestParam("jwtCustomerId") String jwtCustomerId);
+    @RequestLine("GET " + baseUri + "/cleanJwtToken?jwtCustomerId={jwtCustomerId}")
+    public void cleanJwtToken(@NotBlank @Param("jwtCustomerId") String jwtCustomerId);
 }

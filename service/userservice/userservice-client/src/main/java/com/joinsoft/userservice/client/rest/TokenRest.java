@@ -1,9 +1,10 @@
 package com.joinsoft.userservice.client.rest;
 
 import com.joinsoft.userservice.client.dto.CustomerDto;
+import feign.Param;
+import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import java.util.Map;
  */
 public interface TokenRest {
 
+    String baseUri = "/token";
+
     /**
      * 根据手机用户获取token
      *
@@ -19,8 +22,8 @@ public interface TokenRest {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/getTokenByCustomer")
-    public Map<String, String> getTokenByCustomer(@NotBlank @RequestParam("customerId") String customerId);
+    @RequestLine("GET " + baseUri + "/getTokenByCustomer?customerId={customerId}")
+    public Map<String, String> getTokenByCustomer(@NotBlank @Param("customerId") String customerId);
 
     /**
      * 通过refreshtoken重新获取一个token
@@ -28,8 +31,8 @@ public interface TokenRest {
      * @param refreshToken
      * @return
      */
-    @RequestMapping(value = "/getTokenByRefreshToken")
-    public Map<String, String> getTokenByRefreshToken(@NotBlank @RequestParam("refreshToken") String refreshToken);
+    @RequestLine("GET " + baseUri + "/getTokenByRefreshToken?refreshToken={refreshToken}")
+    public Map<String, String> getTokenByRefreshToken(@NotBlank @Param("refreshToken") String refreshToken);
 
     /**
      * 检测token值是否有效
@@ -37,8 +40,8 @@ public interface TokenRest {
      * @param token
      * @return
      */
-    @RequestMapping(value = "/checkTokenValidation")
-    public Boolean checkTokenValidation(@NotBlank @RequestParam("token") String token);
+    @RequestMapping("GET " + baseUri + "/checkTokenValidation?token={token}")
+    public Boolean checkTokenValidation(@NotBlank @Param("token") String token);
 
     /**
      * 设置token过期失效
@@ -47,15 +50,15 @@ public interface TokenRest {
      * @return
      */
     @Deprecated
-    @RequestMapping(value = "/setTokenExpire")
-    public Boolean setTokenExpire(@NotBlank @RequestParam("customerId") String customerId);
+    @RequestMapping("GET " + baseUri + "/setTokenExpire?customerId={customerId}")
+    public Boolean setTokenExpire(@NotBlank @Param("customerId") String customerId);
 
     /**
      * 获取token的过期时间
      *
      * @return
      */
-    @RequestMapping(value = "/getAccessTokenExpireTime")
+    @RequestMapping("GET " + baseUri + "/getAccessTokenExpireTime")
     public Long getAccessTokenExpireTime();
 
     /**
@@ -63,7 +66,7 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping(value = "/getRefreshTokenExpireTime")
+    @RequestMapping("GET " + baseUri + "/getRefreshTokenExpireTime")
     public Long getRefreshTokenExpireTime();
 
 
@@ -71,8 +74,8 @@ public interface TokenRest {
      * 根据token获取用户对象
      */
     @Deprecated
-    @RequestMapping(value = "/getUserObject")
-    public CustomerDto getUserObject(@NotBlank @RequestParam("token") String token);
+    @RequestMapping("GET " + baseUri + "/getUserObject?token={token}")
+    public CustomerDto getUserObject(@NotBlank @Param("token") String token);
 
 
     /**
@@ -80,15 +83,15 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping(value = "/getCustomerByToken")
-    public CustomerDto getCustomerByToken(@NotBlank @RequestParam("token") String token);
+    @RequestMapping("GET " + baseUri + "/getCustomerByToken?token={token}")
+    public CustomerDto getCustomerByToken(@NotBlank @Param("token") String token);
 
     /**
      * 清除token信息
      *
      * @return
      */
-    @RequestMapping(value = "/cleanToken")
-    public Boolean cleanToken(@NotBlank @RequestParam("token") String token, @NotBlank @RequestParam("refreshToken") String refreshToken);
+    @RequestMapping("GET " + baseUri + "/cleanToken?token={token}&refreshToken={refreshToken}")
+    public Boolean cleanToken(@NotBlank @Param("token") String token, @NotBlank @Param("refreshToken") String refreshToken);
 
 }

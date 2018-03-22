@@ -1,11 +1,11 @@
 package com.joinsoft.userservice.client.rest;
 
-import com.php25.common.dto.DataGridPageDto;
 import com.joinsoft.userservice.client.dto.AdminUserDto;
+import com.php25.common.dto.DataGridPageDto;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -17,6 +17,7 @@ import java.util.List;
  */
 public interface AdminUserRest {
 
+    String baseUri = "/adminUser";
 
     /**
      * 根据用户名与密码获取用户信息
@@ -27,8 +28,8 @@ public interface AdminUserRest {
      * @author penghuiping
      * @Time 2016-08-12
      */
-    @RequestMapping("/findByUsernameAndPassword")
-    public AdminUserDto findByUsernameAndPassword(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password);
+    @RequestLine("GET " + baseUri + "/findByUsernameAndPassword?username={username}&password={password}")
+    public AdminUserDto findByUsernameAndPassword(@NotBlank @Param("username") String username, @NotBlank @Param("password") String password);
 
     /**
      * 根据id获取后台用户详情
@@ -36,8 +37,8 @@ public interface AdminUserRest {
      * @param id
      * @return
      */
-    @RequestMapping("/findOne")
-    public AdminUserDto findOne(@NotBlank @RequestParam("id") String id);
+    @RequestLine("GET " + baseUri + "/findOne?id={id}")
+    public AdminUserDto findOne(@NotBlank @Param("id") String id);
 
     /**
      * 保存后台用户信息
@@ -45,8 +46,9 @@ public interface AdminUserRest {
      * @param adminUserDto
      * @return
      */
-    @RequestMapping("/save")
-    public AdminUserDto save(@NotNull @RequestBody AdminUserDto adminUserDto);
+    @RequestLine("POST " + baseUri + "/save")
+    @Headers("Content-Type: application/json")
+    public AdminUserDto save(@NotNull AdminUserDto adminUserDto);
 
     /**
      * 查询所有有效数据
@@ -54,8 +56,8 @@ public interface AdminUserRest {
      * @param ids
      * @return
      */
-    @RequestMapping("/findAll")
-    public List<AdminUserDto> findAll(@Size(min = 1) @RequestParam("ids") List<String> ids);
+    @RequestLine("GET " + baseUri + "/findAll?ids={ids}")
+    public List<AdminUserDto> findAll(@Size(min = 1) @Param("ids") List<String> ids);
 
     /**
      * 批量软删除
@@ -63,8 +65,8 @@ public interface AdminUserRest {
      * @param ids
      * @return
      */
-    @RequestMapping("/softDelete")
-    public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids);
+    @RequestLine("GET " + baseUri + "/softDelete?ids={ids}")
+    public Boolean softDelete(@Size(min = 1) @Param("ids") List<String> ids);
 
     /**
      * 分页查询
@@ -74,6 +76,6 @@ public interface AdminUserRest {
      * @param searchParams
      * @return
      */
-    @RequestMapping("/query")
-    public DataGridPageDto<AdminUserDto> query(@Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize, @NotBlank @RequestParam("searchParams") String searchParams);
+    @RequestLine("GET " + baseUri + "/query?pageNum={pageNum}&pageSize={pageSize}&searchParams={searchParams}")
+    public DataGridPageDto<AdminUserDto> query(@Min(-1) @Param("pageNum") Integer pageNum, @Min(1) @Param("pageSize") Integer pageSize, @NotBlank @Param("searchParams") String searchParams);
 }

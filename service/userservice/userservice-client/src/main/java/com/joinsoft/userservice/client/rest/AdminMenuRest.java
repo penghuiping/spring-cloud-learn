@@ -1,11 +1,11 @@
 package com.joinsoft.userservice.client.rest;
 
-import com.php25.common.dto.DataGridPageDto;
 import com.joinsoft.userservice.client.dto.AdminMenuButtonDto;
+import com.php25.common.dto.DataGridPageDto;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface AdminMenuRest {
 
+    String baseUri = "/adminMenu";
+
 
     /**
      * 根据角色查询所有的有效菜单按钮
@@ -24,8 +26,8 @@ public interface AdminMenuRest {
      * @param adminRoleId
      * @return
      */
-    @RequestMapping("/findMenusEnabledByRole")
-    public List<AdminMenuButtonDto> findMenusEnabledByRole(@NotBlank @RequestParam("adminRoleId") String adminRoleId);
+    @RequestLine("GET " + baseUri + "/findMenusEnabledByRole?adminRoleId={adminRoleId}")
+    public List<AdminMenuButtonDto> findMenusEnabledByRole(@NotBlank @Param("adminRoleId") String adminRoleId);
 
     /**
      * 根据父菜单与角色所有的有效菜单按钮
@@ -34,15 +36,15 @@ public interface AdminMenuRest {
      * @param adminRoleId
      * @return
      */
-    @RequestMapping("/findMenusEnabledByParentAndRole")
-    public List<AdminMenuButtonDto> findMenusEnabledByParentAndRole(@NotBlank @RequestParam("parentId") String parentId, @NotBlank @RequestParam("adminRoleId") String adminRoleId);
+    @RequestLine("GET " + baseUri + "/findMenusEnabledByParentAndRole?parentId={parentId}&adminRoleId={adminRoleId}")
+    public List<AdminMenuButtonDto> findMenusEnabledByParentAndRole(@NotBlank @Param("parentId") String parentId, @NotBlank @Param("adminRoleId") String adminRoleId);
 
     /**
      * 获取菜单按钮树状结构
      *
      * @return
      */
-    @RequestMapping("/findRootMenus")
+    @RequestLine("GET " + baseUri + "/findRootMenus")
     public List<AdminMenuButtonDto> findRootMenus();
 
     /**
@@ -51,8 +53,8 @@ public interface AdminMenuRest {
      * @param parentId
      * @return
      */
-    @RequestMapping("/findMenusByParent")
-    public List<AdminMenuButtonDto> findMenusByParent(@NotBlank @RequestParam("parentId") String parentId);
+    @RequestLine("GET " + baseUri + "/findMenusByParent?parentId={parentId}")
+    public List<AdminMenuButtonDto> findMenusByParent(@NotBlank @Param("parentId") String parentId);
 
     /**
      * 根据角色查询菜单按钮
@@ -60,15 +62,15 @@ public interface AdminMenuRest {
      * @param adminRoleId
      * @return
      */
-    @RequestMapping("/findMenusByRole")
-    public List<AdminMenuButtonDto> findMenusByRole(@NotBlank @RequestParam("adminRoleId") String adminRoleId);
+    @RequestLine("GET " + baseUri + "/findMenusByRole?adminRoleId={adminRoleId}")
+    public List<AdminMenuButtonDto> findMenusByRole(@NotBlank @Param("adminRoleId") String adminRoleId);
 
     /**
      * 获取有效的菜单按钮树状结构
      *
      * @return
      */
-    @RequestMapping("/findRootMenusEnabled")
+    @RequestLine("GET " + baseUri + "/findRootMenusEnabled")
     public List<AdminMenuButtonDto> findRootMenusEnabled();
 
     /**
@@ -77,8 +79,8 @@ public interface AdminMenuRest {
      * @param parentId
      * @return
      */
-    @RequestMapping("/findMenusEnabledByParent")
-    public List<AdminMenuButtonDto> findMenusEnabledByParent(@NotBlank @RequestParam("parentId") String parentId);
+    @RequestLine("GET " + baseUri + "/findMenusEnabledByParent?parentId={parentId}")
+    public List<AdminMenuButtonDto> findMenusEnabledByParent(@NotBlank @Param("parentId") String parentId);
 
     /**
      * 根据id获取菜单详情
@@ -86,8 +88,8 @@ public interface AdminMenuRest {
      * @param id
      * @return
      */
-    @RequestMapping("/findOne")
-    public AdminMenuButtonDto findOne(@NotBlank @RequestParam("id") String id);
+    @RequestLine("GET " + baseUri + "/findOne?id={id}")
+    public AdminMenuButtonDto findOne(@NotBlank @Param("id") String id);
 
     /**
      * 保存菜单信息
@@ -95,8 +97,9 @@ public interface AdminMenuRest {
      * @param adminMenuButtonDto
      * @return
      */
-    @RequestMapping("/save")
-    public AdminMenuButtonDto save(@NotNull @RequestBody AdminMenuButtonDto adminMenuButtonDto);
+    @RequestLine("POST " + baseUri + "/save")
+    @Headers("Content-Type: application/json")
+    public AdminMenuButtonDto save(@NotNull AdminMenuButtonDto adminMenuButtonDto);
 
     /**
      * 批量软删除
@@ -104,8 +107,8 @@ public interface AdminMenuRest {
      * @param ids
      * @return
      */
-    @RequestMapping("/softDelete")
-    public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids);
+    @RequestLine("GET " + baseUri + "/softDelete?ids={ids}")
+    public Boolean softDelete(@Size(min = 1) @Param("ids") List<String> ids);
 
     /**
      * 分页查询
@@ -115,6 +118,6 @@ public interface AdminMenuRest {
      * @param searchParams
      * @return
      */
-    @RequestMapping("/query")
-    public DataGridPageDto query(@Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize, @NotBlank @RequestParam("searchParams") String searchParams);
+    @RequestLine("GET " + baseUri + "/query?pageNum={pageNum}&pageSize={pageSize}&searchParams={searchParams}")
+    public DataGridPageDto query(@Min(-1) @Param("pageNum") Integer pageNum, @Min(1) @Param("pageSize") Integer pageSize, @NotBlank @Param("searchParams") String searchParams);
 }

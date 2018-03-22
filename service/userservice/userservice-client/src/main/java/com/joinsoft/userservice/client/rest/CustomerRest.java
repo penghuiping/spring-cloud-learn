@@ -2,10 +2,11 @@ package com.joinsoft.userservice.client.rest;
 
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.CustomerWrapperDto;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,10 @@ import java.util.List;
 /**
  * Created by penghuiping on 2017/3/8.
  */
+@Validated
 public interface CustomerRest {
+
+    String baseUri = "/customer";
 
     /**
      * 新增用户
@@ -24,8 +28,9 @@ public interface CustomerRest {
      * @param dto
      * @return
      */
-    @RequestMapping(value = "/save")
-    public CustomerDto save(@NotNull @RequestBody CustomerDto dto);
+    @RequestLine("POST " + baseUri + "/save")
+    @Headers("Content-Type: application/json")
+    public CustomerDto save(@NotNull CustomerDto dto);
 
     /**
      * 新增用户(分布式事务，异步消息保证最终一致性)
@@ -33,8 +38,9 @@ public interface CustomerRest {
      * @param dto
      * @return
      */
-    @RequestMapping(value = "/customerRegister")
-    public CustomerDto customerRegister(@NotNull @RequestBody CustomerWrapperDto dto);
+    @RequestLine("POST " + baseUri + "/customerRegister")
+    @Headers("Content-Type: application/json")
+    public CustomerDto customerRegister(@NotNull CustomerWrapperDto dto);
 
 
     /**
@@ -44,15 +50,15 @@ public interface CustomerRest {
      * @param password
      * @return
      */
-    @RequestMapping(value = "/findOneByPhoneAndPassword")
-    public CustomerDto findOneByPhoneAndPassword(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @RequestParam("phone") String phone, @Pattern(regexp = "[0-9A-Za-z]{10,}", message = "请输入正确密码") @RequestParam("password") String password);
+    @RequestLine("GET " + baseUri + "/findOneByPhoneAndPassword?phone={phone}&password={password}")
+    public CustomerDto findOneByPhoneAndPassword(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @Param("phone") String phone, @Pattern(regexp = "[0-9A-Za-z]{10,}", message = "请输入正确密码") @Param("password") String password);
 
     /**
      * 查询全部
      *
      * @return
      */
-    @RequestMapping(value = "/findAll")
+    @RequestLine("GET " + baseUri + "/findAll")
     public List<CustomerDto> findAll();
 
     /**
@@ -61,8 +67,8 @@ public interface CustomerRest {
      * @param phone
      * @return
      */
-    @RequestMapping(value = "/findOneByPhone")
-    public CustomerDto findOneByPhone(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @RequestParam("phone") String phone);
+    @RequestLine("GET " + baseUri + "/findOneByPhone?phone={phone}")
+    public CustomerDto findOneByPhone(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @Param("phone") String phone);
 
 
     /**
@@ -71,8 +77,8 @@ public interface CustomerRest {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/findOne")
-    public CustomerDto findOne(@NotBlank @RequestParam("id") String id);
+    @RequestLine("GET " + baseUri + "/findOne?id={id}")
+    public CustomerDto findOne(@NotBlank @Param("id") String id);
 
     /**
      * 分页查询
@@ -82,8 +88,8 @@ public interface CustomerRest {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/query")
-    public List<CustomerDto> query(@NotBlank @RequestParam("searchParams") String searchParams, @Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize);
+    @RequestLine("GET " + baseUri + "/query?searchParams={searchParams}&pageNum={pageNum}&pageSize={pageSize}")
+    public List<CustomerDto> query(@NotBlank @Param("searchParams") String searchParams, @Min(-1) @Param("pageNum") Integer pageNum, @Min(1) @Param("pageSize") Integer pageSize);
 
     /**
      * 根据uuid查询
@@ -91,8 +97,8 @@ public interface CustomerRest {
      * @param uuid
      * @return
      */
-    @RequestMapping(value = "/findByUuidAndType")
-    public CustomerDto findByUuidAndType(@NotBlank @RequestParam("uuid") String uuid, @NotNull @RequestParam("type") Integer type);
+    @RequestLine("GET " + baseUri + "/findByUuidAndType?uuid={uuid}&type={type}")
+    public CustomerDto findByUuidAndType(@NotBlank @Param("uuid") String uuid, @NotNull @Param("type") Integer type);
 
     /**
      * 软删除
@@ -100,8 +106,8 @@ public interface CustomerRest {
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/softDelete")
-    public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids);
+    @RequestLine("GET " + baseUri + "/softDelete?ids={ids}")
+    public Boolean softDelete(@Size(min = 1) @Param("ids") List<String> ids);
 
 
     /**
@@ -110,6 +116,6 @@ public interface CustomerRest {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/findByName")
-    public List<CustomerDto> findByName(@NotBlank @RequestParam("name") String name);
+    @RequestLine("GET " + baseUri + "/findByName?name={name}")
+    public List<CustomerDto> findByName(@NotBlank @Param("name") String name);
 }
