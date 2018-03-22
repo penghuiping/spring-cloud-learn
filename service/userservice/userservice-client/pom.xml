@@ -5,11 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.joinsoft</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>userservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.joinsoft.userservice</groupId>
     <artifactId>userservice-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -20,15 +19,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.joinsoft</groupId>
-            <artifactId>common</artifactId>
+
+            <groupId>com.php25</groupId>
+            <artifactId>common-spring-boot-starter</artifactId>
             <version>${joinsoft.common}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>distributedtransaction-spring-boot-starter</artifactId>
+            <groupId>com.php25</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.7.Final</version>
         </dependency>
     </dependencies>
 

@@ -7,7 +7,8 @@
     <artifactId>base</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>common</module>
+        <module>common-spring-boot-starter</module>
+        <module>distributedtransaction-spring-boot-starter</module>
     </modules>
     <packaging>pom</packaging>
     <build>

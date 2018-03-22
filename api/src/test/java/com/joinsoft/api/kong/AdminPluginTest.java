@@ -15,7 +15,7 @@ public class AdminPluginTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.101:30120/plugins";
+    private static final String baseUrl = "http://192.168.99.100:30120/plugins";
 
     /**
      * 添加一个插件

@@ -1,7 +1,6 @@
 package com.joinsoft.api.kong;
 
 import okhttp3.*;
-import org.junit.Test;
 
 /**
  * Created by penghuiping on 2018/3/13.

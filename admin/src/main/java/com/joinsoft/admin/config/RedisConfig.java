@@ -1,8 +1,8 @@
 package com.joinsoft.admin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joinsoft.common.service.RedisService;
-import com.joinsoft.common.service.impl.RedisServiceImpl;
+import com.php25.common.service.RedisService;
+import com.php25.common.service.impl.RedisServiceImpl;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;

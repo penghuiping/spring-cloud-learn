@@ -4,26 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.joinsoft</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>userservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>userservice-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>com.joinsoft</groupId>
-            <artifactId>common</artifactId>
+            <groupId>com.php25</groupId>
+            <artifactId>common-spring-boot-starter</artifactId>
             <version>${joinsoft.common}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>cn.jpush.api</groupId>
@@ -50,6 +43,16 @@
                     <artifactId>netty-all</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.joinsoft</groupId>
+            <artifactId>userservice-client</artifactId>
+            <version>${userservice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.3.6</version>
         </dependency>
     </dependencies>
 

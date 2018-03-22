@@ -1,6 +1,6 @@
 package com.joinsoft.api.config;
 
-import com.joinsoft.common.interceptor.CommonInterceptor;
+import com.php25.common.interceptor.CommonInterceptor;
 import com.joinsoft.api.base.interceptor.ApiAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,11 +21,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Autowired
     ApiAuthenticationInterceptor apiAuthenticationInterceptor;
 
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
         registry.addInterceptor(commonInterceptor).addPathPatterns("/**/*");
-        registry.addInterceptor(apiAuthenticationInterceptor).addPathPatterns("/api/**");
     }
 
     @Override
