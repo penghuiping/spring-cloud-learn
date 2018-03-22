@@ -8,7 +8,6 @@ import com.php25.distributedtransaction.task.PullMessageJob;
 import com.php25.distributedtransaction.task.PushMessageJob;
 import com.rabbitmq.client.Channel;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -79,7 +78,6 @@ public class DistributedTransactionAutoConfigure implements InitializingBean {
 
         channel.close();
         connection.close();
-
 
 
         //创建一个job
