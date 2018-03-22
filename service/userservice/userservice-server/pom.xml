@@ -10,6 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.joinsoft</groupId>
     <artifactId>userservice-server</artifactId>
     <version>${userservice.version}</version>
 
@@ -46,7 +47,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.joinsoft.userservice</groupId>
+            <groupId>com.joinsoft</groupId>
             <artifactId>userservice-client</artifactId>
             <version>${userservice.version}</version>
         </dependency>

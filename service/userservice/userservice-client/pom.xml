@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.joinsoft.userservice</groupId>
+    <groupId>com.joinsoft</groupId>
     <artifactId>userservice-client</artifactId>
     <version>${userservice.version}</version>
     <packaging>jar</packaging>

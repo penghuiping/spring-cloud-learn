@@ -9,6 +9,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>com.joinsoft</groupId>
     <artifactId>notifyservice-server</artifactId>
     <version>${notifyservice.version}</version>
 
@@ -45,7 +46,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.joinsoft.notifyservice</groupId>
+            <groupId>com.joinsoft</groupId>
             <artifactId>notifyservice-client</artifactId>
             <version>${notifyservice.version}</version>
         </dependency>
