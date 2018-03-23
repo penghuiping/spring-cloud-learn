@@ -38,7 +38,7 @@ public class PullMessageJob implements org.quartz.Job {
         Connection connection1 = null;
         Channel channel1 = null;
         try {
-            Logger.getLogger(DistributedTransactionJms.class).info("每4秒处理拉取一次消息队列中的消息进行处理");
+            Logger.getLogger(DistributedTransactionJms.class).debug("每4秒处理拉取一次消息队列中的消息进行处理");
             ConnectionFactory connectionFactory = this.rabbitTemplate.getConnectionFactory();
             connection1 = connectionFactory.createConnection();
             channel1 = connection1.createChannel(false);

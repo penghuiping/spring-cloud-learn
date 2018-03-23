@@ -24,7 +24,7 @@ public class PushMessageJob implements org.quartz.Job {
     }
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        Logger.getLogger(PushMessageJob.class).info("每隔4秒扫一次分布式事务消息表，发送新消息到消息队列");
+        Logger.getLogger(PushMessageJob.class).debug("每隔4秒扫一次分布式事务消息表，发送新消息到消息队列");
         List<DistributedTransactionMsgLogDto> msgs = distributedTransactionMsgService.findByStatus(DistributedTransactionMsgStatus.生产者新消息.value);
         distributedTransactionMsgService.sendMsgToBroker(msgs);
     }

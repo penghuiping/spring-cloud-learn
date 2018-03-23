@@ -17,9 +17,9 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- * Created by penghuiping on 2017/3/9.
+ * Created by penghuiping on 2018/3/23.
  */
-public class AdminMenuRestTest {
+public class TestCustomerRest {
 
     private CustomerRest customerRest;
 
@@ -85,7 +85,7 @@ public class AdminMenuRestTest {
         searchParam.setFieldName("enable");
         searchParam.setOperator(Operator.EQ.name());
         searchParam.setValue(1);
-        List<CustomerDto> customerDtoList = customerRest.query(objectMapper.writeValueAsString(Lists.newArrayList(searchParam)),1,5);
+        List<CustomerDto> customerDtoList = customerRest.query(objectMapper.writeValueAsString(Lists.newArrayList(searchParam)), 1, 5);
         System.out.println(objectMapper.writeValueAsString(customerDtoList));
     }
 

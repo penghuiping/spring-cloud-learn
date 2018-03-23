@@ -3,6 +3,7 @@ package com.joinsoft.userservice.client;
 import com.joinsoft.userservice.client.config.UserserviceClientConfigProperties;
 import com.joinsoft.userservice.client.rest.*;
 import feign.Feign;
+import feign.hystrix.HystrixFeign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     AdminMenuRest adminMenuRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(AdminMenuRest.class, userserviceClientConfigProperties.getBaseUrl());
@@ -34,7 +35,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     AdminRoleRest adminRoleRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(AdminRoleRest.class, userserviceClientConfigProperties.getBaseUrl());
@@ -42,7 +43,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     AdminUserRest adminUserRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(AdminUserRest.class, userserviceClientConfigProperties.getBaseUrl());
@@ -50,7 +51,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     CustomerRest customerRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(CustomerRest.class, userserviceClientConfigProperties.getBaseUrl());
@@ -58,7 +59,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     KongJwtRest kongJwtRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(KongJwtRest.class, userserviceClientConfigProperties.getBaseUrl());
@@ -66,7 +67,7 @@ public class UserserviceClientAutoConfigure {
 
     @Bean
     TokenRest tokenRest() {
-        return Feign.builder()
+        return HystrixFeign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(TokenRest.class, userserviceClientConfigProperties.getBaseUrl());
