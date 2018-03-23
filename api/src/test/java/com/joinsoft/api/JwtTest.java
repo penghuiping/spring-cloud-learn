@@ -1,7 +1,7 @@
 package com.joinsoft.api;
 
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
-import com.joinsoft.userservice.server.service.KongJwtService;
+import com.joinsoft.userservice.client.rest.KongJwtRest;
 import okhttp3.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class JwtTest {
 
-    @Autowired
-    private KongJwtService kongJwtService;
-
     private static final OkHttpClient client = new OkHttpClient();
-
     private static final String baseUrl = "http://192.168.99.100:30120/apis/kong_api_secure/plugins";
+    @Autowired
+    private KongJwtRest kongJwtService;
 
     @Test
     public void test1() throws Exception {

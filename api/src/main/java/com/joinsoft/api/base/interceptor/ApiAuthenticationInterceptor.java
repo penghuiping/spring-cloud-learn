@@ -1,8 +1,8 @@
 package com.joinsoft.api.base.interceptor;
 
-import com.php25.common.util.StringUtil;
 import com.joinsoft.api.base.constant.AccessRequired;
-import com.joinsoft.userservice.server.service.TokenService;
+import com.joinsoft.userservice.client.rest.TokenRest;
+import com.php25.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    TokenService tokenService;
+    TokenRest tokenService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

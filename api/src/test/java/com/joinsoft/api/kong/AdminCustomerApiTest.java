@@ -15,7 +15,7 @@ public class AdminCustomerApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.100:30120/consumers";
+    private static final String baseUrl = "http://192.168.99.100:31633/consumers";
 
 
     /**

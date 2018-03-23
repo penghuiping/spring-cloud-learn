@@ -81,7 +81,7 @@ public class AdminPluginTest {
      */
     @Test
     public void deletePlugin() throws Exception {
-        String url = baseUrl+"/963f4d6c-45ff-444a-99b3-965e7f2b2b87";
+        String url = baseUrl + "/d0873b71-3a49-45e7-a16b-6e6b9f36a701";
         Request request = new Request.Builder().url(url).delete().build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());

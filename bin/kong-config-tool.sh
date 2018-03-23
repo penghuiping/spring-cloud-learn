@@ -1,9 +1,9 @@
 #!/bin/bash
-set -e
-base_url=http://192.168.99.100:30120
+set -eux
+base_url=http://192.168.99.100:31633
 ## upstream:config virtual_host,and one virtual_host can bind with many targets
-api_virtual_host=api.php.com
-admin_virtual_host=admin.php.com
+api_virtual_host=api-php
+admin_virtual_host=admin-php
 
 ## target:targets are the backend services.kong will proxy requests to these targets
 api_target=192.168.1.47:20001
@@ -85,6 +85,8 @@ do
     curl -X DELETE $base_url/apis/${project_name}_${i}_$j
     done
 done
+
+## 删除plugins
 else
 echo "Please use command 'sh kong-config-tool config' to config kong"
 echo "Please use command 'sh kong-config-tool clean' to clean kong config"

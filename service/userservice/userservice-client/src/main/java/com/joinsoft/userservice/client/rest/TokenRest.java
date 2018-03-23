@@ -4,7 +4,6 @@ import com.joinsoft.userservice.client.dto.CustomerDto;
 import feign.Param;
 import feign.RequestLine;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public interface TokenRest {
      * @param token
      * @return
      */
-    @RequestMapping("GET " + baseUri + "/checkTokenValidation?token={token}")
+    @RequestLine("GET " + baseUri + "/checkTokenValidation?token={token}")
     public Boolean checkTokenValidation(@NotBlank @Param("token") String token);
 
     /**
@@ -50,7 +49,7 @@ public interface TokenRest {
      * @return
      */
     @Deprecated
-    @RequestMapping("GET " + baseUri + "/setTokenExpire?customerId={customerId}")
+    @RequestLine("GET " + baseUri + "/setTokenExpire?customerId={customerId}")
     public Boolean setTokenExpire(@NotBlank @Param("customerId") String customerId);
 
     /**
@@ -58,7 +57,7 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping("GET " + baseUri + "/getAccessTokenExpireTime")
+    @RequestLine("GET " + baseUri + "/getAccessTokenExpireTime")
     public Long getAccessTokenExpireTime();
 
     /**
@@ -66,7 +65,7 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping("GET " + baseUri + "/getRefreshTokenExpireTime")
+    @RequestLine("GET " + baseUri + "/getRefreshTokenExpireTime")
     public Long getRefreshTokenExpireTime();
 
 
@@ -74,7 +73,7 @@ public interface TokenRest {
      * 根据token获取用户对象
      */
     @Deprecated
-    @RequestMapping("GET " + baseUri + "/getUserObject?token={token}")
+    @RequestLine("GET " + baseUri + "/getUserObject?token={token}")
     public CustomerDto getUserObject(@NotBlank @Param("token") String token);
 
 
@@ -83,7 +82,7 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping("GET " + baseUri + "/getCustomerByToken?token={token}")
+    @RequestLine("GET " + baseUri + "/getCustomerByToken?token={token}")
     public CustomerDto getCustomerByToken(@NotBlank @Param("token") String token);
 
     /**
@@ -91,7 +90,7 @@ public interface TokenRest {
      *
      * @return
      */
-    @RequestMapping("GET " + baseUri + "/cleanToken?token={token}&refreshToken={refreshToken}")
+    @RequestLine("GET " + baseUri + "/cleanToken?token={token}&refreshToken={refreshToken}")
     public Boolean cleanToken(@NotBlank @Param("token") String token, @NotBlank @Param("refreshToken") String refreshToken);
 
 }

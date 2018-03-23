@@ -1,10 +1,10 @@
 package com.joinsoft.userservice.server.rest;
 
-import com.php25.common.exception.JsonException;
 import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.joinsoft.userservice.client.dto.JwtCredentialDto;
 import com.joinsoft.userservice.client.rest.KongJwtRest;
 import com.joinsoft.userservice.server.service.KongJwtService;
+import com.php25.common.exception.JsonException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,9 +35,8 @@ public class KongJwtRestImpl implements KongJwtRest {
      */
     @RequestMapping(value = "/generateJwtCustomerId")
     public String generateJwtCustomerId(@NotNull @RequestBody CustomerDto customerDto) {
-        return kongJwtService.generateJwtCustomerId(customerDto);
+        return String.format("\"%s\"", kongJwtService.generateJwtCustomerId(customerDto));
     }
-
 
     /**
      * 1。 往kong中创建一个jwtCustomer
@@ -72,7 +71,8 @@ public class KongJwtRestImpl implements KongJwtRest {
      */
     @RequestMapping(value = "/generateJwtToken")
     public String generateJwtToken(@NotNull @RequestBody JwtCredentialDto jwtCredentialDto) {
-        return kongJwtService.generateJwtToken(jwtCredentialDto);
+        String value = kongJwtService.generateJwtToken(jwtCredentialDto);
+        return String.format("\"%s\"", value);
     }
 
 

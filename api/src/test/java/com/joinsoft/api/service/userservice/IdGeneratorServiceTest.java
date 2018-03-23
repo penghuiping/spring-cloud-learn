@@ -1,7 +1,6 @@
 package com.joinsoft.api.service.userservice;
 
 import com.joinsoft.api.BaseTest;
-import com.joinsoft.userservice.server.service.IdGeneratorService;
 import org.junit.Test;
 import org.redisson.api.GeoEntry;
 import org.redisson.api.RGeo;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class IdGeneratorServiceTest extends BaseTest {
 
-    @Autowired
-    private IdGeneratorService idGeneratorService;
 
     @Autowired
     private RedissonClient redissonClient;

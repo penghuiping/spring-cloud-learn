@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.joinsoft.userservice.client.UserserviceClientAutoConfigure

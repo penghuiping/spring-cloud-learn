@@ -15,9 +15,9 @@ public class AdminUpstreamApiTest {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final String baseUrl = "http://192.168.99.100:30120/";
+    private static final String baseUrl = "http://192.168.99.100:31633/";
 
-    private static final String virtualHost = "php.test.com";
+    private static final String virtualHost = "api-php";
 
     /**
      * 添加一个upstream
