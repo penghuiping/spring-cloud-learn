@@ -1,6 +1,7 @@
 #!/bin/bash
 set -eux
-base_url=http://192.168.99.100:31633
+#base_url=http://192.168.99.100:31633
+base_url=http://192.168.1.128:32299
 ## upstream:config virtual_host,and one virtual_host can bind with many targets
 api_virtual_host=api-php
 admin_virtual_host=admin-php
