@@ -34,46 +34,6 @@ public class DruidConfig {
         return filterRegistrationBean;
     }
 
-//    @Bean("masterDataSource")
-//    @Qualifier("masterDataSource")
-//    public DataSource druidDataSource(
-//            @Value("${spring.datasource.driverClassName}") String driver,
-//            @Value("${spring.datasource.url}") String url,
-//            @Value("${spring.datasource.username}") String username,
-//            @Value("${spring.datasource.password}") String password) {
-//        DruidDataSource druidDataSource = new DruidDataSource();
-//        druidDataSource.setDriverClassName(driver);
-//        druidDataSource.setUrl(url);
-//        druidDataSource.setUsername(username);
-//        druidDataSource.setPassword(password);
-//        try {
-//            druidDataSource.setFilters("stat, wall");
-//        } catch (SQLException e) {
-//            Logger.getLogger(DruidConfig.class).error(e);
-//        }
-//        return druidDataSource;
-//    }
-//
-//    @Bean("slaveDataSource0")
-//    @Qualifier("slaveDataSource0")
-//    public DataSource druidSlaveDataSource0(
-//            @Value("${spring.slave-datasource.driverClassName}") String driver,
-//            @Value("${spring.slave-datasource.url}") String url,
-//            @Value("${spring.slave-datasource.username}") String username,
-//            @Value("${spring.slave-datasource.password}") String password) {
-//        DruidDataSource druidDataSource = new DruidDataSource();
-//        druidDataSource.setDriverClassName(driver);
-//        druidDataSource.setUrl(url);
-//        druidDataSource.setUsername(username);
-//        druidDataSource.setPassword(password);
-//        try {
-//            druidDataSource.setFilters("stat, wall");
-//        } catch (SQLException e) {
-//            Logger.getLogger(DruidConfig.class).error(e);
-//        }
-//        return druidDataSource;
-//    }
-
     @Bean
     public DataSource shareingJdbcDataSource(
             @Value("${spring.datasource.driverClassName}") String driver,

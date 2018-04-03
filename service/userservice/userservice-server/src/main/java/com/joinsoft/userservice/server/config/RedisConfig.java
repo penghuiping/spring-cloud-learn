@@ -27,11 +27,6 @@ public class RedisConfig {
             @Value("${spring.redis.slave-port}") String slavePort,
             @Value("${spring.redis.slave-database}") String slaveDatabase) {
         Config config = new Config();
-//        config.useSingleServer().setAddress(host + ":" + port);
-//        config.useSingleServer().setConnectionMinimumIdleSize(1);
-//        config.useSingleServer().setConnectionPoolSize(5);
-//        config.useSingleServer().setDatabase(Integer.parseInt(database));
-
         config.useMasterSlaveServers()
                 .setMasterAddress(String.format("%s:%s", host, port))
                 .addSlaveAddress(String.format("%s:%s", slaveHost, slavePort))
