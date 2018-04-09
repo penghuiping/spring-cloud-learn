@@ -6,6 +6,7 @@ import com.php25.common.service.impl.RedisServiceImpl;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.redisson.config.ReadMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +19,20 @@ import org.springframework.context.annotation.Configuration;
 public class RedisConfig {
 
     @Bean(destroyMethod = "shutdown")
-    public RedissonClient redissonClient(@Value("${spring.redis.host}") String host, @Value("${spring.redis.port}") String port, @Value("${spring.redis.database}") String database) {
+    public RedissonClient redissonClient(
+            @Value("${spring.redis.host}") String host,
+            @Value("${spring.redis.port}") String port,
+            @Value("${spring.redis.database}") String database,
+            @Value("${spring.redis.slave-host}") String slaveHost,
+            @Value("${spring.redis.slave-port}") String slavePort,
+            @Value("${spring.redis.slave-database}") String slaveDatabase) {
         Config config = new Config();
-        config.useSingleServer().setAddress(host + ":" + port);
-        config.useSingleServer().setConnectionMinimumIdleSize(1);
-        config.useSingleServer().setConnectionPoolSize(5);
-        config.useSingleServer().setDatabase(Integer.parseInt(database));
+        config.useMasterSlaveServers()
+                .setMasterAddress(String.format("%s:%s", host, port))
+                .addSlaveAddress(String.format("%s:%s", slaveHost, slavePort))
+                .setDatabase(Integer.parseInt(database))
+                .setReadMode(ReadMode.MASTER_SLAVE);
+
         RedissonClient redisson = Redisson.create(config);
         return redisson;
     }

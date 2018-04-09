@@ -7,6 +7,7 @@ import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,27 @@ public class DruidConfig {
     }
 
     @Bean
+    @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
+    public DataSource druidDataSource(
+            @Value("${spring.datasource.driverClassName}") String driver,
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password) {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setDriverClassName(driver);
+        druidDataSource.setUrl(url);
+        druidDataSource.setUsername(username);
+        druidDataSource.setPassword(password);
+        try {
+            druidDataSource.setFilters("stat, wall");
+        } catch (SQLException e) {
+            Logger.getLogger(DruidConfig.class).error(e);
+        }
+        return druidDataSource;
+    }
+
+    @Bean
+    @ConditionalOnExpression("!'${spring.profiles.active}'.contains('development')")
     public DataSource shareingJdbcDataSource(
             @Value("${spring.datasource.driverClassName}") String driver,
             @Value("${spring.datasource.url}") String url,
