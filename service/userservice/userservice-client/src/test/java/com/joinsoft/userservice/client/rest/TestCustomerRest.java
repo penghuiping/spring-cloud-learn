@@ -7,7 +7,7 @@ import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.IdGeneratorServiceImpl;
 import com.php25.common.specification.Operator;
 import com.php25.common.specification.SearchParam;
-import com.php25.common.util.MD5Util;
+import com.php25.common.util.DigestUtil;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -44,7 +44,7 @@ public class TestCustomerRest {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(idGeneratorService.getModelPrimaryKey());
         customerDto.setMobile("18811111111");
-        customerDto.setPassword(MD5Util.getStringMD5("123456"));
+        customerDto.setPassword(DigestUtil.MD5Str("123456"));
         customerDto.setEnable(1);
         customerRest.save(customerDto);
     }
