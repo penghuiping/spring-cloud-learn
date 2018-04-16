@@ -9,7 +9,6 @@
 
     <modules>
         <module>service</module>
-        <module>base</module>
         <module>api</module>
         <module>admin</module>
     </modules>
