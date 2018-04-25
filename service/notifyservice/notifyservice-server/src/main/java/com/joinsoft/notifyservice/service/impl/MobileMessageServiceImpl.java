@@ -1,12 +1,15 @@
 package com.joinsoft.notifyservice.service.impl;
 
+import cn.jiguang.common.resp.APIConnectionException;
+import cn.jiguang.common.resp.APIRequestException;
+import cn.jsms.api.SendSMSResult;
 import cn.jsms.api.common.SMSClient;
 import cn.jsms.api.common.model.SMSPayload;
+import com.joinsoft.notifyservice.client.contant.Constant;
+import com.joinsoft.notifyservice.service.MobileMessageService;
 import com.php25.common.service.RedisService;
 import com.php25.common.util.RandomUtil;
 import com.php25.common.util.StringUtil;
-import com.joinsoft.notifyservice.client.contant.Constant;
-import com.joinsoft.notifyservice.service.MobileMessageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +52,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
     @Override
     public Boolean newMessage(String mobile) {
         client = new SMSClient(MASTER_SECRET, APP_KEY);
-
         String message = RandomUtil.getRandomNumbers(4);
-        message = "1111";
         //要条用第三方接口发送短信
         Map<String, String> map = new HashMap<>();
         map.put("code", message);
@@ -60,16 +61,15 @@ public class MobileMessageServiceImpl implements MobileMessageService {
                 .setTempId(1)
                 .setTempPara(map)
                 .build();
-
-        //try {
-        //SendSMSResult res = client.sendTemplateSMS(payload);
-        redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
-        return true;
-        //} catch (APIConnectionException e) {
-        //    logger.error("Connection error. Should retry later. ", e);
-        //} catch (APIRequestException e) {
-        //    logger.error("Error response from JPush server. Should review and fix it. ", e);
-        //}
-        //return false;
+        try {
+            SendSMSResult res = client.sendTemplateSMS(payload);
+            redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+            return true;
+        } catch (APIConnectionException e) {
+            logger.error("Connection error. Should retry later. ", e);
+        } catch (APIRequestException e) {
+            logger.error("Error response from JPush server. Should review and fix it. ", e);
+        }
+        return false;
     }
 }
