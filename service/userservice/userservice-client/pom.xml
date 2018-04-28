@@ -27,7 +27,7 @@
         <dependency>
             <artifactId>distributedtransaction-spring-boot-starter</artifactId>
             <groupId>com.php25</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${joinsoft.distributedTransaction}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

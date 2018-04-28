@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -40,7 +39,7 @@ public class CustomerRestImpl implements CustomerRest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    @Resource
+    @Autowired
     private DistributedTransactionMsgService distributedTransactionMsgService;
 
 

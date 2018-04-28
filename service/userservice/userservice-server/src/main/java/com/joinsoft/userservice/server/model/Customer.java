@@ -19,13 +19,13 @@ public class Customer {
     @Column
     private Integer enable;
 
-    @Column(name = "name")
+    @Column(name = "username")
     private String username;//用户名
 
-    @Column(name = "real_name")
+    @Column(name = "nickname")
     private String nickname;//昵称
 
-    @Column(name = "phone")
+    @Column(name = "mobile")
     private String mobile;//手机
 
     private Integer sex;//性别
@@ -38,7 +38,7 @@ public class Customer {
 
     private String password;//密码
 
-    @Column(name = "e_mail")
+    @Column(name = "email")
     private String email;//邮箱
 
     @Column(name = "create_time")

@@ -1,15 +1,15 @@
 #!/bin/bash
-set -e
-base_url=http://192.168.99.100:30120
+set -eux
+base_url=http://10.1.1.2:8001
 ## upstream:config virtual_host,and one virtual_host can bind with many targets
 api_virtual_host=api.php.com
 admin_virtual_host=admin.php.com
 
 ## target:targets are the backend services.kong will proxy requests to these targets
-api_target=192.168.1.47:20001
+api_target=10.0.0.133:20001
 api_weight=100
 
-admin_target=192.168.1.47:20000
+admin_target=10.0.0.133:20000
 admin_weight=100
 
 ## proxy api:proxy api--->upstream--->target
