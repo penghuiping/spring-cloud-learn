@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by penghuiping on 16/8/2.
@@ -46,6 +47,21 @@ public class DruidConfig {
         druidDataSource.setUrl(url);
         druidDataSource.setUsername(username);
         druidDataSource.setPassword(password);
+        druidDataSource.setInitialSize(5);
+        druidDataSource.setMinIdle(5);
+        druidDataSource.setMaxActive(20);
+        druidDataSource.setMaxWait(28000);
+        druidDataSource.setTimeBetweenEvictionRunsMillis(28000);
+        druidDataSource.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource.setTestWhileIdle(true);
+        druidDataSource.setTestOnBorrow(false);
+        druidDataSource.setTestOnReturn(false);
+        druidDataSource.setPoolPreparedStatements(true);
+        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(20);
+        Properties properties = new Properties();
+        properties.setProperty("druid.stat.mergeSql", "true");
+        properties.setProperty("druid.stat.slowSqlMillis", "5000");
+        druidDataSource.setConnectProperties(properties);
         try {
             druidDataSource.setFilters("stat, wall");
         } catch (SQLException e) {
@@ -73,6 +89,21 @@ public class DruidConfig {
         druidDataSource_master.setUrl(url);
         druidDataSource_master.setUsername(username);
         druidDataSource_master.setPassword(password);
+        druidDataSource_master.setInitialSize(5);
+        druidDataSource_master.setMinIdle(5);
+        druidDataSource_master.setMaxActive(20);
+        druidDataSource_master.setMaxWait(28000);
+        druidDataSource_master.setTimeBetweenEvictionRunsMillis(28000);
+        druidDataSource_master.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource_master.setTestWhileIdle(true);
+        druidDataSource_master.setTestOnBorrow(false);
+        druidDataSource_master.setTestOnReturn(false);
+        druidDataSource_master.setPoolPreparedStatements(true);
+        druidDataSource_master.setMaxPoolPreparedStatementPerConnectionSize(20);
+        Properties properties = new Properties();
+        properties.setProperty("druid.stat.mergeSql", "true");
+        properties.setProperty("druid.stat.slowSqlMillis", "5000");
+        druidDataSource_master.setConnectProperties(properties);
         try {
             druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
@@ -84,12 +115,26 @@ public class DruidConfig {
         druidDataSource_slave.setUrl(slaveUrl);
         druidDataSource_slave.setUsername(slaveUsername);
         druidDataSource_slave.setPassword(slavePassword);
+        druidDataSource_slave.setInitialSize(5);
+        druidDataSource_slave.setMinIdle(5);
+        druidDataSource_slave.setMaxActive(20);
+        druidDataSource_slave.setMaxWait(28000);
+        druidDataSource_slave.setTimeBetweenEvictionRunsMillis(28000);
+        druidDataSource_slave.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource_slave.setTestWhileIdle(true);
+        druidDataSource_slave.setTestOnBorrow(false);
+        druidDataSource_slave.setTestOnReturn(false);
+        druidDataSource_slave.setPoolPreparedStatements(true);
+        druidDataSource_slave.setMaxPoolPreparedStatementPerConnectionSize(20);
+        Properties properties1 = new Properties();
+        properties1.setProperty("druid.stat.mergeSql", "true");
+        properties1.setProperty("druid.stat.slowSqlMillis", "5000");
+        druidDataSource_master.setConnectProperties(properties);
         try {
-            druidDataSource_slave.setFilters("stat, wall");
+            druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
             Logger.getLogger(DruidConfig.class).error(e);
         }
-
 
         Map<String, DataSource> dataSourceMap = new HashMap<>();
         dataSourceMap.put("masterDataSource", druidDataSource_master);
