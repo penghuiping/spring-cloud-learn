@@ -29,11 +29,6 @@
             <groupId>com.php25</groupId>
             <version>${joinsoft.distributedTransaction}</version>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.0.7.Final</version>
-        </dependency>
     </dependencies>
 
     <build>

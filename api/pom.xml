@@ -54,6 +54,11 @@
             <artifactId>druid</artifactId>
             <version>${druid}</version>
         </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz</artifactId>
+            <version>${nutz}</version>
+        </dependency>
         <!--文件上传 -->
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -71,6 +76,17 @@
             <groupId>io.shardingjdbc</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
             <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swaggerui}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swaggerui}</version>
         </dependency>
     </dependencies>
 

@@ -1,7 +1,7 @@
 package com.joinsoft.api;
 
-import com.joinsoft.userservice.client.dto.JwtCredentialDto;
-import com.joinsoft.userservice.server.service.KongJwtService;
+import com.php25.userservice.client.dto.JwtCredentialDto;
+import com.php25.userservice.server.service.KongJwtService;
 import okhttp3.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class JwtTest {
     private static final String baseUrl = "http://192.168.99.100:30120/apis/kong_api_secure/plugins";
 
     @Test
-    public void test1() throws Exception {
+    public void test1() {
         JwtCredentialDto jwtCredentialDto = new JwtCredentialDto();
         jwtCredentialDto.setKey("a36c3049b36249a3c9f8891cb127243c");
         jwtCredentialDto.setSecret("e71829c351aa4242c2719cbfbe671c09");
