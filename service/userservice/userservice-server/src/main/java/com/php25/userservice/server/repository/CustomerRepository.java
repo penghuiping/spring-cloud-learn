@@ -12,7 +12,7 @@ import java.util.List;
  * Created by penghuiping on 16/9/2.
  */
 @Repository
-public interface CustomerRepository extends BaseRepository<Customer, String> {
+public interface CustomerRepository extends BaseRepository<Customer, Long> {
 
     Customer findByUsernameAndPassword(@Param("name") String name, @Param("password") String password);
 

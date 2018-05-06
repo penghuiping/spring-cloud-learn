@@ -13,7 +13,7 @@ import java.util.List;
  * Created by penghuiping on 1/20/15.
  */
 @Repository
-public interface AdminMenuButtonRepository extends BaseRepository<AdminMenuButton, String> {
+public interface AdminMenuButtonRepository extends BaseRepository<AdminMenuButton, Long> {
 
     @Query("from AdminMenuButton a where a.parent is null and a.enable!=2 order by a.sort asc")
     List<AdminMenuButton> findRootMenus();

@@ -1,7 +1,7 @@
-package com.joinsoft.api;
+package com.php25.userservice.server.rest;
 
 import com.php25.userservice.client.dto.JwtCredentialDto;
-import com.php25.userservice.server.service.KongJwtService;
+import com.php25.userservice.client.rest.KongJwtRest;
 import okhttp3.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by penghuiping on 2018/3/15.
  */
-public class JwtTest {
+public class KongJwtRestTest {
 
     @Autowired
-    private KongJwtService kongJwtService;
+    private KongJwtRest kongJwtRest;
 
     private static final OkHttpClient client = new OkHttpClient();
 
@@ -23,7 +23,7 @@ public class JwtTest {
         JwtCredentialDto jwtCredentialDto = new JwtCredentialDto();
         jwtCredentialDto.setKey("a36c3049b36249a3c9f8891cb127243c");
         jwtCredentialDto.setSecret("e71829c351aa4242c2719cbfbe671c09");
-        String value = kongJwtService.generateJwtToken(jwtCredentialDto);
+        String value = kongJwtRest.generateJwtToken(jwtCredentialDto);
         System.out.println(value);
     }
 

@@ -15,7 +15,7 @@ public class AdminMenuButton {
     private static final long serialVersionUID = 448179669770037196L;
 
     @Id
-    private String id;//主键id
+    private Long id;//主键id
 
     @Column(length = 45)
     private String name;//菜单或者按钮名
@@ -142,11 +142,11 @@ public class AdminMenuButton {
         this.icon = icon;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

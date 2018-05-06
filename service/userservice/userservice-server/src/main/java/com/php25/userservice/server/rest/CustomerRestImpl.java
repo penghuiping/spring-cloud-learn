@@ -1,5 +1,6 @@
 package com.php25.userservice.server.rest;
 
+import com.google.common.collect.Lists;
 import com.php25.distributedtransaction.dto.DistributedTransactionMsgLogDto;
 import com.php25.distributedtransaction.service.DistributedTransactionMsgService;
 import com.php25.userservice.client.dto.CustomerDto;
@@ -24,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Created by penghuiping on 2017/3/8.
@@ -51,7 +53,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/save")
     public CustomerDto save(@NotNull @RequestBody CustomerDto dto) {
-        return customerService.save(dto).get();
+        return customerService.save(dto).orElse(null);
     }
 
     /**
@@ -67,7 +69,7 @@ public class CustomerRestImpl implements CustomerRest {
         AtomicReference<CustomerDto> customerDtoReference = new AtomicReference<>();
 
         Boolean result = transactionTemplate.execute((TransactionStatus a) -> {
-            CustomerDto temp = customerService.save(customerDto).get();
+            CustomerDto temp = customerService.save(customerDto).orElse(null);
             customerDtoReference.set(temp);
             distributedTransactionMsgService.save(distributedTransactionMsgLogDtos);
             return true;
@@ -97,7 +99,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findOneByPhoneAndPassword")
     public CustomerDto findOneByPhoneAndPassword(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @RequestParam("phone") String phone, @Pattern(regexp = "[0-9A-Za-z]{10,}", message = "请输入正确密码") @RequestParam("password") String password) {
-        return customerService.findOneByPhoneAndPassword(phone, password).get();
+        return customerService.findOneByPhoneAndPassword(phone, password).orElse(null);
     }
 
     /**
@@ -107,7 +109,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findAll")
     public List<CustomerDto> findAll() {
-        return customerService.findAll().get();
+        return customerService.findAll().orElse(null);
     }
 
     /**
@@ -118,7 +120,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findOneByPhone")
     public CustomerDto findOneByPhone(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机号") @RequestParam("phone") String phone) {
-        return customerService.findOneByPhone(phone).get();
+        return customerService.findOneByPhone(phone).orElse(null);
     }
 
 
@@ -130,7 +132,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findOne")
     public CustomerDto findOne(@NotBlank @RequestParam("id") String id) {
-        return customerService.findOne(id).get();
+        return customerService.findOne(Long.parseLong(id)).orElse(null);
     }
 
     /**
@@ -143,7 +145,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/query")
     public List<CustomerDto> query(@NotBlank @RequestParam("searchParams") String searchParams, @Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize) {
-        return customerService.query(searchParams, pageNum, pageSize).get();
+        return customerService.query(searchParams, pageNum, pageSize).orElse(null);
     }
 
     /**
@@ -154,7 +156,7 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findByUuidAndType")
     public CustomerDto findByUuidAndType(@NotBlank @RequestParam("uuid") String uuid, @NotNull @RequestParam("type") Integer type) {
-        return customerService.findByUuidAndType(uuid, type).get();
+        return customerService.findByUuidAndType(uuid, type).orElse(null);
     }
 
     /**
@@ -165,7 +167,9 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/softDelete")
     public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        return customerService.softDel(ids);
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        customerService.softDelete(customerService.findAll(ids_).orElse(Lists.newArrayList()));
+        return true;
     }
 
 
@@ -177,6 +181,6 @@ public class CustomerRestImpl implements CustomerRest {
      */
     @RequestMapping(value = "/findByName")
     public List<CustomerDto> findByName(@NotBlank @RequestParam("name") String name) {
-        return customerService.findByName(name).get();
+        return customerService.findByName(name).orElse(null);
     }
 }

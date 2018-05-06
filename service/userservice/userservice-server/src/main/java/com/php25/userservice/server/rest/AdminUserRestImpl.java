@@ -17,6 +17,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by penghuiping on 2017/3/9.
@@ -52,7 +53,7 @@ public class AdminUserRestImpl implements AdminUserRest {
      */
     @RequestMapping("/findOne")
     public AdminUserDto findOne(@NotBlank @RequestParam("id") String id) {
-        return adminUserService.findOne(id).orElse(null);
+        return adminUserService.findOne(Long.parseLong(id)).orElse(null);
     }
 
     /**
@@ -74,7 +75,8 @@ public class AdminUserRestImpl implements AdminUserRest {
      */
     @RequestMapping("/findAll")
     public List<AdminUserDto> findAll(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        return adminUserService.findAll(ids).orElse(Lists.newArrayList());
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        return adminUserService.findAll(ids_).orElse(Lists.newArrayList());
     }
 
     /**
@@ -85,7 +87,8 @@ public class AdminUserRestImpl implements AdminUserRest {
      */
     @RequestMapping("/softDelete")
     public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        adminUserService.softDelete(adminUserService.findAll(ids, false).orElse(Lists.newArrayList()));
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        adminUserService.softDelete(adminUserService.findAll(ids_, false).orElse(Lists.newArrayList()));
         return true;
     }
 

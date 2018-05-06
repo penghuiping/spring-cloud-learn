@@ -15,7 +15,7 @@ public class AdminRole {
     private static final long serialVersionUID = -8387195142612865703L;
 
     @Id
-    private String id;//主键id
+    private Long id;//主键id
 
     @Column
     private String code;//角色代码
@@ -91,11 +91,11 @@ public class AdminRole {
         this.updateTime = updateTime;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

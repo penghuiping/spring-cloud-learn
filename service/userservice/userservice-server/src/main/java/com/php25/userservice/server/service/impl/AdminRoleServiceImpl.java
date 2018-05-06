@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRole, String> implements AdminRoleService {
+public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRole, Long> implements AdminRoleService {
 
     private AdminRoleRepository adminRoleRepository;
 
@@ -82,12 +82,12 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
 
     @Override
-    public Optional<List<AdminRoleDto>> findAll(Iterable<String> ids) {
+    public Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids) {
         return findAll(ids, true);
     }
 
 
-    public Optional<List<AdminRoleDto>> findAll(Iterable<String> ids, Boolean lazy) {
+    public Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids, Boolean lazy) {
         List<AdminRole> adminRoles = (List<AdminRole>) adminRoleRepository.findAll(ids);
         return Optional.ofNullable(adminRoles.parallelStream().map(adminRole -> {
             AdminRoleDto adminRoleDto = new AdminRoleDto();
@@ -141,7 +141,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     }
 
     @Override
-    public Optional<AdminRoleDto> findOne(String id) {
+    public Optional<AdminRoleDto> findOne(Long id) {
         AdminRole adminRole = adminRoleRepository.findOne(id);
         AdminRoleDto adminRoleDto = new AdminRoleDto();
         BeanUtils.copyProperties(adminRole, adminRoleDto);

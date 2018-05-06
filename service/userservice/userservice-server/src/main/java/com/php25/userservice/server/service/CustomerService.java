@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author penghuiping
  * @Time 16/9/2.
  */
-public interface CustomerService extends BaseService<CustomerDto, Customer, String>, SoftDeletable<CustomerDto> {
+public interface CustomerService extends BaseService<CustomerDto, Customer, Long>, SoftDeletable<CustomerDto> {
 
     /**
      * 根据用户名与密码，查询出用户信息
@@ -67,13 +67,6 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Stri
      */
     Optional<List<CustomerDto>> query(String searchParams, Integer pageNum, Integer pageSize);
 
-    /**
-     * 批量软删除
-     *
-     * @param ids
-     * @return
-     */
-    boolean softDel(List<String> ids);
 
     /**
      * 根据姓名模糊查询

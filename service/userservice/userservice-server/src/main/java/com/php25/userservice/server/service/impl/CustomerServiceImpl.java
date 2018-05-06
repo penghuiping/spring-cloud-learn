@@ -15,9 +15,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Transactional
 @Service
-public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, String> implements CustomerService {
+public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, Long> implements CustomerService {
 
 
     private CustomerRepository customerRepository;
@@ -43,6 +43,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<CustomerDto> findOneByUsernameAndPassword(String username, String password) {
+        Assert.hasText(username, "用户名不能为空");
+        Assert.hasText(password, "密码不能为空");
         Customer customer = customerRepository.findByUsernameAndPassword(username, password);
         if (null != customer) {
             CustomerDto customerDto = new CustomerDto();
@@ -53,12 +55,14 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<CustomerDto> findByUuidAndType(String uuid, Integer type) {
+        Assert.hasText(uuid, "uuid表示wx,weibo,qq账号,不能为空");
+        Assert.notNull(type, "type不能为null");
         Customer customer = null;
         if (type == CustomerUuidType.weixin.value) {
             customer = customerRepository.findOneByWx(uuid);
         } else if (type == CustomerUuidType.qq.value) {
             customer = customerRepository.findOneByQQ(uuid);
-        } else if (type == CustomerUuidType.weixin.value) {
+        } else if (type == CustomerUuidType.weibo.value) {
             customer = customerRepository.findOneBySina(uuid);
         }
         if (null != customer) {
@@ -71,6 +75,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<CustomerDto> findOneByPhoneAndPassword(String phone, String password) {
+        Assert.hasText(phone, "手机不能为空");
+        Assert.hasText(password, "密码不能为空");
         Customer customer = customerRepository.findOneByPhoneAndPassword(phone, password);
         if (null != customer) {
             CustomerDto customerDto = new CustomerDto();
@@ -82,6 +88,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<CustomerDto> findOneByPhone(String phone) {
+        Assert.hasText(phone, "手机不能为空");
         Customer customer = customerRepository.findOneByPhone(phone);
         if (null != customer) {
             CustomerDto customerDto = new CustomerDto();
@@ -92,7 +99,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<CustomerDto> save(CustomerDto obj) {
-        if (null != obj && null == obj.getId()) {
+        Assert.notNull(obj, "CustomerDto不能为null");
+        if (null == obj.getId()) {
             obj.setCreateTime(new Date());
         }
         obj.setUpdateTime(new Date());
@@ -109,23 +117,10 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         return super.findAll();
     }
 
-    @Override
-    public boolean softDel(List<String> ids) {
-        if (null != ids && 0 < ids.size()) {
-            List<CustomerDto> customerDtos = new ArrayList<>();
-            for (String id : ids) {
-                Optional<CustomerDto> customerDto = findOne(id);
-                customerDtos.add(customerDto.get());
-            }
-            softDelete(customerDtos);
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
+
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
         Page<Customer> customerPage = customerRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
         List<CustomerDto> customerDtos = customerPage.getContent().parallelStream().map(customer -> {

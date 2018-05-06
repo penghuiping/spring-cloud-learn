@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class RoleMenu {
 
     @Id
-    private String id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -37,11 +37,11 @@ public class RoleMenu {
         this.adminMenuButton = adminMenuButton;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

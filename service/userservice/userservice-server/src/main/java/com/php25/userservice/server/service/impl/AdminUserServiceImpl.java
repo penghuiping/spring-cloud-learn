@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUser, String> implements AdminUserService {
+public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUser, Long> implements AdminUserService {
 
     private AdminUserRepository adminUserRepository;
 
@@ -51,7 +51,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     }
 
     @Override
-    public Optional<AdminUserDto> findOne(String id) {
+    public Optional<AdminUserDto> findOne(Long id) {
         AdminUser adminUser = adminUserRepository.findOne(id);
         AdminUserDto adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
@@ -64,11 +64,11 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
         return Optional.ofNullable(adminUserDto);
     }
 
-    public Optional<List<AdminUserDto>> findAll(Iterable<String> ids) {
+    public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids) {
         return findAll(ids, true);
     }
 
-    public Optional<List<AdminUserDto>> findAll(Iterable<String> ids, Boolean lazy) {
+    public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy) {
         return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAll(ids)).stream().map(adminUser -> {
             AdminUserDto temp = new AdminUserDto();
             if (lazy)
@@ -81,8 +81,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<AdminUserDto> save(AdminUserDto obj) {
-        String id = obj.getId();
-        if (null != id && id.length() > 0) {
+        Long id = obj.getId();
+        if (null != id && id > 0) {
             obj.setUpdateTime(new Date());
             AdminUser adminUser = new AdminUser();
             BeanUtils.copyProperties(obj, adminUser, "roles");

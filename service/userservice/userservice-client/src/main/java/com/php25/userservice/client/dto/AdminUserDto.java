@@ -12,7 +12,7 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdminUserDto implements Serializable {
-    private String id;
+    private Long id;
 
     private String username;
 
@@ -36,11 +36,11 @@ public class AdminUserDto implements Serializable {
 
     private Integer enable;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

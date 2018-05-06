@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 16/8/12.
  */
-public interface AdminRoleService extends BaseService<AdminRoleDto, AdminRole, String>, SoftDeletable<AdminRoleDto> {
+public interface AdminRoleService extends BaseService<AdminRoleDto, AdminRole, Long>, SoftDeletable<AdminRoleDto> {
 
     /**
      * 查询所有有效数据
@@ -22,6 +22,6 @@ public interface AdminRoleService extends BaseService<AdminRoleDto, AdminRole, S
     Optional<List<AdminRoleDto>> findAllEnabled();
 
 
-    Optional<List<AdminRoleDto>> findAll(Iterable<String> ids, Boolean lazy);
+    Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids, Boolean lazy);
 
 }

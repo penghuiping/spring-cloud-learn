@@ -53,7 +53,7 @@ public class KongJwtServiceImpl implements KongJwtService {
     public String generateJwtCustomerId(CustomerDto customerDto) {
         Assert.notNull(customerDto, "customerDto不能为null");
         //生成jwtCustomerId
-        String jwtCustomerId = customerDto.getId();
+        String jwtCustomerId = customerDto.getId() + "";
         return jwtCustomerId;
     }
 
@@ -118,7 +118,7 @@ public class KongJwtServiceImpl implements KongJwtService {
         Assert.hasLength(jwtCustomerId, "jwtCustomerId不能为空");
         CustomerDto customerDto = redisService.get(jwtCustomerId, CustomerDto.class);
         if (null == customerDto) {
-            Optional<CustomerDto> customerDtoOptional = customerService.findOne(jwtCustomerId);
+            Optional<CustomerDto> customerDtoOptional = customerService.findOne(Long.parseLong(jwtCustomerId));
             redisService.set(jwtCustomerId, customerDtoOptional.get(), 3600 * 24l);
         }
         return customerDto;

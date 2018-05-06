@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "userservice_customer")
 public class Customer {
     @Id
-    private String id;//主键id
+    private Long id;//主键id
 
     @Column
     private Integer enable;//是否有效 0:无效 1:有效 2:软删除
@@ -52,11 +52,11 @@ public class Customer {
     @Column(name = "update_time")
     private Date updateTime;//更新时间
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

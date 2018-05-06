@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class UserRole {
 
     @Id
-    private String id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -37,11 +37,11 @@ public class UserRole {
         this.adminRole = adminRole;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

@@ -17,6 +17,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by penghuiping on 2017/3/9.
@@ -39,8 +40,8 @@ public class AdminMenuRestImpl implements AdminMenuRest {
     @RequestMapping("/findMenusEnabledByRole")
     public List<AdminMenuButtonDto> findMenusEnabledByRole(@NotBlank @RequestParam("adminRoleId") String adminRoleId) {
         AdminRoleDto adminRole = new AdminRoleDto();
-        adminRole.setId(adminRoleId);
-        return adminMenuService.findMenusEnabledByRole(adminRole).get();
+        adminRole.setId(Long.parseLong(adminRoleId));
+        return adminMenuService.findMenusEnabledByRole(adminRole).orElse(null);
     }
 
     /**
@@ -53,11 +54,11 @@ public class AdminMenuRestImpl implements AdminMenuRest {
     @RequestMapping("/findMenusEnabledByParentAndRole")
     public List<AdminMenuButtonDto> findMenusEnabledByParentAndRole(@NotBlank @RequestParam("parentId") String parentId, @NotBlank @RequestParam("adminRoleId") String adminRoleId) {
         AdminMenuButtonDto parent = new AdminMenuButtonDto();
-        parent.setId(parentId);
+        parent.setId(Long.parseLong(parentId));
 
         AdminRoleDto adminRole = new AdminRoleDto();
-        adminRole.setId(adminRoleId);
-        return adminMenuService.findMenusEnabledByParentAndRole(parent, adminRole).get();
+        adminRole.setId(Long.parseLong(adminRoleId));
+        return adminMenuService.findMenusEnabledByParentAndRole(parent, adminRole).orElse(null);
     }
 
     /**
@@ -67,7 +68,7 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/findRootMenus")
     public List<AdminMenuButtonDto> findRootMenus() {
-        return adminMenuService.findRootMenus().get();
+        return adminMenuService.findRootMenus().orElse(null);
     }
 
     /**
@@ -79,8 +80,8 @@ public class AdminMenuRestImpl implements AdminMenuRest {
     @RequestMapping("/findMenusByParent")
     public List<AdminMenuButtonDto> findMenusByParent(@NotBlank @RequestParam("parentId") String parentId) {
         AdminMenuButtonDto parent = new AdminMenuButtonDto();
-        parent.setId(parentId);
-        return adminMenuService.findMenusByParent(parent).get();
+        parent.setId(Long.parseLong(parentId));
+        return adminMenuService.findMenusByParent(parent).orElse(null);
     }
 
     /**
@@ -92,8 +93,8 @@ public class AdminMenuRestImpl implements AdminMenuRest {
     @RequestMapping("/findMenusByRole")
     public List<AdminMenuButtonDto> findMenusByRole(@NotBlank @RequestParam("adminRoleId") String adminRoleId) {
         AdminRoleDto adminRoleDto = new AdminRoleDto();
-        adminRoleDto.setId(adminRoleId);
-        return adminMenuService.findMenusByRole(adminRoleDto).get();
+        adminRoleDto.setId(Long.parseLong(adminRoleId));
+        return adminMenuService.findMenusByRole(adminRoleDto).orElse(null);
     }
 
     /**
@@ -103,7 +104,7 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/findRootMenusEnabled")
     public List<AdminMenuButtonDto> findRootMenusEnabled() {
-        return adminMenuService.findRootMenusEnabled().get();
+        return adminMenuService.findRootMenusEnabled().orElse(null);
     }
 
     /**
@@ -115,8 +116,8 @@ public class AdminMenuRestImpl implements AdminMenuRest {
     @RequestMapping("/findMenusEnabledByParent")
     public List<AdminMenuButtonDto> findMenusEnabledByParent(@NotBlank @RequestParam("parentId") String parentId) {
         AdminMenuButtonDto parent = new AdminMenuButtonDto();
-        parent.setId(parentId);
-        return adminMenuService.findMenusEnabledByParent(parent).get();
+        parent.setId(Long.parseLong(parentId));
+        return adminMenuService.findMenusEnabledByParent(parent).orElse(null);
     }
 
     /**
@@ -127,7 +128,7 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/findOne")
     public AdminMenuButtonDto findOne(@NotBlank @RequestParam("id") String id) {
-        return adminMenuService.findOne(id).get();
+        return adminMenuService.findOne(Long.parseLong(id)).orElse(null);
     }
 
     /**
@@ -138,7 +139,7 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/save")
     public AdminMenuButtonDto save(@NotNull @RequestBody AdminMenuButtonDto adminMenuButtonDto) {
-        return adminMenuService.save(adminMenuButtonDto).get();
+        return adminMenuService.save(adminMenuButtonDto).orElse(null);
     }
 
     /**
@@ -149,7 +150,8 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/softDelete")
     public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        List<AdminMenuButtonDto> adminMenuButtonDtos = adminMenuService.findAll(ids).get();
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        List<AdminMenuButtonDto> adminMenuButtonDtos = adminMenuService.findAll(ids_).orElse(null);
         adminMenuService.softDelete(adminMenuButtonDtos);
         return true;
     }
@@ -164,6 +166,6 @@ public class AdminMenuRestImpl implements AdminMenuRest {
      */
     @RequestMapping("/query")
     public DataGridPageDto query(@Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize, @NotBlank @RequestParam("searchParams") String searchParams) {
-        return adminMenuService.query(pageNum, pageSize, searchParams).get();
+        return adminMenuService.query(pageNum, pageSize, searchParams).orElse(null);
     }
 }

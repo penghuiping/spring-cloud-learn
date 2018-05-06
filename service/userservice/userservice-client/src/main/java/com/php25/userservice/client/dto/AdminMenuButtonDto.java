@@ -12,7 +12,7 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdminMenuButtonDto implements Serializable {
-    private String id;
+    private Long id;
 
     private String name;
 
@@ -22,7 +22,7 @@ public class AdminMenuButtonDto implements Serializable {
 
     private AdminMenuButtonDto parent;
 
-    private String parentId;
+    private Long parentId;
 
     private Boolean isShow = false;
 
@@ -44,11 +44,11 @@ public class AdminMenuButtonDto implements Serializable {
 
     private String icon;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -100,11 +100,11 @@ public class AdminMenuButtonDto implements Serializable {
         this.isLeaf = isLeaf;
     }
 
-    public String getParentId() {
+    public Long getParentId() {
         return parentId;
     }
 
-    public void setParentId(String parentId) {
+    public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
 

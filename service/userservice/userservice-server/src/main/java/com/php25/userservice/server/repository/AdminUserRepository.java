@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * Created by penghuiping on 1/19/15.
  */
 @Repository
-public interface AdminUserRepository extends BaseRepository<AdminUser, String> {
+public interface AdminUserRepository extends BaseRepository<AdminUser, Long> {
 
     AdminUser findByLoginNameAndPassword(String username, String password);
 

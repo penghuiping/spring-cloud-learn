@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, AdminMenuButton, String> implements AdminMenuService {
+public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, AdminMenuButton, Long> implements AdminMenuService {
     private AdminMenuButtonRepository adminMenuButtonRepository;
 
     @Autowired
@@ -34,9 +34,9 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     }
 
     @Override
-    public Optional<AdminMenuButtonDto> findOne(String id) {
+    public Optional<AdminMenuButtonDto> findOne(Long id) {
         AdminMenuButton adminMenuButton = adminMenuButtonRepository.findOne(id);
-        String parentId = null;
+        Long parentId = null;
         if (null != adminMenuButton.getParent()) {
             adminMenuButton.getParent().getId();
         }
@@ -49,7 +49,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     @Override
     public Optional<AdminMenuButtonDto> save(AdminMenuButtonDto menu) {
         AdminMenuButton result = null;
-        if (null != menu.getId() && menu.getId().length() > 0) {
+        if (null != menu.getId() && menu.getId() > 0) {
             //编辑
             AdminMenuButton adminMenuButton = new AdminMenuButton();
             BeanUtils.copyProperties(menu, adminMenuButton);
@@ -65,7 +65,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
             //新增
             Integer sort = adminMenuButtonRepository.findMenusMaxSort();
             menu.setSort(sort + 1);
-            if (null == menu.getParentId() || menu.getParentId().length() == 0) {
+            if (null == menu.getParentId() || menu.getParentId() == 0) {
                 menu.setIsLeaf(false);
                 AdminMenuButton adminMenuButton = new AdminMenuButton();
                 BeanUtils.copyProperties(menu, adminMenuButton);
@@ -155,7 +155,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
 
     //此方法用于转换对象
     private AdminMenuButtonDto trans(AdminMenuButton adminMenuButton) {
-        String parentId = null;
+        Long parentId = null;
         if (null != adminMenuButton.getParent())
             parentId = adminMenuButton.getParent().getId();
         AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();

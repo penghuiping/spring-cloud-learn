@@ -17,7 +17,7 @@ public class AdminUser {
     private static final long serialVersionUID = -155601402424059709L;
 
     @Id
-    private String id;//主键id
+    private Long id;//主键id
 
     @NotEmpty
     @Column(name = "username", length = 45)
@@ -118,11 +118,11 @@ public class AdminUser {
         this.mobile = mobile;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
  * Created by Zhangbing on 2017/4/24.
  */
 @Repository
-public interface RoleMenuRepository extends BaseRepository<RoleMenu,String> {
+public interface RoleMenuRepository extends BaseRepository<RoleMenu, Long> {
 
     @Query("from RoleMenu r where r.adminRole.id=:roleId and r.adminMenuButton.id=:menuId")
-    RoleMenu findOneByRoleIdAndMenuId(@Param("roleId") String roleId,@Param("menuId")String menuId);
+    RoleMenu findOneByRoleIdAndMenuId(@Param("roleId") Long roleId, @Param("menuId") Long menuId);
 }

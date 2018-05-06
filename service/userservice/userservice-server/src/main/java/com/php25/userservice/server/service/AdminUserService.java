@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author penghuiping
  * @Time 2016-08-12
  */
-public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, String>, SoftDeletable<AdminUserDto> {
+public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, Long>, SoftDeletable<AdminUserDto> {
 
     /**
      * 根据用户名与密码获取用户信息
@@ -35,5 +35,5 @@ public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, S
      * @param lazy 对于对象里面的集合是否进行懒加载操作
      * @return
      */
-    Optional<List<AdminUserDto>> findAll(Iterable<String> ids, Boolean lazy);
+    Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy);
 }

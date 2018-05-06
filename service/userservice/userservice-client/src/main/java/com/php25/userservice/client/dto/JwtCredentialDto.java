@@ -5,7 +5,7 @@ package com.php25.userservice.client.dto;
  */
 public class JwtCredentialDto {
 
-    private String consumer_id;
+    private Long consumer_id;
 
     private String created_at;
 
@@ -17,11 +17,11 @@ public class JwtCredentialDto {
 
     private String algorithm;
 
-    public String getConsumer_id() {
+    public Long getConsumer_id() {
         return consumer_id;
     }
 
-    public void setConsumer_id(String consumer_id) {
+    public void setConsumer_id(Long consumer_id) {
         this.consumer_id = consumer_id;
     }
 

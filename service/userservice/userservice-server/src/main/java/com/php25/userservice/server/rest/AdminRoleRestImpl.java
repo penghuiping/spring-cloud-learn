@@ -16,6 +16,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by penghuiping on 2017/3/9.
@@ -36,7 +37,7 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping(value = "/findAllEnabled")
     public List<AdminRoleDto> findAllEnabled() {
-        return adminRoleService.findAllEnabled().get();
+        return adminRoleService.findAllEnabled().orElse(null);
     }
 
     /**
@@ -47,7 +48,7 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping(value = "/findOne")
     public AdminRoleDto findOne(@NotBlank @RequestParam("id") String id) {
-        return adminRoleService.findOne(id).get();
+        return adminRoleService.findOne(Long.parseLong(id)).orElse(null);
     }
 
     /**
@@ -58,7 +59,7 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping(value = "/save")
     public AdminRoleDto save(@NotNull @RequestBody AdminRoleDto adminRoleDto) {
-        return adminRoleService.save(adminRoleDto).get();
+        return adminRoleService.save(adminRoleDto).orElse(null);
     }
 
     /**
@@ -69,7 +70,8 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping(value = "/findAll")
     public List<AdminRoleDto> findAll(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        return adminRoleService.findAll(ids).get();
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        return adminRoleService.findAll(ids_).orElse(null);
     }
 
     /**
@@ -80,7 +82,8 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping(value = "/softDelete")
     public Boolean softDelete(@Size(min = 1) @RequestParam("ids") List<String> ids) {
-        adminRoleService.softDelete(adminRoleService.findAll(ids, false).get());
+        List<Long> ids_ = ids.stream().map(a -> Long.parseLong(a)).collect(Collectors.toList());
+        adminRoleService.softDelete(adminRoleService.findAll(ids_, false).orElse(null));
         return true;
     }
 
@@ -95,6 +98,6 @@ public class AdminRoleRestImpl implements AdminRoleRest {
      */
     @RequestMapping("/query")
     public DataGridPageDto query(@Min(-1) @RequestParam("pageNum") Integer pageNum, @Min(1) @RequestParam("pageSize") Integer pageSize, @NotBlank @RequestParam("searchParams") String searchParams) {
-        return adminRoleService.query(pageNum, pageSize, searchParams).get();
+        return adminRoleService.query(pageNum, pageSize, searchParams).orElse(null);
     }
 }

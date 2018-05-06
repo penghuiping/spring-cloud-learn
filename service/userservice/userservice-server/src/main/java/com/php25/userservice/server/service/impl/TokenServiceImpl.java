@@ -27,10 +27,10 @@ import java.util.Map;
 @Primary
 public class TokenServiceImpl<T> implements TokenService<T> {
 
-    @Value(value = "${access_token_expire_time:3600}")
+    @Value(value = "${app.oath2.access_token.expire_time:#{3600l}}")
     private Long access_token_expire_time;
 
-    @Value(value = "${refresh_token_expire_time:#{3600 * 24 * 7}}")
+    @Value(value = "${app.oath2.refresh_token.expire_time:#{3600 * 24 * 7l}}")
     private Long refresh_token_expire_time;
 
     @Autowired

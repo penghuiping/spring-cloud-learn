@@ -28,9 +28,6 @@ public class RedisConfig {
         config.useSingleServer().setConnectionPoolSize(5);
         config.useSingleServer().setDatabase(Integer.parseInt(database));
         RedissonClient redisson = Redisson.create(config);
-
-        RedisService redisService = new RedisServiceImpl(redisson);
-        redisService.set("redisson", redisson);
         return redisson;
     }
 

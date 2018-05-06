@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 16/8/12.
  */
-public interface AdminMenuService extends BaseService<AdminMenuButtonDto, AdminMenuButton, String>, SoftDeletable<AdminMenuButtonDto> {
+public interface AdminMenuService extends BaseService<AdminMenuButtonDto, AdminMenuButton, Long>, SoftDeletable<AdminMenuButtonDto> {
 
     /**
      * 根据角色查询所有的有效菜单按钮
