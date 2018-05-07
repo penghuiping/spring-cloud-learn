@@ -2,6 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.dto.DataGridPageDto;
+import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.BaseServiceImpl;
 import com.php25.common.specification.BaseSpecs;
 import com.php25.userservice.client.dto.AdminRoleDto;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -40,6 +42,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     private UserRoleRepository userRoleRepository;
 
     @Autowired
+    private IdGeneratorService idGeneratorService;
+
+    @Autowired
     public void setAdminUserRepository(AdminUserRepository adminUserRepository) {
         this.adminUserRepository = adminUserRepository;
         this.baseRepository = adminUserRepository;
@@ -52,6 +57,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<AdminUserDto> findOne(Long id) {
+        Assert.notNull(id, "id不能为null");
         AdminUser adminUser = adminUserRepository.findOne(id);
         AdminUserDto adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
@@ -69,6 +75,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     }
 
     public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy) {
+        Assert.notEmpty(Lists.newArrayList(ids), "ids至少需要一个元素");
+        Assert.notNull(lazy, "lazy需要填入true或者false");
         return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAll(ids)).stream().map(adminUser -> {
             AdminUserDto temp = new AdminUserDto();
             if (lazy)
@@ -81,6 +89,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<AdminUserDto> save(AdminUserDto obj) {
+        Assert.notNull(obj, "adminUserDto不能为null");
+        Assert.notEmpty(obj.getRoles(), "adminUserDto.roles不能为null,且必须要有一个元素");
         Long id = obj.getId();
         if (null != id && id > 0) {
             obj.setUpdateTime(new Date());
@@ -96,6 +106,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
                 UserRole userRole = userRoleRepository.findOneByRoleIdAndUserId(adminRole.getId(), adminUser.getId());
                 if (null == userRole) {
                     userRole = new UserRole();
+                    userRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                     userRole.setAdminUser(adminUser);
                     userRole.setAdminRole(adminRole);
                     userRoleRepository.save(userRole);
@@ -116,6 +127,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             adminUser = adminUserRepository.save(adminUser);
             for (AdminRole adminRole : adminRoles) {
                 UserRole userRole = new UserRole();
+                userRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 userRole.setAdminUser(adminUser);
                 userRole.setAdminRole(adminRole);
                 userRoleRepository.save(userRole);
@@ -129,6 +141,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
+        Assert.notNull(pageNum, "pageNum不能为null");
+        Assert.notNull(pageSize, "pageSize不能为null");
+        Assert.hasText(searchParams, "searchParams不能为空,如没有搜索条件请使用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
         Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
         List<AdminUserDto> adminUserBos = userPage.getContent().stream().map(adminUser -> {
@@ -148,6 +163,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<AdminUserDto> findByLoginNameAndPassword(String loginName, String password) {
+        Assert.hasText(loginName, "loginName不能为空");
+        Assert.hasText(loginName, "password不能为空");
         AdminUser adminUser = adminUserRepository.findByLoginNameAndPassword(loginName, password);
         if (null != adminUser) {
             AdminUserDto adminUserDto = new AdminUserDto();
@@ -160,6 +177,6 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             adminUserDto.setRoles(adminRoleDtos);
             return Optional.ofNullable(adminUserDto);
         } else
-            return Optional.ofNullable(null);
+            return Optional.empty();
     }
 }

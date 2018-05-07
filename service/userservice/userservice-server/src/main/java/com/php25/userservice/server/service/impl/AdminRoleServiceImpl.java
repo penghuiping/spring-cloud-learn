@@ -1,6 +1,7 @@
 package com.php25.userservice.server.service.impl;
 
 import com.php25.common.dto.DataGridPageDto;
+import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.BaseServiceImpl;
 import com.php25.common.specification.BaseSpecs;
 import com.php25.userservice.client.dto.AdminMenuButtonDto;
@@ -11,6 +12,7 @@ import com.php25.userservice.server.model.RoleMenu;
 import com.php25.userservice.server.repository.AdminRoleRepository;
 import com.php25.userservice.server.repository.RoleMenuRepository;
 import com.php25.userservice.server.service.AdminRoleService;
+import io.jsonwebtoken.lang.Assert;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,9 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     private RoleMenuRepository roleMenuRepository;
 
     @Autowired
+    private IdGeneratorService idGeneratorService;
+
+    @Autowired
     public void setAdminRoleRepository(AdminRoleRepository adminRoleRepository) {
         this.adminRoleRepository = adminRoleRepository;
         this.baseRepository = adminRoleRepository;
@@ -53,9 +57,11 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
     @Override
     public Optional<AdminRoleDto> save(AdminRoleDto obj) {
+        Assert.notNull(obj, "adminRoleDto不能为null");
+        Assert.notEmpty(obj.getMenus(), "adminRoleDto.menus至少需要包含一个元素");
         AdminRole adminRole = new AdminRole();
         BeanUtils.copyProperties(obj, adminRole);
-        if (null == obj.getMenus()) obj.setMenus(new ArrayList<>());
+
         if (null == obj.getId() || "".equals(obj.getId())) {
             adminRole.setCreateTime(new Date());
         }
@@ -70,6 +76,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
             RoleMenu roleMenu = roleMenuRepository.findOneByRoleIdAndMenuId(adminRole.getId(), menuButton.getId());
             if (null == roleMenu) {
                 roleMenu = new RoleMenu();
+                roleMenu.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 roleMenu.setAdminRole(adminRole);
                 roleMenu.setAdminMenuButton(menuButton);
                 roleMenuRepository.save(roleMenu);
@@ -83,11 +90,14 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
     @Override
     public Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids) {
+        Assert.notEmpty((List<Long>) ids, "ids集合至少需要包含一个元素");
         return findAll(ids, true);
     }
 
 
     public Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids, Boolean lazy) {
+        Assert.notEmpty((List<Long>) ids, "ids集合至少需要包含一个元素");
+        Assert.notNull(lazy, "lazy不能为null");
         List<AdminRole> adminRoles = (List<AdminRole>) adminRoleRepository.findAll(ids);
         return Optional.ofNullable(adminRoles.parallelStream().map(adminRole -> {
             AdminRoleDto adminRoleDto = new AdminRoleDto();
@@ -128,6 +138,9 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
     @Override
     public Optional<DataGridPageDto<AdminRoleDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
+        Assert.notNull(pageNum, "pageNum不能为null");
+        Assert.notNull(pageSize, "pageSize不能为null");
+        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件请使用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
         Page<AdminRole> userPage = adminRoleRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
         List<AdminRoleDto> adminRoleBos = userPage.getContent().parallelStream().map(adminRole -> {
@@ -142,6 +155,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
     @Override
     public Optional<AdminRoleDto> findOne(Long id) {
+        Assert.notNull(id, "id不能为null");
         AdminRole adminRole = adminRoleRepository.findOne(id);
         AdminRoleDto adminRoleDto = new AdminRoleDto();
         BeanUtils.copyProperties(adminRole, adminRoleDto);

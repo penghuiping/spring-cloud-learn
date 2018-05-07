@@ -44,7 +44,7 @@ public class CommonController extends JSONController {
     SSOLogin(@RequestParam @NotEmpty String username, @RequestParam @NotEmpty String password) {
         AdminUserDto adminUserDto = adminUserRest.findByUsernameAndPassword(username, password);
         //首先清空原来的token
-        Map<String, String> result = tokenRest.getTokenByObjId(adminUserDto.getId());
+        Map<String, String> result = tokenRest.getTokenByObjId(adminUserDto.getId().toString());
         return ResponseEntity.ok(succeed(result));
     }
 

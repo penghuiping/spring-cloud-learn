@@ -2,6 +2,7 @@ package com.php25.api.base.controller;
 
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
+import com.php25.common.exception.JsonException;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.dto.JwtCredentialDto;
 import com.php25.userservice.client.rest.CustomerRest;
@@ -48,7 +49,7 @@ public class ApiController extends JSONController {
     })
     @RequestMapping(value = "/insecure/common/SSOLogin.do", method = RequestMethod.GET)
     public @ResponseBody
-    JSONResponse SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) {
+    JSONResponse SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) throws JsonException {
         CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
         if (null != customer) {
             String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer);
@@ -74,7 +75,7 @@ public class ApiController extends JSONController {
     @RequestMapping(value = "/secure/common/SSOLogout.do", method = RequestMethod.GET)
     public
     @ResponseBody
-    JSONResponse SSOLogout(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) {
+    JSONResponse SSOLogout(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
         kongJwtRest.cleanJwtToken(jwtCustomerId);
         return succeed(jwtCustomerId);
     }
@@ -92,7 +93,7 @@ public class ApiController extends JSONController {
     @RequestMapping(value = "/secure/common/showCustomerInfo.do", method = RequestMethod.GET)
     public
     @ResponseBody
-    JSONResponse showCustomerInfo(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) {
+    JSONResponse showCustomerInfo(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
         CustomerDto customerDto = kongJwtRest.getByJwtCustomerId(jwtCustomerId);
         return succeed(customerDto);
     }

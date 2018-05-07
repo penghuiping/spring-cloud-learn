@@ -120,7 +120,9 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-
+        Assert.notNull(pageNum, "pageNum不能为null");
+        Assert.notNull(pageSize, "pageSize不能为null");
+        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
         Page<Customer> customerPage = customerRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
         List<CustomerDto> customerDtos = customerPage.getContent().parallelStream().map(customer -> {
@@ -135,6 +137,9 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<List<CustomerDto>> query(String searchParams, Integer pageNum, Integer pageSize) {
+        Assert.notNull(pageNum, "pageNum不能为null");
+        Assert.notNull(pageSize, "pageSize不能为null");
+        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
         Optional<DataGridPageDto<CustomerDto>> customerDtoDataGridPageDto = query(pageNum, pageSize, searchParams);
         if (customerDtoDataGridPageDto.isPresent()) {
             return Optional.ofNullable(customerDtoDataGridPageDto.get().getData());
@@ -152,6 +157,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
 
     @Override
     public Optional<List<CustomerDto>> findByName(String name) {
+        Assert.hasText(name, "name不能为空");
         List<Customer> customers = customerRepository.findByName(name);
         return Optional.ofNullable(customers.stream().map(customer -> trans(customer)).collect(Collectors.toList()));
     }

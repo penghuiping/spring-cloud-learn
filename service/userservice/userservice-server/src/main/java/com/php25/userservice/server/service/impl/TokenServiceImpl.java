@@ -143,6 +143,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      */
     public Boolean checkTokenValidation(String token, Class<T> cls) {
         Assert.hasLength(token, "token不能为空");
+        Assert.notNull(cls, "cls不能为null");
         if (!StringUtil.isBlank(token) && token.length() == 33 && token.startsWith("t")) {
             T temp = redisService.get(token, cls);
             return null != temp;
@@ -174,11 +175,14 @@ public class TokenServiceImpl<T> implements TokenService<T> {
 
     @Override
     public T getObjByToken(String token, Class<T> cls) {
+        Assert.hasLength(token, "token不能为空");
+        Assert.notNull(cls, "cls不能为null");
         return redisService.get(token, cls);
     }
 
     @Override
     public Boolean cleanToken(T obj) {
+        Assert.notNull(obj, "obj不能为null");
         if (obj instanceof String || obj instanceof Long) {
             String key = obj + "";
             String value = redisService.get(key, String.class);

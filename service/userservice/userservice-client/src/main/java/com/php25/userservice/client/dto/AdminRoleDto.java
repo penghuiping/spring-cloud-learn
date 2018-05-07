@@ -17,6 +17,8 @@ public class AdminRoleDto implements Serializable {
 
     private String name;
 
+    private String code;//角色代码
+
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
@@ -28,6 +30,14 @@ public class AdminRoleDto implements Serializable {
     private Integer enable;
 
     private List<AdminMenuButtonDto> menus;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public Long getId() {
         return id;
