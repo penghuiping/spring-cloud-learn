@@ -15,7 +15,7 @@
 
     <packaging>pom</packaging>
     <properties>
-        <druid>1.0.18</druid>
+        <druid>1.1.9</druid>
         <commons-fileupload>1.3.1</commons-fileupload>
         <thumbnailator>0.4.8</thumbnailator>
         <okhttp>3.6.0</okhttp>
@@ -76,7 +76,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!--<goal>build</goal>-->
+                            <goal>build</goal>
                             <!--<goal>resource</goal>-->
                         </goals>
                     </execution>
