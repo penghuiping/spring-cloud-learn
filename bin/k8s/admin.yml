@@ -6,9 +6,9 @@ items:
   kind: Service
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
     labels:
       app: sewing-admin-service
       provider: fabric8
@@ -44,23 +44,23 @@ items:
       ###common
       ########################################################
       app.name=sewing-repair
-      app.db.ip=192.168.99.100
+      app.db.ip=192.168.99.101
       app.db.port=30006
       app.db.username=root
       app.db.password=root
       app.db.name=test
 
-      app.rabbitmq.ip=192.168.99.100
+      app.rabbitmq.ip=192.168.99.101
       app.rabbitmq.port=30002
       app.rabbitmq.username=guest
       app.rabbitmq.password=guest
       app.rabbitmq.virtualHost=/
 
-      app.redis.ip=192.168.99.100
+      app.redis.ip=192.168.99.101
       app.redis.port=30001
       app.redis.db=9
 
-      app.filesever.ip=192.168.99.100
+      app.filesever.ip=192.168.99.101
       app.filesever.nginx.html=/home/joinsoft/html/
 
       k8s.value=development
@@ -369,9 +369,9 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
       fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
     labels:
       app: sewing-admin-deployment
@@ -390,9 +390,9 @@ items:
     template:
       metadata:
         annotations:
-          fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+          fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
           fabric8.io/iconUrl: img/icons/spring-boot.svg
-          fabric8.io/git-branch: new-master
+          fabric8.io/git-branch: develop
           fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=admin&var-version=0.0.8-test
         labels:
           app: admin

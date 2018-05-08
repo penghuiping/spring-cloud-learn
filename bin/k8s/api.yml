@@ -6,9 +6,9 @@ items:
   kind: Service
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
     labels:
       app: sewing-api-service
       provider: fabric8
@@ -359,9 +359,9 @@ items:
   kind: Deployment
   metadata:
     annotations:
-      fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+      fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
       fabric8.io/iconUrl: img/icons/spring-boot.svg
-      fabric8.io/git-branch: new-master
+      fabric8.io/git-branch: develop
       fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=api&var-version=0.0.8-test
     labels:
       app: sewing-api-deployment
@@ -380,9 +380,9 @@ items:
     template:
       metadata:
         annotations:
-          fabric8.io/git-commit: 424ae81bc41e7098135882a87ed909ae8dd3dfca
+          fabric8.io/git-commit: 876b4e26266d5702a048aa3c18dab78f0835b7a5
           fabric8.io/iconUrl: img/icons/spring-boot.svg
-          fabric8.io/git-branch: new-master
+          fabric8.io/git-branch: develop
           fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=api&var-version=0.0.8-test
         labels:
           app: api
@@ -401,7 +401,7 @@ items:
           livenessProbe:
             httpGet:
               path: /health
-              port: 20000
+              port: 20001
               scheme: HTTP
             initialDelaySeconds: 5
             timeoutSeconds: 1
@@ -409,7 +409,7 @@ items:
           readinessProbe:
             httpGet:
               path: /health
-              port: 20000
+              port: 20001
               scheme: HTTP
             initialDelaySeconds: 15
             timeoutSeconds: 1
