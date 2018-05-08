@@ -3,10 +3,10 @@ package com.php25.api.base.controller;
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
-import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.client.dto.JwtCredentialDto;
-import com.php25.userservice.client.rest.CustomerRest;
-import com.php25.userservice.client.rest.KongJwtRest;
+import com.php25.userservice.server.dto.CustomerDto;
+import com.php25.userservice.server.dto.JwtCredentialDto;
+import com.php25.userservice.server.service.CustomerService;
+import com.php25.userservice.server.service.KongJwtService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * Created by penghuiping on 2018/3/15.
@@ -25,11 +27,11 @@ import org.springframework.web.bind.annotation.*;
 public class ApiController extends JSONController {
 
     @Autowired
-    private CustomerRest customerRest;
+    private CustomerService customerService;
 
 
     @Autowired
-    private KongJwtRest kongJwtRest;
+    private KongJwtService kongJwtService;
 
     /**
      * 登入接口，返回access_token与refresh_token
@@ -50,12 +52,12 @@ public class ApiController extends JSONController {
     @RequestMapping(value = "/insecure/common/SSOLogin.do", method = RequestMethod.GET)
     public @ResponseBody
     JSONResponse SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) throws JsonException {
-        CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
-        if (null != customer) {
-            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer);
-            kongJwtRest.createJwtCustomer(jwtCustomerId);
-            JwtCredentialDto jwtCredentialDto = kongJwtRest.generateJwtCredential(jwtCustomerId);
-            String jwt = kongJwtRest.generateJwtToken(jwtCredentialDto);
+        Optional<CustomerDto> customer = customerService.findOneByPhoneAndPassword(mobile, password);
+        if (customer.isPresent()) {
+            String jwtCustomerId = kongJwtService.generateJwtCustomerId(customer.get());
+            kongJwtService.createJwtCustomer(jwtCustomerId);
+            JwtCredentialDto jwtCredentialDto = kongJwtService.generateJwtCredential(jwtCustomerId);
+            String jwt = kongJwtService.generateJwtToken(jwtCredentialDto);
             return succeed(jwt);
         } else {
             return failed("登入失败");
@@ -76,7 +78,7 @@ public class ApiController extends JSONController {
     public
     @ResponseBody
     JSONResponse SSOLogout(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
-        kongJwtRest.cleanJwtToken(jwtCustomerId);
+        kongJwtService.cleanJwtToken(jwtCustomerId);
         return succeed(jwtCustomerId);
     }
 
@@ -94,7 +96,7 @@ public class ApiController extends JSONController {
     public
     @ResponseBody
     JSONResponse showCustomerInfo(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
-        CustomerDto customerDto = kongJwtRest.getByJwtCustomerId(jwtCustomerId);
+        CustomerDto customerDto = kongJwtService.getByJwtCustomerId(jwtCustomerId);
         return succeed(customerDto);
     }
 }
