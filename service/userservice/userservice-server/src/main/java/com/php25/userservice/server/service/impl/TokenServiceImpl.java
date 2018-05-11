@@ -2,7 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.RedisService;
-import com.php25.common.service.impl.RedisServiceImpl;
+import com.php25.common.service.impl.RedisRedissonServiceImpl;
 import com.php25.common.util.StringUtil;
 import com.php25.common.util.TimeUtil;
 import com.php25.userservice.server.service.TokenService;
@@ -101,7 +101,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
         }
 
 
-        RAtomicLong rAtomicLong = ((RedisServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
+        RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
         rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsiteDay(new Date(), 1)));
 
         if ((rAtomicLong.isExists() && rAtomicLong.get() >= 10l) || (rAtomicLong.isExists() && rAtomicLong.get() < 0l)) {
