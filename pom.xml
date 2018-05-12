@@ -22,6 +22,8 @@
         <fabric8.maven.plugin>3.5.33</fabric8.maven.plugin>
         <userservice.version>0.0.1-SNAPSHOT</userservice.version>
         <notifyservice.version>0.0.1-SNAPSHOT</notifyservice.version>
+        <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+        <common-dependencies>0.0.1.RELEASE</common-dependencies>
         <java.version>1.8</java.version>
     </properties>
 
@@ -31,14 +33,14 @@
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.6.RELEASE</version>
+                <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.php25</groupId>
                 <artifactId>common-dependencies</artifactId>
-                <version>0.0.1.RELEASE</version>
+                <version>${common-dependencies}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

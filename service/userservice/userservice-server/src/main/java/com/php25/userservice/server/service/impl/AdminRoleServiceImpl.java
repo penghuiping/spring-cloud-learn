@@ -98,7 +98,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     public Optional<List<AdminRoleDto>> findAll(Iterable<Long> ids, Boolean lazy) {
         Assert.notEmpty((List<Long>) ids, "ids集合至少需要包含一个元素");
         Assert.notNull(lazy, "lazy不能为null");
-        List<AdminRole> adminRoles = (List<AdminRole>) adminRoleRepository.findAll(ids);
+        List<AdminRole> adminRoles = (List<AdminRole>) adminRoleRepository.findAllById(ids);
         return Optional.ofNullable(adminRoles.parallelStream().map(adminRole -> {
             AdminRoleDto adminRoleDto = new AdminRoleDto();
             if (lazy)
@@ -156,7 +156,8 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     @Override
     public Optional<AdminRoleDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
-        AdminRole adminRole = adminRoleRepository.findOne(id);
+        AdminRole adminRole = adminRoleRepository.findById(id).orElse(null);
+        if (null == adminRole) return Optional.empty();
         AdminRoleDto adminRoleDto = new AdminRoleDto();
         BeanUtils.copyProperties(adminRole, adminRoleDto);
         return Optional.ofNullable(adminRoleDto);

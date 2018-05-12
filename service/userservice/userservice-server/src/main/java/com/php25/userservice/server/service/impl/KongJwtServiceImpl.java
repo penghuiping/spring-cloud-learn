@@ -10,7 +10,7 @@ import com.php25.userservice.server.service.KongJwtService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import okhttp3.*;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -72,7 +72,7 @@ public class KongJwtServiceImpl implements KongJwtService {
             request = new Request.Builder().url(url).put(body).build();
             response = okHttpClient.newCall(request).execute();
             if (201 == response.code() || 200 == response.code()) {
-                Logger.getLogger(KongJwtServiceImpl.class).debug("创建或者更新成功");
+                LoggerFactory.getLogger(KongJwtServiceImpl.class).debug("创建或者更新成功");
             } else {
                 throw new RuntimeException("创建kong的customer对象失败");
             }

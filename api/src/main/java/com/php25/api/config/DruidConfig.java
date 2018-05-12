@@ -1,14 +1,13 @@
 package com.php25.api.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.support.http.WebStatFilter;
 import com.google.common.collect.Maps;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,14 +25,8 @@ import java.util.Properties;
  */
 @Configuration
 public class DruidConfig {
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new WebStatFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
-        return filterRegistrationBean;
-    }
+    private static Logger logger = LoggerFactory.getLogger(DruidConfig.class);
+
 
     @Bean
     @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
@@ -65,7 +58,7 @@ public class DruidConfig {
         try {
             druidDataSource.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
         return druidDataSource;
     }
@@ -107,7 +100,7 @@ public class DruidConfig {
         try {
             druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
 
         DruidDataSource druidDataSource_slave = new DruidDataSource();
@@ -133,7 +126,7 @@ public class DruidConfig {
         try {
             druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
 
         Map<String, DataSource> dataSourceMap = new HashMap<>();
