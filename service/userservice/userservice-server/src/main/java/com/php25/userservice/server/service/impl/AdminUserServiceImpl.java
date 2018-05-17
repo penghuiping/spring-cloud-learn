@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.php25.common.dto.DataGridPageDto;
 import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.common.specification.BaseSpecs;
+import com.php25.common.specification.BaseSpecsFactory;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.server.model.AdminRole;
@@ -145,7 +145,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
         Assert.notNull(pageSize, "pageSize不能为null");
         Assert.hasText(searchParams, "searchParams不能为空,如没有搜索条件请使用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
+        Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecsFactory.getJpaInstance().getSpecs(searchParams), pageRequest);
         List<AdminUserDto> adminUserBos = userPage.getContent().stream().map(adminUser -> {
             AdminUserDto adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
