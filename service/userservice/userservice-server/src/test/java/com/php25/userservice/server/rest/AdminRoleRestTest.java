@@ -98,10 +98,7 @@ public class AdminRoleRestTest extends BaseRestTest {
         //softDelete
         adminRoleRest.softDelete(Lists.newArrayList(adminRoleDto.getId() + ""));
 
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
         adminRoleDtoDataGridPageDto = adminRoleRest.query(1, 1, objectMapper.writeValueAsString(Lists.newArrayList(searchParam)));
 
         logger.info("==========>:" + objectMapper.writeValueAsString(adminRoleDtoDataGridPageDto));
