@@ -83,10 +83,7 @@ public class AdminUserRestTest extends BaseRestTest {
         Assert.assertNull(adminUserDto1);
 
         //query
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
 
         DataGridPageDto<AdminUserDto> adminUserDtoDataGridPageDto = adminUserRest.query(1, 1, objectMapper.writeValueAsString(Lists.newArrayList(searchParam)));
         Assert.assertNotNull(adminUserDtoDataGridPageDto.getData());

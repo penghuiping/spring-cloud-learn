@@ -2,7 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.dto.DataGridPageDto;
 import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.common.specification.BaseSpecs;
+import com.php25.common.specification.BaseSpecsFactory;
 import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
@@ -124,7 +124,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         Assert.notNull(pageSize, "pageSize不能为null");
         Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<Customer> customerPage = customerRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
+        Page<Customer> customerPage = customerRepository.findAll(BaseSpecsFactory.getJpaInstance().getSpecs(searchParams), pageRequest);
         List<CustomerDto> customerDtos = customerPage.getContent().parallelStream().map(customer -> {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);

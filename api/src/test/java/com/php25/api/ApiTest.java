@@ -1,4 +1,4 @@
-package com.joinsoft.api;
+package com.php25.api;
 
 import okhttp3.*;
 import org.junit.Test;

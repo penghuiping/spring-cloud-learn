@@ -114,10 +114,7 @@ public class AdminMenuRestTest extends BaseRestTest {
         //softDelete
         adminMenuRest.softDelete(Lists.newArrayList(adminMenuButtonDto.getId().toString(), adminMenuButtonDto1.getId().toString()));
 
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
         adminMenuButtonDtoDataGridPageDto = adminMenuRest.query(1, 10, objectMapper.writeValueAsString(Lists.newArrayList(searchParam)));
         Assert.assertTrue(adminMenuButtonDtoDataGridPageDto.getData().size() == 0);
 

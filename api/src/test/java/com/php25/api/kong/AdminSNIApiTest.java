@@ -1,4 +1,4 @@
-package com.joinsoft.api.kong;
+package com.php25.api.kong;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;

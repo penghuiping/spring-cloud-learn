@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.php25.service.userservice.client</groupId>
             <artifactId>userservice-client</artifactId>
-            <version>${userservice.version}</version>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>
@@ -49,7 +48,17 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

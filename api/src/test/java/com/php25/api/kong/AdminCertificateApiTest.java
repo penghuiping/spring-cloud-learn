@@ -1,6 +1,7 @@
-package com.joinsoft.api.kong;
+package com.php25.api.kong;
 
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by penghuiping on 2018/3/13.
