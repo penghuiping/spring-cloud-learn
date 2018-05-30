@@ -1,6 +1,5 @@
 package com.php25.userservice.server.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,7 +18,6 @@ public class AdminUser {
     @Id
     private Long id;//主键id
 
-    @NotEmpty
     @Column(name = "username", length = 45)
     private String username;//用户名
 
@@ -38,7 +36,6 @@ public class AdminUser {
     @Column(name = "update_time")
     private Date updateTime;//更新时间
 
-    @NotEmpty
     @Column(length = 45)
     private String password;//密码
 

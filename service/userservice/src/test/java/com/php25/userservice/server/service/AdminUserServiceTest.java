@@ -82,10 +82,7 @@ public class AdminUserServiceTest extends BaseServiceTest {
         Assert.assertNull(adminUserDto1);
 
         //query
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
 
         Optional<DataGridPageDto<AdminUserDto>> adminUserDtoDataGridPageDto = adminUserService.query(1, 1, objectMapper.writeValueAsString(Lists.newArrayList(searchParam)));
         Assert.assertNotNull(adminUserDtoDataGridPageDto.get().getData());

@@ -113,13 +113,8 @@ public class AdminMenuServiceTest extends BaseServiceTest {
         //softDelete
         adminMenuService.softDelete(Lists.newArrayList(adminMenuButtonDto, adminMenuButtonDto1));
 
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
         adminMenuButtonDtoDataGridPageDto = adminMenuService.query(1, 10, objectMapper.writeValueAsString(Lists.newArrayList(searchParam)));
         Assert.assertTrue(adminMenuButtonDtoDataGridPageDto.get().getData().size() == 0);
-
-
     }
 }

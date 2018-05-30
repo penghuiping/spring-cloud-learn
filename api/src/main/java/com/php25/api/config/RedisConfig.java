@@ -2,7 +2,7 @@ package com.php25.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.service.RedisService;
-import com.php25.common.service.impl.RedisServiceImpl;
+import com.php25.common.service.impl.RedisRedissonServiceImpl;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Created by penghuiping on 16/8/26.
@@ -56,8 +57,9 @@ public class RedisConfig {
     }
 
     @Bean
+    @Primary
     public RedisService redisService(@Autowired RedissonClient redissonClient) {
-        RedisService redisService = new RedisServiceImpl(redissonClient);
+        RedisService redisService = new RedisRedissonServiceImpl(redissonClient);
         return redisService;
     }
 

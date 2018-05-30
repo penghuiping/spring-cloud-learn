@@ -3,7 +3,7 @@ package com.php25.userservice.server.service.impl;
 import com.php25.common.dto.DataGridPageDto;
 import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.common.specification.BaseSpecs;
+import com.php25.common.specification.BaseSpecsFactory;
 import com.php25.userservice.server.dto.AdminMenuButtonDto;
 import com.php25.userservice.server.dto.AdminRoleDto;
 import com.php25.userservice.server.model.AdminMenuButton;
@@ -142,7 +142,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
         Assert.notNull(pageSize, "pageSize不能为null");
         Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件请使用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<AdminRole> userPage = adminRoleRepository.findAll(BaseSpecs.getSpecs(searchParams), pageRequest);
+        Page<AdminRole> userPage = adminRoleRepository.findAll(BaseSpecsFactory.getJpaInstance().getSpecs(searchParams), pageRequest);
         List<AdminRoleDto> adminRoleBos = userPage.getContent().parallelStream().map(adminRole -> {
             AdminRoleDto adminRoleDto = new AdminRoleDto();
             BeanUtils.copyProperties(adminRole, adminRoleDto, "adminMenuButtons");

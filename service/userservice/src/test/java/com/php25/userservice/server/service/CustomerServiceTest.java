@@ -79,10 +79,7 @@ public class CustomerServiceTest extends BaseServiceTest {
 
         //softDelete
         customerRest.softDelete(Lists.newArrayList(customerDto));
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue("1");
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value("1").build();
         customerDtoList = customerRest.query(objectMapper.writeValueAsString(Lists.newArrayList(searchParam)), 1, 1);
         logger.info(objectMapper.writeValueAsString(customerDtoList));
     }

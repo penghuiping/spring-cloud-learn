@@ -1,4 +1,4 @@
-package com.joinsoft.api;
+package com.php25.api;
 
 import com.php25.ApiApplication;
 import org.junit.Test;
