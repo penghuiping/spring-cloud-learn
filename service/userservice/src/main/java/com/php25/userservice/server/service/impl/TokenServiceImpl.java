@@ -102,7 +102,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
 
 
         RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
-        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsiteDay(new Date(), 1)));
+        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
 
         if ((rAtomicLong.isExists() && rAtomicLong.get() >= 10l) || (rAtomicLong.isExists() && rAtomicLong.get() < 0l)) {
             return null;

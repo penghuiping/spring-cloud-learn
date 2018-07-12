@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.Calendar;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -101,7 +101,7 @@ public class KongJwtServiceImpl implements KongJwtService {
     public String generateJwtToken(JwtCredentialDto jwtCredentialDto) {
         Assert.notNull(jwtCredentialDto, "jwtCredentialDto不能为null");
         String header = "{\"alg\": \"HS256\",\"typ\": \"JWT\"}";
-        String payload = String.format("{\"iss\":\"%s\",\"exp\":%s}", jwtCredentialDto.getKey(), TimeUtil.offsiteDate(new Date(), Calendar.SECOND, jwtTokenExpireTime).getTime() / 1000);
+        String payload = String.format("{\"iss\":\"%s\",\"exp\":%s}", jwtCredentialDto.getKey(), TimeUtil.offsetDate(new Date(), ChronoUnit.SECONDS, jwtTokenExpireTime).getTime() / 1000);
         String secret = jwtCredentialDto.getSecret();
 
         try {
