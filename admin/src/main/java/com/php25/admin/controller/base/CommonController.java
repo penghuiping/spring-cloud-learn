@@ -2,6 +2,7 @@ package com.php25.admin.controller.base;
 
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
+import com.php25.common.exception.JsonException;
 import com.php25.common.service.RedisService;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.client.rest.AdminUserRest;
@@ -41,7 +42,7 @@ public class CommonController extends JSONController {
     })
     @RequestMapping(value = "/SSOLogin.do", method = RequestMethod.POST)
     public ResponseEntity<JSONResponse>
-    SSOLogin(@RequestParam @NotEmpty String username, @RequestParam @NotEmpty String password) {
+    SSOLogin(@RequestParam @NotEmpty String username, @RequestParam @NotEmpty String password) throws JsonException {
         AdminUserDto adminUserDto = adminUserRest.findByUsernameAndPassword(username, password);
         //首先清空原来的token
         Map<String, String> result = tokenRest.getTokenByObjId(adminUserDto.getId().toString());

@@ -5,7 +5,8 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.google.common.collect.Maps;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -26,6 +27,8 @@ import java.util.Properties;
  */
 @Configuration
 public class DruidConfig {
+    private static final Logger logger = LoggerFactory.getLogger(DruidConfig.class);
+
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -65,7 +68,7 @@ public class DruidConfig {
         try {
             druidDataSource.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
         return druidDataSource;
     }
@@ -107,7 +110,7 @@ public class DruidConfig {
         try {
             druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
 
         DruidDataSource druidDataSource_slave = new DruidDataSource();
@@ -133,7 +136,7 @@ public class DruidConfig {
         try {
             druidDataSource_slave.setFilters("stat, wall");
         } catch (SQLException e) {
-            Logger.getLogger(DruidConfig.class).error(e);
+            logger.error("出错啦！", e);
         }
 
 

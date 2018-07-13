@@ -37,7 +37,8 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     @Override
     public Optional<AdminMenuButtonDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
-        AdminMenuButton adminMenuButton = adminMenuButtonRepository.findOne(id);
+        AdminMenuButton adminMenuButton = adminMenuButtonRepository.findById(id).orElse(null);
+        if (adminMenuButton == null) return Optional.empty();
         Long parentId = null;
         if (null != adminMenuButton.getParent()) {
             adminMenuButton.getParent().getId();
@@ -76,7 +77,8 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
                 adminMenuButton.setUpdateTime(new Date());
                 result = adminMenuButtonRepository.save(adminMenuButton);
             } else {
-                AdminMenuButton parent = adminMenuButtonRepository.findOne(menu.getParentId());
+                AdminMenuButton parent = adminMenuButtonRepository.findById(menu.getParentId()).orElse(null);
+                if (null == parent) return Optional.empty();
 //                parent.setIsLeaf(true);
                 adminMenuButtonRepository.save(parent);
                 AdminMenuButton adminMenuButton = new AdminMenuButton();

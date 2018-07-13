@@ -58,7 +58,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     @Override
     public Optional<AdminUserDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
-        AdminUser adminUser = adminUserRepository.findOne(id);
+        AdminUser adminUser = adminUserRepository.findById(id).orElse(null);
+        if (null == adminUser) return Optional.empty();
         AdminUserDto adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
         List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
@@ -77,7 +78,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy) {
         Assert.notEmpty(Lists.newArrayList(ids), "ids至少需要一个元素");
         Assert.notNull(lazy, "lazy需要填入true或者false");
-        return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAll(ids)).stream().map(adminUser -> {
+        return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAllById(ids)).stream().map(adminUser -> {
             AdminUserDto temp = new AdminUserDto();
             if (lazy)
                 BeanUtils.copyProperties(adminUser, temp, "roles", "menus");
