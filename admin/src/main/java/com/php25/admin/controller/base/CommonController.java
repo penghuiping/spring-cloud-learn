@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Validated
 @Controller
@@ -49,9 +48,9 @@ public class CommonController extends JSONController {
     @RequestMapping(value = "/SSOLogin.do", method = RequestMethod.POST)
     public ResponseEntity<JSONResponse>
     SSOLogin(@RequestParam @NotEmpty String username, @RequestParam @NotEmpty String password) throws JsonException {
-        Optional<AdminUserDto> adminUserDto = adminUserRest.findByLoginNameAndPassword(username, password);
+        AdminUserDto adminUserDto = adminUserRest.findByLoginNameAndPassword(username, password);
         //首先清空原来的token
-        Map<String, String> result = tokenRest.generateToken(adminUserDto.get().getId().toString());
+        Map<String, String> result = tokenRest.generateToken(adminUserDto.getId().toString());
         return ResponseEntity.ok(succeed(result));
     }
 
