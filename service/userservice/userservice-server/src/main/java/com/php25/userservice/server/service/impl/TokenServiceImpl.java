@@ -2,18 +2,14 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.RedisService;
-import com.php25.common.service.impl.RedisRedissonServiceImpl;
 import com.php25.common.util.StringUtil;
-import com.php25.common.util.TimeUtil;
 import com.php25.userservice.server.service.TokenService;
-import org.redisson.api.RAtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,20 +97,20 @@ public class TokenServiceImpl<T> implements TokenService<T> {
         }
 
 
-        RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
-        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
-
-        if ((rAtomicLong.isExists() && rAtomicLong.get() >= 10l) || (rAtomicLong.isExists() && rAtomicLong.get() < 0l)) {
-            return null;
-
-        }
-
-
-        if (!rAtomicLong.isExists()) {
-            rAtomicLong.set(0l);
-        }
-
-        rAtomicLong.getAndIncrement();
+//        RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
+//        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
+//
+//        if ((rAtomicLong.isExists() && rAtomicLong.get() >= 10l) || (rAtomicLong.isExists() && rAtomicLong.get() < 0l)) {
+//            return null;
+//
+//        }
+//
+//
+//        if (!rAtomicLong.isExists()) {
+//            rAtomicLong.set(0l);
+//        }
+//
+//        rAtomicLong.getAndIncrement();
         String token = "t" + idGeneratorService.getModelPrimaryKey();
 
         //生产反向回溯依赖关系

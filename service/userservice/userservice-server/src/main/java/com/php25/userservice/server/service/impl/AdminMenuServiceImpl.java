@@ -1,8 +1,8 @@
 package com.php25.userservice.server.service.impl;
 
 import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.userservice.client.dto.AdminMenuButtonDto;
-import com.php25.userservice.client.dto.AdminRoleDto;
+import com.php25.userservice.server.dto.AdminMenuButtonDto;
+import com.php25.userservice.server.dto.AdminRoleDto;
 import com.php25.userservice.server.model.AdminMenuButton;
 import com.php25.userservice.server.model.AdminRole;
 import com.php25.userservice.server.repository.AdminMenuButtonRepository;

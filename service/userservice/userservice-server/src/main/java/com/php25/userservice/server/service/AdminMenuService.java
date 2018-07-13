@@ -2,8 +2,8 @@ package com.php25.userservice.server.service;
 
 import com.php25.common.service.BaseService;
 import com.php25.common.service.SoftDeletable;
-import com.php25.userservice.client.dto.AdminMenuButtonDto;
-import com.php25.userservice.client.dto.AdminRoleDto;
+import com.php25.userservice.server.dto.AdminMenuButtonDto;
+import com.php25.userservice.server.dto.AdminRoleDto;
 import com.php25.userservice.server.model.AdminMenuButton;
 
 import java.util.List;

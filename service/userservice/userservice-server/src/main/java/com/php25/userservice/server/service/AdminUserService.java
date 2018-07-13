@@ -2,7 +2,7 @@ package com.php25.userservice.server.service;
 
 import com.php25.common.service.BaseService;
 import com.php25.common.service.SoftDeletable;
-import com.php25.userservice.client.dto.AdminUserDto;
+import com.php25.userservice.server.dto.AdminUserDto;
 import com.php25.userservice.server.model.AdminUser;
 
 import java.util.List;

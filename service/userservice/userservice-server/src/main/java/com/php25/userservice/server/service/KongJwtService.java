@@ -1,8 +1,8 @@
 package com.php25.userservice.server.service;
 
 import com.php25.common.exception.JsonException;
-import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.client.dto.JwtCredentialDto;
+import com.php25.userservice.server.dto.CustomerDto;
+import com.php25.userservice.server.dto.JwtCredentialDto;
 
 /**
  * Created by penghuiping on 2018/3/15.

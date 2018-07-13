@@ -14,7 +14,6 @@
 
     <modules>
         <module>userservice-server</module>
-        <module>userservice-client</module>
     </modules>
     <packaging>pom</packaging>
 </project>

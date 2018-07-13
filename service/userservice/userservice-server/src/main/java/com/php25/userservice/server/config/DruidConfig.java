@@ -1,7 +1,6 @@
 package com.php25.userservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.support.http.WebStatFilter;
 import com.google.common.collect.Maps;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,15 +27,6 @@ import java.util.Properties;
 @Configuration
 public class DruidConfig {
     private static final Logger logger = LoggerFactory.getLogger(DruidConfig.class);
-
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new WebStatFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
-        return filterRegistrationBean;
-    }
 
     @Bean
     @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")

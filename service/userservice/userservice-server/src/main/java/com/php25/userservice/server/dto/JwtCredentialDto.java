@@ -1,4 +1,4 @@
-package com.php25.userservice.client.dto;
+package com.php25.userservice.server.dto;
 
 /**
  * Created by penghuiping on 2018/3/15.
