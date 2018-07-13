@@ -1,26 +1,24 @@
 package com.php25.api.base.controller;
 
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
 import com.php25.userservice.server.dto.CustomerDto;
 import com.php25.userservice.server.dto.JwtCredentialDto;
-import com.php25.userservice.server.service.CustomerService;
-import com.php25.userservice.server.service.KongJwtService;
+import com.php25.userservice.server.service.CustomerRpc;
+import com.php25.userservice.server.service.KongJwtRpc;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Optional;
 
 /**
  * Created by penghuiping on 2018/3/15.
@@ -29,12 +27,16 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ApiController extends JSONController {
 
-    @Autowired
-    private CustomerService customerRest;
+    @Reference(version = "1.0.0",
+            application = "${dubbo.application.id}",
+            url = "dubbo://localhost:12345")
+    private CustomerRpc customerRest;
 
 
-    @Autowired
-    private KongJwtService kongJwtRest;
+    @Reference(version = "1.0.0",
+            application = "${dubbo.application.id}",
+            url = "dubbo://localhost:12345")
+    private KongJwtRpc kongJwtRest;
 
     /**
      * 登入接口，返回access_token与refresh_token
@@ -54,9 +56,9 @@ public class ApiController extends JSONController {
     })
     @RequestMapping(value = "/insecure/common/SSOLogin.do", method = RequestMethod.GET)
     public ResponseEntity<JSONResponse> SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) throws JsonException {
-        Optional<CustomerDto> customer = customerRest.findOneByPhoneAndPassword(mobile, password);
-        if (customer.isPresent()) {
-            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer.get());
+        CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
+        if (customer != null) {
+            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer);
             kongJwtRest.createJwtCustomer(jwtCustomerId);
             JwtCredentialDto jwtCredentialDto = kongJwtRest.generateJwtCredential(jwtCustomerId);
             String jwt = kongJwtRest.generateJwtToken(jwtCredentialDto);

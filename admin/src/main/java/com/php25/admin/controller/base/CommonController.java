@@ -1,12 +1,13 @@
 package com.php25.admin.controller.base;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
 import com.php25.common.service.RedisService;
 import com.php25.userservice.server.dto.AdminUserDto;
-import com.php25.userservice.server.service.AdminUserService;
-import com.php25.userservice.server.service.TokenService;
+import com.php25.userservice.server.service.AdminUserRpc;
+import com.php25.userservice.server.service.TokenRpc;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -27,14 +28,18 @@ import java.util.Optional;
 @RequestMapping("/admin/base/common")
 public class CommonController extends JSONController {
 
-    @Autowired
-    private AdminUserService adminUserRest;
+    @Reference(version = "1.0.0",
+            application = "${dubbo.application.id}",
+            url = "dubbo://localhost:12345")
+    private AdminUserRpc adminUserRest;
 
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private TokenService<String> tokenRest;
+    @Reference(version = "1.0.0",
+            application = "${dubbo.application.id}",
+            url = "dubbo://localhost:12345")
+    private TokenRpc<String> tokenRest;
 
     @ApiOperation(value = "登入", notes = "登入")
     @ApiImplicitParams({

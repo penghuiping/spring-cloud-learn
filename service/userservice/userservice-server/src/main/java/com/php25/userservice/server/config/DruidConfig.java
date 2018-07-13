@@ -1,7 +1,6 @@
-package com.php25.admin.config;
+package com.php25.userservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.support.http.WebStatFilter;
 import com.google.common.collect.Maps;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
@@ -9,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -26,17 +25,9 @@ import java.util.Properties;
  * Created by penghuiping on 16/8/2.
  */
 @Configuration
+@ConditionalOnExpression("'${server.type}'.contains('provider')")
 public class DruidConfig {
     private static final Logger logger = LoggerFactory.getLogger(DruidConfig.class);
-
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new WebStatFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
-        return filterRegistrationBean;
-    }
 
     @Bean
     @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
@@ -51,11 +42,12 @@ public class DruidConfig {
         druidDataSource.setUsername(username);
         druidDataSource.setPassword(password);
         druidDataSource.setInitialSize(5);
-        druidDataSource.setMinIdle(5);
+        druidDataSource.setMinIdle(1);
         druidDataSource.setMaxActive(20);
-        druidDataSource.setMaxWait(28000);
-        druidDataSource.setTimeBetweenEvictionRunsMillis(28000);
-        druidDataSource.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource.setMaxWait(60000);
+        druidDataSource.setTimeBetweenEvictionRunsMillis(60000);
+        druidDataSource.setMinEvictableIdleTimeMillis(300000);
+        druidDataSource.setValidationQuery("SELECT 'x' FROM DUAL");
         druidDataSource.setTestWhileIdle(true);
         druidDataSource.setTestOnBorrow(false);
         druidDataSource.setTestOnReturn(false);
@@ -68,7 +60,7 @@ public class DruidConfig {
         try {
             druidDataSource.setFilters("stat, wall");
         } catch (SQLException e) {
-            logger.error("出错啦！", e);
+            logger.error("数据库连接失败", e);
         }
         return druidDataSource;
     }
@@ -93,24 +85,25 @@ public class DruidConfig {
         druidDataSource_master.setUsername(username);
         druidDataSource_master.setPassword(password);
         druidDataSource_master.setInitialSize(5);
-        druidDataSource_master.setMinIdle(5);
+        druidDataSource_master.setMinIdle(1);
         druidDataSource_master.setMaxActive(20);
-        druidDataSource_master.setMaxWait(28000);
-        druidDataSource_master.setTimeBetweenEvictionRunsMillis(28000);
-        druidDataSource_master.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource_master.setMaxWait(60000);
+        druidDataSource_master.setTimeBetweenEvictionRunsMillis(60000);
+        druidDataSource_master.setMinEvictableIdleTimeMillis(300000);
+        druidDataSource_master.setValidationQuery("SELECT 'x' FROM DUAL");
         druidDataSource_master.setTestWhileIdle(true);
         druidDataSource_master.setTestOnBorrow(false);
         druidDataSource_master.setTestOnReturn(false);
         druidDataSource_master.setPoolPreparedStatements(true);
         druidDataSource_master.setMaxPoolPreparedStatementPerConnectionSize(20);
-        Properties properties = new Properties();
-        properties.setProperty("druid.stat.mergeSql", "true");
-        properties.setProperty("druid.stat.slowSqlMillis", "5000");
-        druidDataSource_master.setConnectProperties(properties);
+        Properties properties_master = new Properties();
+        properties_master.setProperty("druid.stat.mergeSql", "true");
+        properties_master.setProperty("druid.stat.slowSqlMillis", "5000");
+        druidDataSource_master.setConnectProperties(properties_master);
         try {
             druidDataSource_master.setFilters("stat, wall");
         } catch (SQLException e) {
-            logger.error("出错啦！", e);
+            logger.error("数据库连接失败", e);
         }
 
         DruidDataSource druidDataSource_slave = new DruidDataSource();
@@ -119,24 +112,25 @@ public class DruidConfig {
         druidDataSource_slave.setUsername(slaveUsername);
         druidDataSource_slave.setPassword(slavePassword);
         druidDataSource_slave.setInitialSize(5);
-        druidDataSource_slave.setMinIdle(5);
+        druidDataSource_slave.setMinIdle(1);
         druidDataSource_slave.setMaxActive(20);
-        druidDataSource_slave.setMaxWait(28000);
-        druidDataSource_slave.setTimeBetweenEvictionRunsMillis(28000);
-        druidDataSource_slave.setValidationQuery("SELECT 1 FROM DUAL");
+        druidDataSource_slave.setMaxWait(60000);
+        druidDataSource_slave.setTimeBetweenEvictionRunsMillis(60000);
+        druidDataSource_slave.setMinEvictableIdleTimeMillis(300000);
+        druidDataSource_slave.setValidationQuery("SELECT 'x' FROM DUAL");
         druidDataSource_slave.setTestWhileIdle(true);
         druidDataSource_slave.setTestOnBorrow(false);
         druidDataSource_slave.setTestOnReturn(false);
         druidDataSource_slave.setPoolPreparedStatements(true);
         druidDataSource_slave.setMaxPoolPreparedStatementPerConnectionSize(20);
-        Properties properties1 = new Properties();
-        properties1.setProperty("druid.stat.mergeSql", "true");
-        properties1.setProperty("druid.stat.slowSqlMillis", "5000");
-        druidDataSource_slave.setConnectProperties(properties1);
+        Properties properties_slave = new Properties();
+        properties_slave.setProperty("druid.stat.mergeSql", "true");
+        properties_slave.setProperty("druid.stat.slowSqlMillis", "5000");
+        druidDataSource_slave.setConnectProperties(properties_slave);
         try {
             druidDataSource_slave.setFilters("stat, wall");
         } catch (SQLException e) {
-            logger.error("出错啦！", e);
+            logger.error("数据库连接失败", e);
         }
 
 
@@ -157,6 +151,11 @@ public class DruidConfig {
             throw new RuntimeException(e);
         }
         return dataSource;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.service.RedisService;
 import com.php25.common.service.impl.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * Created by penghuiping on 16/8/26.
  */
 @Configuration
+@ConditionalOnExpression("'${server.type}'.contains('provider')")
 public class RedisConfig {
 
     @Bean

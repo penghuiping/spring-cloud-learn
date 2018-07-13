@@ -1,10 +1,10 @@
 package com.php25.api.base.interceptor;
 
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.api.base.constant.AccessRequired;
-import com.php25.common.util.StringUtil;
-import com.php25.userservice.server.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.php25.userservice.server.service.TokenRpc;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,8 +21,10 @@ import java.lang.reflect.Method;
 @Component
 public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
-    TokenService<String> tokenRest;
+    @Reference(version = "1.0.0",
+            application = "${dubbo.application.id}",
+            url = "dubbo://localhost:12345")
+    TokenRpc<String> tokenRest;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -38,7 +40,7 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 response.addHeader("Content-Type", "application/json;charset=UTF-8");
 
             //如果为空直接返回未登入提示
-            if (StringUtil.isEmpty(token)) {
+            if (StringUtils.isEmpty(token)) {
                 //返回403状态码 访问被禁止
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return false;
