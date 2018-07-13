@@ -3,7 +3,6 @@ package com.php25.userservice.client.rpc;
 import com.php25.userservice.client.dto.AdminUserDto;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 后台用户
@@ -22,7 +21,7 @@ public interface AdminUserRpc {
      * @author penghuiping
      * @Time 2016-08-12
      */
-    Optional<AdminUserDto> findByLoginNameAndPassword(String loginName, String password);
+    AdminUserDto findByLoginNameAndPassword(String loginName, String password);
 
 
     /**
@@ -32,5 +31,5 @@ public interface AdminUserRpc {
      * @param lazy 对于对象里面的集合是否进行懒加载操作
      * @return
      */
-    Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy);
+    List<AdminUserDto> findAll(Iterable<Long> ids, Boolean lazy);
 }
