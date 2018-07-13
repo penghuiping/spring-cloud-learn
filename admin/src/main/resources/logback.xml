@@ -23,7 +23,7 @@
             <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${default.pattern}</pattern>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>

@@ -1,7 +1,6 @@
 package com.php25.userservice.server.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.rest.TokenRest;
 import com.php25.userservice.server.service.CustomerService;
 import com.php25.userservice.server.service.TokenService;
