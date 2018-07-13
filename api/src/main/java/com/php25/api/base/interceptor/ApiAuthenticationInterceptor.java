@@ -3,7 +3,7 @@ package com.php25.api.base.interceptor;
 
 import com.php25.api.base.constant.AccessRequired;
 import com.php25.common.util.StringUtil;
-import com.php25.userservice.client.rest.TokenRest;
+import com.php25.userservice.server.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    TokenRest tokenRest;
+    TokenService<String> tokenRest;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -45,7 +45,7 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
             }
 
             //直接判断redis里的token值是否有效
-            if (tokenRest.checkTokenValidation(token)) return true;
+            if (tokenRest.checkTokenValidation(token, String.class)) return true;
 
             //返回403状态码 访问被禁止
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

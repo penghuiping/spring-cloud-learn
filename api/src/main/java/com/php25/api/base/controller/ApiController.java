@@ -4,10 +4,10 @@ package com.php25.api.base.controller;
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
-import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.client.dto.JwtCredentialDto;
-import com.php25.userservice.client.rest.CustomerRest;
-import com.php25.userservice.client.rest.KongJwtRest;
+import com.php25.userservice.server.dto.CustomerDto;
+import com.php25.userservice.server.dto.JwtCredentialDto;
+import com.php25.userservice.server.service.CustomerService;
+import com.php25.userservice.server.service.KongJwtService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 /**
  * Created by penghuiping on 2018/3/15.
  */
@@ -28,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ApiController extends JSONController {
 
     @Autowired
-    private CustomerRest customerRest;
+    private CustomerService customerRest;
 
 
     @Autowired
-    private KongJwtRest kongJwtRest;
+    private KongJwtService kongJwtRest;
 
     /**
      * 登入接口，返回access_token与refresh_token
@@ -52,9 +54,9 @@ public class ApiController extends JSONController {
     })
     @RequestMapping(value = "/insecure/common/SSOLogin.do", method = RequestMethod.GET)
     public ResponseEntity<JSONResponse> SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) throws JsonException {
-        CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
-        if (null != customer) {
-            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer);
+        Optional<CustomerDto> customer = customerRest.findOneByPhoneAndPassword(mobile, password);
+        if (customer.isPresent()) {
+            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer.get());
             kongJwtRest.createJwtCustomer(jwtCustomerId);
             JwtCredentialDto jwtCredentialDto = kongJwtRest.generateJwtCredential(jwtCustomerId);
             String jwt = kongJwtRest.generateJwtToken(jwtCredentialDto);

@@ -4,9 +4,9 @@ import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
 import com.php25.common.service.RedisService;
-import com.php25.userservice.client.dto.AdminUserDto;
-import com.php25.userservice.client.rest.AdminUserRest;
-import com.php25.userservice.client.rest.TokenRest;
+import com.php25.userservice.server.dto.AdminUserDto;
+import com.php25.userservice.server.service.AdminUserService;
+import com.php25.userservice.server.service.TokenService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Validated
 @Controller
@@ -27,13 +28,13 @@ import java.util.Map;
 public class CommonController extends JSONController {
 
     @Autowired
-    private AdminUserRest adminUserRest;
+    private AdminUserService adminUserRest;
 
     @Autowired
     private RedisService redisService;
 
     @Autowired
-    private TokenRest tokenRest;
+    private TokenService<String> tokenRest;
 
     @ApiOperation(value = "登入", notes = "登入")
     @ApiImplicitParams({
@@ -43,9 +44,9 @@ public class CommonController extends JSONController {
     @RequestMapping(value = "/SSOLogin.do", method = RequestMethod.POST)
     public ResponseEntity<JSONResponse>
     SSOLogin(@RequestParam @NotEmpty String username, @RequestParam @NotEmpty String password) throws JsonException {
-        AdminUserDto adminUserDto = adminUserRest.findByUsernameAndPassword(username, password);
+        Optional<AdminUserDto> adminUserDto = adminUserRest.findByLoginNameAndPassword(username, password);
         //首先清空原来的token
-        Map<String, String> result = tokenRest.getTokenByObjId(adminUserDto.getId().toString());
+        Map<String, String> result = tokenRest.generateToken(adminUserDto.get().getId().toString());
         return ResponseEntity.ok(succeed(result));
     }
 

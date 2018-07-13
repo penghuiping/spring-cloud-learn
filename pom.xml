@@ -50,8 +50,8 @@
                 <version>${userservice.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.php25.service.userservice.server</groupId>
-                <artifactId>userservice-server</artifactId>
+                <groupId>com.php25.service.userservice</groupId>
+                <artifactId>userservice</artifactId>
                 <version>${userservice.version}</version>
             </dependency>
             <dependency>

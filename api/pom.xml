@@ -18,12 +18,12 @@
             <artifactId>jedis</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.php25.service.userservice.client</groupId>
-            <artifactId>userservice-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.php25</groupId>
             <artifactId>common-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.service.userservice</groupId>
+            <artifactId>userservice</artifactId>
         </dependency>
         <dependency>
             <groupId>org.redisson</groupId>
