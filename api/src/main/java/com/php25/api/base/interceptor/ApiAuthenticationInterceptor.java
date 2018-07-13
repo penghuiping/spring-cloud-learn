@@ -3,7 +3,7 @@ package com.php25.api.base.interceptor;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.api.base.constant.AccessRequired;
-import com.php25.userservice.server.service.TokenRpc;
+import com.php25.userservice.client.rpc.TokenRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

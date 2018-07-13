@@ -1,20 +1,18 @@
-package com.php25.userservice.server.service;
+package com.php25.userservice.client.rpc;
 
-import com.php25.common.exception.JsonException;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.dto.JwtCredentialDto;
 
 /**
  * Created by penghuiping on 2018/3/15.
  */
-public interface KongJwtService {
+public interface KongJwtRpc {
 
     /**
      * 0. 生成jwtCustomerId
      *
      * @param customerDto
      * @return
-     * @throws JsonException
      */
     String generateJwtCustomerId(CustomerDto customerDto);
 
@@ -23,7 +21,6 @@ public interface KongJwtService {
      * 1。 往kong中创建一个jwtCustomer
      *
      * @param jwtCustomerId
-     * @throws JsonException
      */
     void createJwtCustomer(String jwtCustomerId);
 
@@ -33,7 +30,6 @@ public interface KongJwtService {
      *
      * @param jwtCustomerId
      * @return
-     * @throws JsonException
      */
     JwtCredentialDto generateJwtCredential(String jwtCustomerId);
 
@@ -42,7 +38,6 @@ public interface KongJwtService {
      * 3. 生成最终要的jwtToken
      *
      * @return
-     * @throws JsonException
      */
     String generateJwtToken(JwtCredentialDto jwtCredentialDto);
 
@@ -52,7 +47,6 @@ public interface KongJwtService {
      *
      * @param jwtCustomerId
      * @return
-     * @throws JsonException
      */
     CustomerDto getByJwtCustomerId(String jwtCustomerId);
 
@@ -60,7 +54,6 @@ public interface KongJwtService {
      * 清除jwtToken
      *
      * @param jwtCustomerId
-     * @throws JsonException
      */
     void cleanJwtToken(String jwtCustomerId);
 

@@ -1,9 +1,6 @@
-package com.php25.userservice.server.service;
+package com.php25.userservice.client.rpc;
 
-import com.php25.common.service.BaseService;
-import com.php25.common.service.SoftDeletable;
 import com.php25.userservice.client.dto.AdminUserDto;
-import com.php25.userservice.server.model.AdminUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +11,7 @@ import java.util.Optional;
  * @author penghuiping
  * @Time 2016-08-12
  */
-public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, Long>, SoftDeletable<AdminUserDto> {
+public interface AdminUserRpc {
 
     /**
      * 根据用户名与密码获取用户信息

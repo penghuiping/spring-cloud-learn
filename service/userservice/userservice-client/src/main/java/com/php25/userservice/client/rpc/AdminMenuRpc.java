@@ -1,10 +1,7 @@
-package com.php25.userservice.server.service;
+package com.php25.userservice.client.rpc;
 
-import com.php25.common.service.BaseService;
-import com.php25.common.service.SoftDeletable;
 import com.php25.userservice.client.dto.AdminMenuButtonDto;
 import com.php25.userservice.client.dto.AdminRoleDto;
-import com.php25.userservice.server.model.AdminMenuButton;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +9,7 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 16/8/12.
  */
-public interface AdminMenuService extends BaseService<AdminMenuButtonDto, AdminMenuButton, Long>, SoftDeletable<AdminMenuButtonDto> {
+public interface AdminMenuRpc {
 
     /**
      * 根据角色查询所有的有效菜单按钮

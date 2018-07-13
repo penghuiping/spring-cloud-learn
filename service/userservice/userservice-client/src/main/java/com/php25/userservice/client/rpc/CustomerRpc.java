@@ -1,12 +1,8 @@
-package com.php25.userservice.server.service;
+package com.php25.userservice.client.rpc;
 
-import com.php25.common.service.BaseService;
-import com.php25.common.service.SoftDeletable;
 import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.server.model.Customer;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 用户服务类
@@ -14,7 +10,7 @@ import java.util.Optional;
  * @author penghuiping
  * @Time 16/9/2.
  */
-public interface CustomerService extends BaseService<CustomerDto, Customer, Long>, SoftDeletable<CustomerDto> {
+public interface CustomerRpc {
 
     /**
      * 根据用户名与密码，查询出用户信息
@@ -25,7 +21,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @author penghuiping
      * @Time 16/9/2.
      */
-    Optional<CustomerDto> findOneByUsernameAndPassword(String username, String password);
+    CustomerDto findOneByUsernameAndPassword(String username, String password);
 
     /**
      * 根据uuid  和 type，查询出用户信息
@@ -37,7 +33,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @author penghuiping
      * @Time 16/9/2.
      */
-    Optional<CustomerDto> findByUuidAndType(String uuid, Integer type);
+    CustomerDto findByUuidAndType(String uuid, Integer type);
 
     /**
      * 根据联系方式和密码查询
@@ -46,7 +42,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @param password
      * @return
      */
-    Optional<CustomerDto> findOneByPhoneAndPassword(String phone, String password);
+    CustomerDto findOneByPhoneAndPassword(String phone, String password);
 
     /**
      * 根据联系方式查询
@@ -54,7 +50,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @param phone
      * @return
      */
-    Optional<CustomerDto> findOneByPhone(String phone);
+    CustomerDto findOneByPhone(String phone);
 
 
     /**
@@ -65,7 +61,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @param pageSize
      * @return
      */
-    Optional<List<CustomerDto>> query(String searchParams, Integer pageNum, Integer pageSize);
+    List<CustomerDto> query(String searchParams, Integer pageNum, Integer pageSize);
 
 
     /**
@@ -74,6 +70,6 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @param name
      * @return
      */
-    Optional<List<CustomerDto>> findByName(String name);
+    List<CustomerDto> findByName(String name);
 
 }

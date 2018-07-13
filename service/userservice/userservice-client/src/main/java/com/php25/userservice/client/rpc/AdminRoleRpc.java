@@ -1,10 +1,7 @@
-package com.php25.userservice.server.service;
+package com.php25.userservice.client.rpc;
 
 
-import com.php25.common.service.BaseService;
-import com.php25.common.service.SoftDeletable;
 import com.php25.userservice.client.dto.AdminRoleDto;
-import com.php25.userservice.server.model.AdminRole;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +9,7 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 16/8/12.
  */
-public interface AdminRoleService extends BaseService<AdminRoleDto, AdminRole, Long>, SoftDeletable<AdminRoleDto> {
+public interface AdminRoleRpc {
 
     /**
      * 查询所有有效数据

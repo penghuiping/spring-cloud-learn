@@ -1,7 +1,7 @@
 package com.php25.userservice.server.rpc;
 
-import com.php25.userservice.server.dto.CustomerDto;
-import com.php25.userservice.server.service.CustomerRpc;
+import com.php25.userservice.client.dto.CustomerDto;
+import com.php25.userservice.client.rpc.CustomerRpc;
 import com.php25.userservice.server.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
