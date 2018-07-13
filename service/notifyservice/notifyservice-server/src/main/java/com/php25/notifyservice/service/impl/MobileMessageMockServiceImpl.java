@@ -5,7 +5,8 @@ import com.php25.common.service.RedisService;
 import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.service.MobileMessageService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MobileMessageMockServiceImpl implements MobileMessageService {
-    private Logger logger = Logger.getLogger(MobileMessageMockServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(MobileMessageMockServiceImpl.class);
 
     private SMSClient client = null;
 

@@ -10,7 +10,8 @@ import com.php25.common.util.RandomUtil;
 import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.service.MobileMessageService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -32,7 +33,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
     @Value("${jiguang.sms.MASTER_SECRET}")
     private String MASTER_SECRET;
 
-    private Logger logger = Logger.getLogger(MobileMessageServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(MobileMessageServiceImpl.class);
 
     private SMSClient client = null;
 
