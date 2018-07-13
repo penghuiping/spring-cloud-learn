@@ -3,13 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.joinsoft</groupId>
+        <groupId>com.php25.service.notifyservice</groupId>
         <artifactId>notifyservice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.joinsoft</groupId>
+
+    <groupId>com.php25.service.notifyservice.server</groupId>
     <artifactId>notifyservice-server</artifactId>
     <version>${notifyservice.version}</version>
 
@@ -17,27 +18,18 @@
         <dependency>
             <groupId>com.php25</groupId>
             <artifactId>common-spring-boot-starter</artifactId>
-            <version>${joinsoft.common}</version>
         </dependency>
         <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jsms-client</artifactId>
-            <version>${jsms-client}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>${gson}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.0</version>
         </dependency>
         <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jiguang-common</artifactId>
-            <version>${jiguang-common}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -46,9 +38,12 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.joinsoft</groupId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.service.notifyservice.client</groupId>
             <artifactId>notifyservice-client</artifactId>
-            <version>${notifyservice.version}</version>
         </dependency>
     </dependencies>
 

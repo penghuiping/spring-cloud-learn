@@ -2,12 +2,13 @@ package com.joinsoft.userservice.client.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.joinsoft.userservice.client.dto.CustomerDto;
 import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.impl.IdGeneratorServiceImpl;
 import com.php25.common.specification.Operator;
 import com.php25.common.specification.SearchParam;
 import com.php25.common.util.DigestUtil;
+import com.php25.userservice.client.dto.CustomerDto;
+import com.php25.userservice.client.rest.CustomerRest;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -42,7 +43,7 @@ public class TestCustomerRest {
     @Test
     public void save() throws Exception {
         CustomerDto customerDto = new CustomerDto();
-        customerDto.setId(idGeneratorService.getModelPrimaryKey());
+        customerDto.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
         customerDto.setMobile("18811111111");
         customerDto.setPassword(DigestUtil.MD5Str("123456"));
         customerDto.setEnable(1);
@@ -81,10 +82,7 @@ public class TestCustomerRest {
 
     @Test
     public void query() throws Exception {
-        SearchParam searchParam = new SearchParam();
-        searchParam.setFieldName("enable");
-        searchParam.setOperator(Operator.EQ.name());
-        searchParam.setValue(1);
+        SearchParam searchParam = new SearchParam.Builder().fieldName("enable").operator(Operator.EQ).value(1).build();
         List<CustomerDto> customerDtoList = customerRest.query(objectMapper.writeValueAsString(Lists.newArrayList(searchParam)), 1, 5);
         System.out.println(objectMapper.writeValueAsString(customerDtoList));
     }

@@ -1,0 +1,42 @@
+package com.php25.notifyservice.service.impl;
+
+import cn.jsms.api.common.SMSClient;
+import com.php25.common.service.RedisService;
+import com.php25.common.util.StringUtil;
+import com.php25.notifyservice.client.contant.Constant;
+import com.php25.notifyservice.service.MobileMessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Created by Zhangbing on 2017/4/17.
+ */
+@Service
+public class MobileMessageMockServiceImpl implements MobileMessageService {
+    private Logger logger = LoggerFactory.getLogger(MobileMessageMockServiceImpl.class);
+
+    private SMSClient client = null;
+
+    @Autowired
+    private RedisService redisService;
+
+
+    @Override
+    public Boolean findOneByPhoneAndCode(String mobile, String code) {
+        String mobileCode = redisService.get("sms" + mobile, String.class);
+        if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
+            redisService.remove("sms" + mobile);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public Boolean newMessage(String mobile) {
+        String message = "1111";
+        redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+        return true;
+
+    }
+}
