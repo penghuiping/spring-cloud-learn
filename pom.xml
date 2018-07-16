@@ -11,6 +11,7 @@
         <module>service</module>
         <module>api</module>
         <module>admin</module>
+        <module>gateway</module>
     </modules>
 
     <packaging>pom</packaging>
