@@ -9,6 +9,7 @@ import com.php25.userservice.server.service.CustomerService;
 import com.php25.userservice.server.service.KongJwtService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 2018/3/15.
  */
-
+@Slf4j
 @Transactional
 @Service
 @Primary

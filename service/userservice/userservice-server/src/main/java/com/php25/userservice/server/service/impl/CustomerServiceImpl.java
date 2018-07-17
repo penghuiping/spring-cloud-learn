@@ -8,6 +8,7 @@ import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
 import com.php25.userservice.server.repository.CustomerRepository;
 import com.php25.userservice.server.service.CustomerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Created by penghuiping on 16/9/2.
  */
+@Slf4j
 @Transactional
 @Service
 public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, Long> implements CustomerService {

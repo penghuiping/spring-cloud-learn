@@ -1,5 +1,6 @@
 package com.php25.userservice.server.model;
 
+import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -10,12 +11,10 @@ import java.util.List;
  * 后台管理用户实体类
  * Created by penghuiping on 11/30/14.
  */
+@Data
 @Entity
 @Table(name = "userservice_user")
 public class AdminUser {
-
-    private static final long serialVersionUID = -155601402424059709L;
-
     @Id
     private Long id;//主键id
 
@@ -53,84 +52,4 @@ public class AdminUser {
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
     private List<AdminRole> roles;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<AdminRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<AdminRole> roles) {
-        this.roles = roles;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Integer enable) {
-        this.enable = enable;
-    }
 }

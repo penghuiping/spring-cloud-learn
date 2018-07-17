@@ -13,6 +13,7 @@ import com.php25.userservice.server.repository.AdminRoleRepository;
 import com.php25.userservice.server.repository.RoleMenuRepository;
 import com.php25.userservice.server.service.AdminRoleService;
 import io.jsonwebtoken.lang.Assert;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Created by penghuiping on 16/8/12.
  */
-
+@Slf4j
 @Transactional
 @Service
 @Primary

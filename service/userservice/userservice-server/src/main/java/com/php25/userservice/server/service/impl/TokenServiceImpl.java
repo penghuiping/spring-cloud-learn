@@ -4,6 +4,7 @@ import com.php25.common.service.IdGeneratorService;
 import com.php25.common.service.RedisService;
 import com.php25.common.util.StringUtil;
 import com.php25.userservice.server.service.TokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author penghuiping
  * @timer 2017/1/24.
  */
+@Slf4j
 @Service
 @Primary
 public class TokenServiceImpl<T> implements TokenService<T> {

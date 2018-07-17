@@ -10,6 +10,7 @@ import com.php25.common.util.RandomUtil;
 import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.service.MobileMessageService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.Map;
 /**
  * Created by Zhangbing on 2017/4/17.
  */
+@Slf4j
 @Service
 @Primary
 public class MobileMessageServiceImpl implements MobileMessageService {
