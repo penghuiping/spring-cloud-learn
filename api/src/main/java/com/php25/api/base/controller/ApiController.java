@@ -27,17 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api")
 public class ApiController extends JSONController {
 
-    @Reference(version = "1.0.0",
-            application = "${dubbo.application.id}",
-            url = "dubbo://localhost:12345")
+    @Reference(check = false)
     private CustomerRpc customerRest;
 
-
-    @Reference(version = "1.0.0",
-            application = "${dubbo.application.id}",
-            url = "dubbo://localhost:12345")
+    @Reference(check = false)
     private KongJwtRpc kongJwtRest;
-
     /**
      * 登入接口，返回access_token与refresh_token
      * access_token用于应用访问

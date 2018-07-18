@@ -21,9 +21,7 @@ import java.lang.reflect.Method;
 @Component
 public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
-    @Reference(version = "1.0.0",
-            application = "${dubbo.application.id}",
-            url = "dubbo://localhost:12345")
+    @Reference(check = false)
     TokenRpc<String> tokenRest;
 
     @Override

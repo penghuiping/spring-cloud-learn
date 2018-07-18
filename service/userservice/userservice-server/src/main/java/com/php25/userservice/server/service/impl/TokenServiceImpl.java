@@ -98,7 +98,6 @@ public class TokenServiceImpl<T> implements TokenService<T> {
             redisService.remove(token);
         }
 
-
 //        RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
 //        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
 //
@@ -113,6 +112,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
 //        }
 //
 //        rAtomicLong.getAndIncrement();
+
         String token = "t" + idGeneratorService.getModelPrimaryKey();
 
         //生产反向回溯依赖关系

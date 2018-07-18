@@ -12,12 +12,7 @@ import java.util.List;
  * @Date: 2018/7/13 17:06
  * @Description:
  */
-@com.alibaba.dubbo.config.annotation.Service(
-        version = "1.0.0",
-        application = "${dubbo.application.id}",
-        protocol = "${dubbo.protocol.id}",
-        registry = "${dubbo.registry.id}"
-)
+@com.alibaba.dubbo.config.annotation.Service
 public class CustomerRpcImpl implements CustomerRpc {
 
     @Autowired
