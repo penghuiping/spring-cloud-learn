@@ -1,10 +1,10 @@
-package com.php25.notifyservice.service.impl;
+package com.php25.notifyservice.server.service.impl;
 
 import cn.jsms.api.common.SMSClient;
 import com.php25.common.service.RedisService;
 import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
-import com.php25.notifyservice.service.MobileMessageService;
+import com.php25.notifyservice.server.service.MobileMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.php25.notifyservice.service;
+package com.php25.notifyservice.server.service;
 
 /**
  * 短信验证码

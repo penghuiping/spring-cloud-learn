@@ -3,7 +3,7 @@ package com.php25.notifyservice.client.rest;
 /**
  * Created by Zhangbing on 2017/4/17.
  */
-public interface MobileMessageRest {
+public interface MobileMessageRpc {
 
     /**
      * 插入\修改一条验证码信息
@@ -11,7 +11,7 @@ public interface MobileMessageRest {
      * @param mobile
      * @return
      */
-    Boolean newMessage(String mobile);
+    Boolean sendSMS(String mobile);
 
     /**
      * 通过电话号码查询有效验证码数据

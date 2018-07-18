@@ -1,4 +1,4 @@
-package com.php25.notifyservice.service.impl;
+package com.php25.notifyservice.server.service.impl;
 
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
@@ -9,7 +9,7 @@ import com.php25.common.service.RedisService;
 import com.php25.common.util.RandomUtil;
 import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
-import com.php25.notifyservice.service.MobileMessageService;
+import com.php25.notifyservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

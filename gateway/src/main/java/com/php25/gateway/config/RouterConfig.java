@@ -36,7 +36,7 @@ public class RouterConfig {
 
     @Bean
     @Order(0)
-    public GlobalFilter b() {
+    public GlobalFilter jwtFilter() {
         return (exchange, chain) -> {
             logger.info("second pre filter");
             ServerHttpResponse response = exchange.getResponse();
