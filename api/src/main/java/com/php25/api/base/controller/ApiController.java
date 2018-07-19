@@ -7,9 +7,8 @@ import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
 import com.php25.notifyservice.client.rpc.MailRpc;
 import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.client.dto.JwtCredentialDto;
 import com.php25.userservice.client.rpc.CustomerRpc;
-import com.php25.userservice.client.rpc.KongJwtRpc;
+import com.php25.userservice.client.rpc.TokenJwtRpc;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +31,7 @@ public class ApiController extends JSONController {
     private CustomerRpc customerRest;
 
     @Reference(check = false)
-    private KongJwtRpc kongJwtRest;
+    private TokenJwtRpc tokenJwtRpc;
 
     @Reference(check = false)
     private MailRpc mailRpc;
@@ -54,14 +53,11 @@ public class ApiController extends JSONController {
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", paramType = "query")
     })
-    @RequestMapping(value = "/insecure/common/SSOLogin.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/common/SSOLogin.do", method = RequestMethod.GET)
     public ResponseEntity<JSONResponse> SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password) throws JsonException {
         CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
         if (customer != null) {
-            String jwtCustomerId = kongJwtRest.generateJwtCustomerId(customer);
-            kongJwtRest.createJwtCustomer(jwtCustomerId);
-            JwtCredentialDto jwtCredentialDto = kongJwtRest.generateJwtCredential(jwtCustomerId);
-            String jwt = kongJwtRest.generateJwtToken(jwtCredentialDto);
+            String jwt = tokenJwtRpc.getToken(customer.getId() + "");
             return ResponseEntity.ok(succeed(jwt));
         } else {
             return ResponseEntity.ok(failed("登入失败"));
@@ -78,10 +74,9 @@ public class ApiController extends JSONController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-Consumer-Username", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),
     })
-    @RequestMapping(value = "/secure/common/SSOLogout.do", method = RequestMethod.GET)
-    public ResponseEntity<JSONResponse> SSOLogout(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
-        kongJwtRest.cleanJwtToken(jwtCustomerId);
-        return ResponseEntity.ok(succeed(jwtCustomerId));
+    @RequestMapping(value = "/common/SSOLogout.do", method = RequestMethod.GET)
+    public ResponseEntity<JSONResponse> SSOLogout(@NotEmpty @RequestHeader(name = "jwt") String jwt) throws JsonException {
+        return ResponseEntity.ok(succeed(tokenJwtRpc.cleanToken(jwt)));
     }
 
     /**
@@ -94,9 +89,9 @@ public class ApiController extends JSONController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-Consumer-Username", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),
     })
-    @RequestMapping(value = "/secure/common/showCustomerInfo.do", method = RequestMethod.GET)
-    public ResponseEntity<JSONResponse> showCustomerInfo(@NotEmpty @RequestHeader(name = "X-Consumer-Username") String jwtCustomerId) throws JsonException {
-        CustomerDto customerDto = kongJwtRest.getByJwtCustomerId(jwtCustomerId);
+    @RequestMapping(value = "/common/showCustomerInfo.do", method = RequestMethod.GET)
+    public ResponseEntity<JSONResponse> showCustomerInfo(@NotEmpty @RequestHeader(name = "customerId") String customerId) throws JsonException {
+        CustomerDto customerDto = customerRest.findOne(Long.parseLong(customerId));
         return ResponseEntity.ok(succeed(customerDto));
     }
 }

@@ -1,17 +1,19 @@
 package com.php25.gateway.config;
 
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.google.common.collect.Lists;
+import com.php25.gateway.filter.JwtFilter;
+import com.php25.userservice.client.rpc.TokenJwtRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.StripPrefixGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import reactor.core.publisher.Mono;
 
 
 /**
@@ -24,36 +26,28 @@ public class RouterConfig {
 
     private Logger logger = LoggerFactory.getLogger(RouterConfig.class);
 
+    @Reference(check = false)
+    private TokenJwtRpc tokenJwtRpc;
+
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder, @Autowired @Qualifier("jwtFilter") GatewayFilter jwtFilter) {
         StripPrefixGatewayFilterFactory.Config config = new StripPrefixGatewayFilterFactory.Config();
         config.setParts(1);
         return builder.routes()
-                .route("host_route", r -> r.path("/a/**").filters(f -> f.stripPrefix(1)).uri("http://localhost:8081"))
-                .route("host_route", r -> r.path("/b/**").filters(f -> f.stripPrefix(1)).uri("http://localhost:8082"))
+                .route("host_route0", r -> r.path("/a/**")
+                        .filters(f -> {
+                            return f.stripPrefix(1).filter(jwtFilter);
+                        })
+                        .uri("http://localhost:8081"))
                 .build();
     }
 
+
     @Bean
-    @Order(0)
-    public GlobalFilter jwtFilter() {
-        return (exchange, chain) -> {
-            logger.info("second pre filter");
-            ServerHttpResponse response = exchange.getResponse();
-            boolean flag = true;
-            if (flag) {
-                //认证通过
-                return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                    logger.info("second post filter");
-                }));
-            } else {
-                //认证失败
-                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return response.setComplete();
-            }
-
-        };
+    @Qualifier("jwtFilter")
+    public GatewayFilter jwtFilter() {
+        JwtFilter jwtFilter = new JwtFilter();
+        jwtFilter.setTokenJwtRpc(tokenJwtRpc);
+        return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do")));
     }
-
-
 }

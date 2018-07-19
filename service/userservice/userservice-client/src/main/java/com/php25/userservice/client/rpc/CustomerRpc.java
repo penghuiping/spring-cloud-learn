@@ -12,6 +12,8 @@ import java.util.List;
  */
 public interface CustomerRpc {
 
+    CustomerDto findOne(Long id);
+
     /**
      * 根据用户名与密码，查询出用户信息
      *

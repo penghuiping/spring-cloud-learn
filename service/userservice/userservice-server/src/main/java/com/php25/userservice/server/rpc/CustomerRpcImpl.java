@@ -3,6 +3,7 @@ package com.php25.userservice.server.rpc;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.rpc.CustomerRpc;
 import com.php25.userservice.server.service.CustomerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -12,11 +13,17 @@ import java.util.List;
  * @Date: 2018/7/13 17:06
  * @Description:
  */
+@Slf4j
 @com.alibaba.dubbo.config.annotation.Service
 public class CustomerRpcImpl implements CustomerRpc {
 
     @Autowired
     private CustomerService customerService;
+
+    @Override
+    public CustomerDto findOne(Long id) {
+        return customerService.findOne(id).get();
+    }
 
     @Override
     public CustomerDto findOneByUsernameAndPassword(String username, String password) {
