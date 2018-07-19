@@ -11,8 +11,6 @@ import com.php25.common.util.StringUtil;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -34,8 +32,6 @@ public class MobileMessageServiceImpl implements MobileMessageService {
 
     @Value("${jiguang.sms.MASTER_SECRET}")
     private String MASTER_SECRET;
-
-    private Logger logger = LoggerFactory.getLogger(MobileMessageServiceImpl.class);
 
     private SMSClient client = null;
 
@@ -69,9 +65,9 @@ public class MobileMessageServiceImpl implements MobileMessageService {
             redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
             return true;
         } catch (APIConnectionException e) {
-            logger.error("Connection error. Should retry later. ", e);
+            log.error("Connection error. Should retry later. ", e);
         } catch (APIRequestException e) {
-            logger.error("Error response from JPush server. Should review and fix it. ", e);
+            log.error("Error response from JPush server. Should review and fix it. ", e);
         }
         return false;
     }
