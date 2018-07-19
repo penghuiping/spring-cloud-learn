@@ -1,7 +1,7 @@
 package com.php25.notifyservice.server;
 
 import com.google.common.collect.Lists;
-import com.php25.notifyservice.server.dto.PairDto;
+import com.php25.notifyservice.client.dto.PairDto;
 import com.php25.notifyservice.server.service.MailService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

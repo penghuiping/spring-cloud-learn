@@ -1,4 +1,4 @@
-package com.php25.notifyservice.server.dto;
+package com.php25.notifyservice.client.dto;
 
 /**
  * @Auther: penghuiping

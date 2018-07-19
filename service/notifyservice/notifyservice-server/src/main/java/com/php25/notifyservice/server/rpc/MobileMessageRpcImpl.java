@@ -1,7 +1,7 @@
 package com.php25.notifyservice.server.rpc;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.php25.notifyservice.client.rest.MobileMessageRpc;
+import com.php25.notifyservice.client.rpc.MobileMessageRpc;
 import com.php25.notifyservice.server.service.MobileMessageService;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;

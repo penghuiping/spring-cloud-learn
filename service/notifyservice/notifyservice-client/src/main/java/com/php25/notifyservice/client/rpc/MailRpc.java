@@ -1,5 +1,4 @@
-package com.php25.notifyservice.server.service;
-
+package com.php25.notifyservice.client.rpc;
 
 import com.php25.notifyservice.client.dto.PairDto;
 
@@ -9,10 +8,10 @@ import java.util.Map;
 
 /**
  * @Auther: penghuiping
- * @Date: 2018/7/19 10:02
+ * @Date: 2018/7/19 11:19
  * @Description:
  */
-public interface MailService {
+public interface MailRpc {
 
     /**
      * 发送简单邮件
@@ -42,5 +41,4 @@ public interface MailService {
      * @param attachments<文件名，附件> 附件列表
      */
     public void sendTemplateMail(String sendTo, String title, Map<String, Object> content, List<PairDto<String, File>> attachments);
-
 }

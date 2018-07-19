@@ -1,6 +1,6 @@
 package com.php25.notifyservice.server.service.impl;
 
-import com.php25.notifyservice.server.dto.PairDto;
+import com.php25.notifyservice.client.dto.PairDto;
 import com.php25.notifyservice.server.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.beetl.core.Configuration;

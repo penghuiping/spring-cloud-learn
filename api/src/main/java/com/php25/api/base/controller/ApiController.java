@@ -5,6 +5,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.common.controller.JSONController;
 import com.php25.common.dto.JSONResponse;
 import com.php25.common.exception.JsonException;
+import com.php25.notifyservice.client.rpc.MailRpc;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.dto.JwtCredentialDto;
 import com.php25.userservice.client.rpc.CustomerRpc;
@@ -32,6 +33,11 @@ public class ApiController extends JSONController {
 
     @Reference(check = false)
     private KongJwtRpc kongJwtRest;
+
+    @Reference(check = false)
+    private MailRpc mailRpc;
+
+
     /**
      * 登入接口，返回access_token与refresh_token
      * access_token用于应用访问

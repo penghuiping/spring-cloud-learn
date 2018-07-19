@@ -1,4 +1,4 @@
-package com.php25.notifyservice.client.rest;
+package com.php25.notifyservice.client.rpc;
 
 /**
  * Created by Zhangbing on 2017/4/17.
