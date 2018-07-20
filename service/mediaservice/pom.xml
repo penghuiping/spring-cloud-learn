@@ -15,8 +15,8 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>mediaservice-server</module>
         <module>mediaservice-client</module>
+        <module>mediaservice-server</module>
     </modules>
     <packaging>pom</packaging>
 </project>

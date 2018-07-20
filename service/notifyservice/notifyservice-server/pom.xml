@@ -20,10 +20,6 @@
             <artifactId>common-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jsms-client</artifactId>
         </dependency>
@@ -44,10 +40,6 @@
         <dependency>
             <groupId>com.php25.service.notifyservice.client</groupId>
             <artifactId>notifyservice-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.boot</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

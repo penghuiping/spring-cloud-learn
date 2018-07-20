@@ -67,9 +67,14 @@
                 <version>${notifyservice.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.php25.service.notifyservice.server</groupId>
-                <artifactId>notifyservice-server</artifactId>
-                <version>${notifyservice.version}</version>
+                <groupId>com.php25.service.mediaservice.server</groupId>
+                <artifactId>mediaservice-server</artifactId>
+                <version>${mediaservice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.php25.service.mediaservice.client</groupId>
+                <artifactId>mediaservice-client</artifactId>
+                <version>${mediaservice.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
