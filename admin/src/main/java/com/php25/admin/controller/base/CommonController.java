@@ -27,17 +27,13 @@ import java.util.Map;
 @RequestMapping("/admin/base/common")
 public class CommonController extends JSONController {
 
-    @Reference(version = "1.0.0",
-            application = "${dubbo.application.id}",
-            url = "dubbo://localhost:12345")
+    @Reference
     private AdminUserRpc adminUserRest;
 
     @Autowired
     private RedisService redisService;
 
-    @Reference(version = "1.0.0",
-            application = "${dubbo.application.id}",
-            url = "dubbo://localhost:12345")
+    @Reference
     private TokenRpc<String> tokenRest;
 
     @ApiOperation(value = "登入", notes = "登入")

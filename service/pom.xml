@@ -16,6 +16,7 @@
     <modules>
         <module>userservice</module>
         <module>notifyservice</module>
+        <module>mediaservice</module>
     </modules>
     <packaging>pom</packaging>
 </project>
