@@ -26,6 +26,8 @@
         <mediaservice.version>0.0.1-SNAPSHOT</mediaservice.version>
         <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
         <common-dependencies>0.0.1.RELEASE</common-dependencies>
+        <simplemagic.version>1.12</simplemagic.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
         <java.version>1.8</java.version>
     </properties>
 
@@ -45,6 +47,16 @@
                 <version>${common-dependencies}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.j256.simplemagic</groupId>
+                <artifactId>simplemagic</artifactId>
+                <version>${simplemagic.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.php25.service.userservice.client</groupId>

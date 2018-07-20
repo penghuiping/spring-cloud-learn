@@ -64,7 +64,10 @@
         <dependency>
             <groupId>com.j256.simplemagic</groupId>
             <artifactId>simplemagic</artifactId>
-            <version>1.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
         </dependency>
         <dependency>
             <groupId>com.php25.service.mediaservice.client</groupId>
