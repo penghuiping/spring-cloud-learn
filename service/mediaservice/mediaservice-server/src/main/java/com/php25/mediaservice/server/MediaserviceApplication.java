@@ -1,4 +1,4 @@
-package com.php25.notifyservice.server;
+package com.php25.mediaservice.server;
 
 import com.php25.common.repository.impl.BaseRepositoryImpl;
 import org.springframework.boot.SpringApplication;

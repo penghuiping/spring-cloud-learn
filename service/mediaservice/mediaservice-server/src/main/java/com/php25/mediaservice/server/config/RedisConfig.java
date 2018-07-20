@@ -1,4 +1,4 @@
-package com.php25.notifyservice.server.config;
+package com.php25.mediaservice.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.service.RedisService;
