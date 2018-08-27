@@ -1,8 +1,9 @@
 package com.php25.userservice.server.service.impl;
 
-import com.php25.common.dto.DataGridPageDto;
-import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.common.specification.BaseSpecsFactory;
+import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.specification.BaseSpecsFactory;
+import com.php25.common.jpa.service.BaseServiceImpl;
+import com.php25.common.jpa.specification.BaseJpaSpecs;
 import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -126,7 +128,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         Assert.notNull(pageSize, "pageSize不能为null");
         Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<Customer> customerPage = customerRepository.findAll(BaseSpecsFactory.getJpaInstance().getSpecs(searchParams), pageRequest);
+        Page<Customer> customerPage = customerRepository.findAll(BaseSpecsFactory.<Specification<Customer>>getInstance(BaseJpaSpecs.class).getSpecs(searchParams), pageRequest);
         List<CustomerDto> customerDtos = customerPage.getContent().parallelStream().map(customer -> {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);

@@ -48,6 +48,6 @@ public class RouterConfig {
     public GatewayFilter jwtFilter() {
         JwtFilter jwtFilter = new JwtFilter();
         jwtFilter.setTokenJwtRpc(tokenJwtRpc);
-        return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do")));
+        return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do","/api/common/render.do")));
     }
 }

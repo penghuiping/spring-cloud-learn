@@ -2,9 +2,9 @@ package com.php25.userservice.server.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.php25.common.service.IdGeneratorService;
-import com.php25.common.service.RedisService;
-import com.php25.common.util.DigestUtil;
+import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.util.DigestUtil;
+import com.php25.common.redis.RedisService;
 import com.php25.userservice.server.service.TokenJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -62,7 +62,9 @@ public class TokenJwtServiceImpl implements TokenJwtService {
 
     @Override
     public Boolean verifyToken(String token) {
-        if (!Jwts.parser().isSigned(token)) return false;
+        if (!Jwts.parser().isSigned(token)) {
+            return false;
+        }
         Claims claims = parseJwtToken(token);
         String id = claims.getIssuer();
         if (redisService.exists(REDIS_JWT + id)) {
@@ -79,8 +81,9 @@ public class TokenJwtServiceImpl implements TokenJwtService {
     public String getKeyByToken(String token) {
         String id = parseJwtToken(token).getIssuer();
         String key = null;
-        if (redisService.exists(REDIS_JWT + id))
+        if (redisService.exists(REDIS_JWT + id)) {
             key = redisService.get(REDIS_JWT + id, String.class);
+        }
         return key;
     }
 

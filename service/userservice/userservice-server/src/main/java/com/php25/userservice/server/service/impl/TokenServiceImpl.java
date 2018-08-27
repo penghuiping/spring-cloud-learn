@@ -1,8 +1,8 @@
 package com.php25.userservice.server.service.impl;
 
-import com.php25.common.service.IdGeneratorService;
-import com.php25.common.service.RedisService;
-import com.php25.common.util.StringUtil;
+import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.redis.RedisService;
 import com.php25.userservice.server.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +44,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      * @author penghuiping
      * @timer 2017/1/24
      */
+    @Override
     public Map<String, String> generateToken(T obj) {
         Assert.notNull(obj, "obj不能为null");
         if (obj instanceof String || obj instanceof Long) {
@@ -82,6 +83,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      * @author penghuiping
      * @timer 2017/1/24
      */
+    @Override
     public Map<String, String> getToken(String refreshToken) {
         Assert.hasLength(refreshToken, "refreshToken不能为空");
         String obj = redisService.get(refreshToken, String.class);
@@ -139,6 +141,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      * @author penghuiping
      * @timer 2017/1/24
      */
+    @Override
     public Boolean checkTokenValidation(String token, Class<T> cls) {
         Assert.hasLength(token, "token不能为空");
         Assert.notNull(cls, "cls不能为null");
@@ -156,6 +159,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      * @author penghuiping
      * @timer 2017/1/24
      */
+    @Override
     public Long getAccessTokenExpireTime() {
         return access_token_expire_time;
     }
@@ -167,6 +171,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      * @author penghuiping
      * @timer 2017/1/24
      */
+    @Override
     public Long getRefreshTokenExpireTime() {
         return refresh_token_expire_time;
     }

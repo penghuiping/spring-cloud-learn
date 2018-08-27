@@ -1,6 +1,6 @@
 package com.php25.userservice.server.repository;
 
-import com.php25.common.repository.BaseRepository;
+import com.php25.common.jpa.repository.BaseRepository;
 import com.php25.userservice.server.model.Customer;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

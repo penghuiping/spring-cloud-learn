@@ -1,6 +1,6 @@
 package com.php25.userservice.server;
 
-import com.php25.common.repository.impl.BaseRepositoryImpl;
+import com.php25.common.jpa.repository.BaseRepositoryImpl;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;

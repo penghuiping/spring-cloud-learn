@@ -1,6 +1,6 @@
 package com.php25.userservice.server.service.impl;
 
-import com.php25.common.service.impl.BaseServiceImpl;
+import com.php25.common.jpa.service.BaseServiceImpl;
 import com.php25.userservice.client.dto.AdminMenuButtonDto;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.server.model.AdminMenuButton;
@@ -41,7 +41,9 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     public Optional<AdminMenuButtonDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
         AdminMenuButton adminMenuButton = adminMenuButtonRepository.findById(id).orElse(null);
-        if (adminMenuButton == null) return Optional.empty();
+        if (adminMenuButton == null) {
+            return Optional.empty();
+        }
         Long parentId = null;
         if (null != adminMenuButton.getParent()) {
             adminMenuButton.getParent().getId();
@@ -81,7 +83,9 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
                 result = adminMenuButtonRepository.save(adminMenuButton);
             } else {
                 AdminMenuButton parent = adminMenuButtonRepository.findById(menu.getParentId()).orElse(null);
-                if (null == parent) return Optional.empty();
+                if (null == parent) {
+                    return Optional.empty();
+                }
 //                parent.setIsLeaf(true);
                 adminMenuButtonRepository.save(parent);
                 AdminMenuButton adminMenuButton = new AdminMenuButton();
@@ -170,8 +174,9 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     //此方法用于转换对象
     private AdminMenuButtonDto trans(AdminMenuButton adminMenuButton) {
         Long parentId = null;
-        if (null != adminMenuButton.getParent())
+        if (null != adminMenuButton.getParent()) {
             parentId = adminMenuButton.getParent().getId();
+        }
         AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
         BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo, "children", "parent");
         adminMenuButtonBo.setParentId(parentId);

@@ -1,10 +1,11 @@
 package com.php25.userservice.server.service.impl;
 
 import com.google.common.collect.Lists;
-import com.php25.common.dto.DataGridPageDto;
-import com.php25.common.service.IdGeneratorService;
-import com.php25.common.service.impl.BaseServiceImpl;
-import com.php25.common.specification.BaseSpecsFactory;
+import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.specification.BaseSpecsFactory;
+import com.php25.common.jpa.service.BaseServiceImpl;
+import com.php25.common.jpa.specification.BaseJpaSpecs;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.server.model.AdminRole;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -61,7 +63,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     public Optional<AdminUserDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
         AdminUser adminUser = adminUserRepository.findById(id).orElse(null);
-        if (null == adminUser) return Optional.empty();
+        if (null == adminUser) {
+            return Optional.empty();
+        }
         AdminUserDto adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
         List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
@@ -73,19 +77,22 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
         return Optional.ofNullable(adminUserDto);
     }
 
+    @Override
     public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids) {
         return findAll(ids, true);
     }
 
+    @Override
     public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy) {
         Assert.notEmpty(Lists.newArrayList(ids), "ids至少需要一个元素");
         Assert.notNull(lazy, "lazy需要填入true或者false");
         return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAllById(ids)).stream().map(adminUser -> {
             AdminUserDto temp = new AdminUserDto();
-            if (lazy)
+            if (lazy) {
                 BeanUtils.copyProperties(adminUser, temp, "roles", "menus");
-            else
+            } else {
                 BeanUtils.copyProperties(adminUser, temp);
+            }
             return temp;
         }).collect(Collectors.toList()));
     }
@@ -148,7 +155,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
         Assert.notNull(pageSize, "pageSize不能为null");
         Assert.hasText(searchParams, "searchParams不能为空,如没有搜索条件请使用[]");
         PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecsFactory.getJpaInstance().getSpecs(searchParams), pageRequest);
+        Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecsFactory.<Specification<AdminUser>>getInstance(BaseJpaSpecs.class).getSpecs(searchParams), pageRequest);
         List<AdminUserDto> adminUserBos = userPage.getContent().stream().map(adminUser -> {
             AdminUserDto adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
@@ -179,7 +186,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             }).collect(Collectors.toList());
             adminUserDto.setRoles(adminRoleDtos);
             return Optional.ofNullable(adminUserDto);
-        } else
+        } else {
             return Optional.empty();
+        }
     }
 }

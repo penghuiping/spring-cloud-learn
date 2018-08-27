@@ -2,7 +2,7 @@ package com.php25.mediaservice.server.service.impl;
 
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
-import com.php25.common.util.DigestUtil;
+import com.php25.common.core.util.DigestUtil;
 import com.php25.mediaservice.server.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

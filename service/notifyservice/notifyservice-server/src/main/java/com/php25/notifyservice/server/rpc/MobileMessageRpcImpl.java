@@ -23,6 +23,7 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
      * @param mobile
      * @return
      */
+    @Override
     public Boolean sendSMS(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机") String mobile) {
         return mobileMessageService.newMessage(mobile);
     }
@@ -34,6 +35,7 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
      * @param code
      * @return
      */
+    @Override
     public Boolean findOneByPhoneAndCode(@Pattern(regexp = "[0-9]{11}", message = "请输入正确手机") String mobile, @NotBlank String code) {
         return mobileMessageService.findOneByPhoneAndCode(mobile, code);
     }

@@ -34,8 +34,9 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
             //先获取loginToken
             String token = request.getParameter("token");
             String value = request.getHeader("Content-Type");
-            if ("application/json".equals(value))
+            if ("application/json".equals(value)) {
                 response.addHeader("Content-Type", "application/json;charset=UTF-8");
+            }
 
             //如果为空直接返回未登入提示
             if (StringUtils.isEmpty(token)) {

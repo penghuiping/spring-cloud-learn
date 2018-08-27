@@ -3,9 +3,9 @@ package com.php25.api.base.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.kaptcha.Kaptcha;
-import com.php25.common.controller.JSONController;
-import com.php25.common.dto.JSONResponse;
-import com.php25.common.exception.JsonException;
+import com.php25.common.mvc.JSONController;
+import com.php25.common.mvc.JSONResponse;
+import com.php25.common.mvc.JsonException;
 import com.php25.notifyservice.client.rpc.MailRpc;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.rpc.CustomerRpc;
@@ -17,7 +17,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Created by penghuiping on 2018/3/15.

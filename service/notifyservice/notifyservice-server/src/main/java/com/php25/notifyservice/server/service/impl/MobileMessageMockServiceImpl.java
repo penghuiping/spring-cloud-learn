@@ -1,8 +1,8 @@
 package com.php25.notifyservice.server.service.impl;
 
 import cn.jsms.api.common.SMSClient;
-import com.php25.common.service.RedisService;
-import com.php25.common.util.StringUtil;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.redis.RedisService;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,9 @@ public class MobileMessageMockServiceImpl implements MobileMessageService {
         if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
             redisService.remove("sms" + mobile);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override

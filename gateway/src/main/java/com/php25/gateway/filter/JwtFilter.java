@@ -92,8 +92,9 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
         public Config(List<String> excludeUris) {
             if (null == excludeUris) {
                 this.excludeUris = new ArrayList<>();
-            } else
+            } else {
                 this.excludeUris = excludeUris;
+            }
         }
     }
 }

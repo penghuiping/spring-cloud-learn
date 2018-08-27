@@ -5,9 +5,9 @@ import cn.jiguang.common.resp.APIRequestException;
 import cn.jsms.api.SendSMSResult;
 import cn.jsms.api.common.SMSClient;
 import cn.jsms.api.common.model.SMSPayload;
-import com.php25.common.service.RedisService;
-import com.php25.common.util.RandomUtil;
-import com.php25.common.util.StringUtil;
+import com.php25.common.core.util.RandomUtil;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.redis.RedisService;
 import com.php25.notifyservice.client.contant.Constant;
 import com.php25.notifyservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,9 @@ public class MobileMessageServiceImpl implements MobileMessageService {
         if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
             redisService.remove("sms" + mobile);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override

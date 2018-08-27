@@ -1,10 +1,10 @@
 package com.php25.admin.controller.base;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.php25.common.controller.JSONController;
-import com.php25.common.dto.JSONResponse;
-import com.php25.common.exception.JsonException;
-import com.php25.common.service.RedisService;
+import com.php25.common.mvc.JSONController;
+import com.php25.common.mvc.JSONResponse;
+import com.php25.common.mvc.JsonException;
+import com.php25.common.redis.RedisService;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.client.rpc.AdminUserRpc;
 import com.php25.userservice.client.rpc.TokenRpc;
