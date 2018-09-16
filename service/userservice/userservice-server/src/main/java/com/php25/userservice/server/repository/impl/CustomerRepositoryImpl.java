@@ -1,111 +1,71 @@
 package com.php25.userservice.server.repository.impl;
 
+import com.php25.common.jdbc.Db;
+import com.php25.common.jdbc.repository.BaseRepositoryImpl;
 import com.php25.userservice.server.model.Customer;
+import com.php25.userservice.server.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by penghuiping on 2/20/15.
+ * 用于操作Customer实体类
+ *
+ * @author penghuiping
+ * @date 2015-02-20
  */
-public class CustomerRepositoryImpl {
-    @PersistenceContext
-    private EntityManager entityManager;
+@Repository
+public class CustomerRepositoryImpl extends BaseRepositoryImpl<Customer, Long> implements CustomerRepository {
+
+    @Autowired
+    private Db db;
 
     @Transactional
+    @Override
     public Customer findByUsernameAndPassword(String username, String password) {
-        Query query = entityManager.createQuery("select a from Customer a where a.username=?1 and a.password=?2 and a.enable=1");
-        query.setParameter(1, username);
-        query.setParameter(2, password);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("username", username).andEq("password", password).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneByPhoneAndPassword(String phone, String password) {
-        Query query = entityManager.createQuery("select a from Customer a where a.mobile=?1 and a.password=?2 and a.enable=1");
-        query.setParameter(1, phone);
-        query.setParameter(2, password);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("mobile", phone).andEq("password", password).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneByUidAndType(String uid, Integer type) {
-        Query query = entityManager.createQuery("select a from Customer a where a.mobile=?1 and a.type=?2 and a.enable=1");
-        query.setParameter(1, uid);
-        query.setParameter(2, type);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("mobile", uid).andEq("type", type).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneByPhone(String phone) {
-        Query query = entityManager.createQuery("select a from Customer a where a.mobile=?1 and a.enable=1");
-        query.setParameter(1, phone);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("mobile", phone).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneByWx(String wx) {
-        Query query = entityManager.createQuery("select a from Customer a where a.wx=?1 and a.enable=1");
-        query.setParameter(1, wx);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("wx", wx).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneByQQ(String qq) {
-        Query query = entityManager.createQuery("select a from Customer a where a.qq=?1 and a.enable=1");
-        query.setParameter(1, qq);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("qq", qq).andEq("enable", 1).single();
     }
 
     @Transactional
+    @Override
     public Customer findOneBySina(String weibo) {
-        Query query = entityManager.createQuery("select a from Customer a where a.weibo=?1 and a.enable=1");
-        query.setParameter(1, weibo);
-        List<Customer> rs = query.setFirstResult(0).setMaxResults(1).getResultList();
-        if (rs.size() > 0) {
-            Customer customer = rs.get(0);
-            return customer;
-        } else {
-            return null;
-        }
+        return db.cnd(Customer.class).whereEq("weibo", weibo).andEq("enable", 1).single();
+    }
+
+    @Override
+    public List<Customer> findByName(String name) {
+        return db.cnd(Customer.class).whereLike("username", "%" + name + "%").andEq("enable", 1).select();
     }
 }

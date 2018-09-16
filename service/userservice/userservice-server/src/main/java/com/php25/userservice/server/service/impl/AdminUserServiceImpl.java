@@ -3,9 +3,7 @@ package com.php25.userservice.server.service.impl;
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.specification.BaseSpecsFactory;
-import com.php25.common.jpa.service.BaseServiceImpl;
-import com.php25.common.jpa.specification.BaseJpaSpecs;
+import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.server.model.AdminRole;
@@ -18,15 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +45,6 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     @Autowired
     public void setAdminUserRepository(AdminUserRepository adminUserRepository) {
         this.adminUserRepository = adminUserRepository;
-        this.baseRepository = adminUserRepository;
     }
 
     @Autowired
@@ -151,13 +144,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        Assert.notNull(pageNum, "pageNum不能为null");
-        Assert.notNull(pageSize, "pageSize不能为null");
-        Assert.hasText(searchParams, "searchParams不能为空,如没有搜索条件请使用[]");
-        PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<AdminUser> userPage = adminUserRepository.findAll(BaseSpecsFactory.<Specification<AdminUser>>getInstance(BaseJpaSpecs.class).getSpecs(searchParams), pageRequest);
-        List<AdminUserDto> adminUserBos = userPage.getContent().stream().map(adminUser -> {
-            AdminUserDto adminUserDto = new AdminUserDto();
+        return this.query(pageNum, pageSize, searchParams, (adminUser, adminUserDto) -> {
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
             List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
                 AdminRoleDto adminRoleDto = new AdminRoleDto();
@@ -165,10 +152,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
                 return adminRoleDto;
             }).collect(Collectors.toList());
             adminUserDto.setRoles(adminRoleDtos);
-            return adminUserDto;
-        }).collect(Collectors.toList());
-        PageImpl<AdminUserDto> adminUserPage = new PageImpl<AdminUserDto>(adminUserBos, null, userPage.getTotalElements());
-        return Optional.ofNullable(toDataGridPageDto(adminUserPage));
+        }, Sort.Direction.DESC, "id");
     }
 
     @Override

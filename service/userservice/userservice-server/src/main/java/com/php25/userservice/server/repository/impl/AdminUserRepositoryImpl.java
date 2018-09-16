@@ -1,34 +1,31 @@
 package com.php25.userservice.server.repository.impl;
 
+import com.php25.common.jdbc.Db;
+import com.php25.common.jdbc.repository.BaseRepositoryImpl;
 import com.php25.userservice.server.model.AdminUser;
+import com.php25.userservice.server.repository.AdminUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 /**
- * Created by penghuiping on 2/20/15.
+ * @author penghuiping
+ * @date 2015-02-20
  */
-public class AdminUserRepositoryImpl {
-    @PersistenceContext
-    private EntityManager entityManager;
-
+@Repository
+public class AdminUserRepositoryImpl extends BaseRepositoryImpl<AdminUser, Long> implements AdminUserRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private Db db;
+
     @Transactional
+    @Override
     public AdminUser findByLoginNameAndPassword(String loginName, String password) {
-        Query query = entityManager.createQuery("select a from AdminUser a where a.username=?1 and a.password=?2 and a.enable=1");
-        query.setParameter(1, loginName);
-        query.setParameter(2, password);
-        try {
-            return (AdminUser) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return db.cnd(AdminUser.class).whereEq("username", loginName).andEq("password", password).andEq("enable", 1).single();
     }
+
+
 }

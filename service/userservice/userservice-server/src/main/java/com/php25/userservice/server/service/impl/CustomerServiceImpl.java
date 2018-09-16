@@ -1,9 +1,7 @@
 package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.specification.BaseSpecsFactory;
-import com.php25.common.jpa.service.BaseServiceImpl;
-import com.php25.common.jpa.specification.BaseJpaSpecs;
+import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
@@ -12,15 +10,11 @@ import com.php25.userservice.server.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +35,6 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
-        this.baseRepository = customerRepository;
     }
 
 
@@ -50,30 +43,29 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         Assert.hasText(username, "用户名不能为空");
         Assert.hasText(password, "密码不能为空");
         Customer customer = customerRepository.findByUsernameAndPassword(username, password);
-        if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
-            BeanUtils.copyProperties(customer, customerDto);
-            return Optional.ofNullable(customerDto);
-        } else return Optional.ofNullable(null);
+        return transOptional(customer);
     }
 
     @Override
-    public Optional<CustomerDto> findByUuidAndType(String uuid, Integer type) {
+    public Optional<CustomerDto> findByUuidAndType(String uuid, CustomerUuidType type) {
         Assert.hasText(uuid, "uuid表示wx,weibo,qq账号,不能为空");
         Assert.notNull(type, "type不能为null");
         Customer customer = null;
-        if (type == CustomerUuidType.weixin.value) {
-            customer = customerRepository.findOneByWx(uuid);
-        } else if (type == CustomerUuidType.qq.value) {
-            customer = customerRepository.findOneByQQ(uuid);
-        } else if (type == CustomerUuidType.weibo.value) {
-            customer = customerRepository.findOneBySina(uuid);
+        switch (type) {
+            case qq:
+                customer = customerRepository.findOneByQQ(uuid);
+                break;
+            case weibo:
+                customer = customerRepository.findOneBySina(uuid);
+                break;
+            case weixin:
+                customer = customerRepository.findOneByWx(uuid);
+                break;
+            default:
+                customer = customerRepository.findOneByWx(uuid);
+                break;
         }
-        if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
-            BeanUtils.copyProperties(customer, customerDto);
-            return Optional.ofNullable(customerDto);
-        } else return Optional.ofNullable(null);
+        return transOptional(customer);
 
     }
 
@@ -82,11 +74,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         Assert.hasText(phone, "手机不能为空");
         Assert.hasText(password, "密码不能为空");
         Customer customer = customerRepository.findOneByPhoneAndPassword(phone, password);
-        if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
-            BeanUtils.copyProperties(customer, customerDto);
-            return Optional.ofNullable(customerDto);
-        } else return Optional.ofNullable(null);
+        return transOptional(customer);
     }
 
 
@@ -94,11 +82,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
     public Optional<CustomerDto> findOneByPhone(String phone) {
         Assert.hasText(phone, "手机不能为空");
         Customer customer = customerRepository.findOneByPhone(phone);
-        if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
-            BeanUtils.copyProperties(customer, customerDto);
-            return Optional.ofNullable(customerDto);
-        } else return Optional.ofNullable(null);
+        return transOptional(customer);
     }
 
     @Override
@@ -111,52 +95,47 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         return super.save(obj);
     }
 
-    @Override
-    public Optional<List<CustomerDto>> findAll() {
-        List<Customer> customers = customerRepository.findAllEnabled();
-        List<CustomerDto> customerDtos = null;
-        if (null != customers && 0 < customers.size()) {
-            customerDtos = customers.stream().map(customer -> trans(customer)).collect(Collectors.toList());
-        }
-        return super.findAll();
-    }
-
 
     @Override
     public Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        Assert.notNull(pageNum, "pageNum不能为null");
-        Assert.notNull(pageSize, "pageSize不能为null");
-        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
-        PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<Customer> customerPage = customerRepository.findAll(BaseSpecsFactory.<Specification<Customer>>getInstance(BaseJpaSpecs.class).getSpecs(searchParams), pageRequest);
-        List<CustomerDto> customerDtos = customerPage.getContent().parallelStream().map(customer -> {
-            CustomerDto customerDto = new CustomerDto();
-            BeanUtils.copyProperties(customer, customerDto);
-            return customerDto;
-        }).collect(Collectors.toList());
-
-        PageImpl<CustomerDto> customerDtoPage = new PageImpl<CustomerDto>(customerDtos, null, customerPage.getTotalElements());
-        return Optional.ofNullable(toDataGridPageDto(customerDtoPage));
+        return this.query(pageNum, pageSize, searchParams, BeanUtils::copyProperties, Sort.Direction.DESC, "id");
     }
 
     @Override
     public Optional<List<CustomerDto>> query(String searchParams, Integer pageNum, Integer pageSize) {
-        Assert.notNull(pageNum, "pageNum不能为null");
-        Assert.notNull(pageSize, "pageSize不能为null");
-        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件可以用[]");
         Optional<DataGridPageDto<CustomerDto>> customerDtoDataGridPageDto = query(pageNum, pageSize, searchParams);
         if (customerDtoDataGridPageDto.isPresent()) {
             return Optional.ofNullable(customerDtoDataGridPageDto.get().getData());
         }
-        return Optional.ofNullable(null);
+        return Optional.empty();
     }
 
-
-    //此方法用来转化对象
+    /**
+     * 此方法用来转化对象
+     *
+     * @param customer
+     * @return
+     */
     private CustomerDto trans(Customer customer) {
         CustomerDto customerDto = new CustomerDto();
         BeanUtils.copyProperties(customer, customerDto);
         return customerDto;
+    }
+
+    /**
+     * model to dto
+     *
+     * @param customer
+     * @return
+     */
+    private Optional<CustomerDto> transOptional(Customer customer) {
+        if (null != customer) {
+            CustomerDto customerDto = new CustomerDto();
+            BeanUtils.copyProperties(customer, customerDto);
+            return Optional.ofNullable(customerDto);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

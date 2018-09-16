@@ -14,9 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.transaction.Transactional;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +36,7 @@ public class TokenJwtServiceImpl implements TokenJwtService {
 
     private static final String secret = "%TGB6yhn";
     private static final String REDIS_JWT = "jwt:";
-    private static final Long REDIS_KEY_EXPIRE_TIME = 1800l;
+    private static final Long REDIS_KEY_EXPIRE_TIME = 1800L;
     @Autowired
     private IdGeneratorService idGeneratorService;
 

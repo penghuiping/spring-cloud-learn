@@ -1,19 +1,19 @@
-package com.php25.notifyservice.server;
+package com.php25.userservice.server;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * @Auther: penghuiping
- * @Date: 2018/7/18 16:43
- * @Description:
+ * @author penghuiping
+ * @date
  */
 @SpringBootApplication
 @EnableTransactionManagement
-public class NotifyserviceApplication {
+public class UserServiceApplication {
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(NotifyserviceApplication.class);
+        SpringApplication app = new SpringApplication(UserServiceApplication.class);
         app.run(args);
     }
 }

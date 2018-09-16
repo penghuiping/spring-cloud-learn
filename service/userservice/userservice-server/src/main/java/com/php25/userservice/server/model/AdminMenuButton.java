@@ -2,7 +2,10 @@ package com.php25.userservice.server.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
 
@@ -23,11 +26,9 @@ public class AdminMenuButton {
     @Column
     private String url;//菜单或者按钮对应的接口url
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<AdminMenuButton> children;
 
-    @ManyToOne
-    @JoinColumn(name = "parent")
+    @Column(name = "parent")
     private AdminMenuButton parent;//父节点
 
     @Column(name = "is_leaf")

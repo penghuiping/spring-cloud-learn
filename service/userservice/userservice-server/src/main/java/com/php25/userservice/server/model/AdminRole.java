@@ -2,7 +2,10 @@ package com.php25.userservice.server.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
 
@@ -35,11 +38,6 @@ public class AdminRole {
     @Column
     private Integer enable;//是否有效 0:无效 1:有效 2:软删除
 
-    @ManyToMany
-    @JoinTable(
-            name = "userservice_role_menu",
-            joinColumns = {@JoinColumn(name = "role_id")},
-            inverseJoinColumns = {@JoinColumn(name = "menu_id")}
-    )
+
     private List<AdminMenuButton> adminMenuButtons;
 }

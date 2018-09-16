@@ -21,9 +21,9 @@
         <docker.registry.port>30007</docker.registry.port>
         <spring.boot.maven.plugin>2.0.0.RELEASE</spring.boot.maven.plugin>
         <fabric8.maven.plugin>3.5.33</fabric8.maven.plugin>
-        <userservice.version>0.0.1-SNAPSHOT</userservice.version>
-        <notifyservice.version>0.0.1-SNAPSHOT</notifyservice.version>
-        <mediaservice.version>0.0.1-SNAPSHOT</mediaservice.version>
+        <userservice.version>0.0.2-SNAPSHOT</userservice.version>
+        <notifyservice.version>0.0.2-SNAPSHOT</notifyservice.version>
+        <mediaservice.version>0.0.2-SNAPSHOT</mediaservice.version>
         <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
         <common-dependencies>0.0.1.RELEASE</common-dependencies>
         <simplemagic.version>1.12</simplemagic.version>

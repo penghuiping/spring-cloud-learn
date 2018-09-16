@@ -2,7 +2,10 @@ package com.php25.userservice.server.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 角色-菜单中间关系表
@@ -16,11 +19,9 @@ public class RoleMenu {
     @Id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @Column(name = "role_id")
     private AdminRole adminRole;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @Column(name = "menu_id")
     private AdminMenuButton adminMenuButton;
 }

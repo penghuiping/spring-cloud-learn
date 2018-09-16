@@ -2,9 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.specification.BaseSpecsFactory;
-import com.php25.common.jpa.service.BaseServiceImpl;
-import com.php25.common.jpa.specification.BaseJpaSpecs;
+import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.client.dto.AdminMenuButtonDto;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.server.model.AdminMenuButton;
@@ -18,14 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +44,6 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     @Autowired
     public void setAdminRoleRepository(AdminRoleRepository adminRoleRepository) {
         this.adminRoleRepository = adminRoleRepository;
-        this.baseRepository = adminRoleRepository;
     }
 
     @Autowired
@@ -142,19 +135,10 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
 
     @Override
     public Optional<DataGridPageDto<AdminRoleDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        Assert.notNull(pageNum, "pageNum不能为null");
-        Assert.notNull(pageSize, "pageSize不能为null");
-        Assert.hasText(searchParams, "searchParams不能为空，如没有搜索条件请使用[]");
-        PageRequest pageRequest = new PageRequest(pageNum - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<AdminRole> userPage = adminRoleRepository.findAll(BaseSpecsFactory.<Specification<AdminRole>>getInstance(BaseJpaSpecs.class).getSpecs(searchParams), pageRequest);
-        List<AdminRoleDto> adminRoleBos = userPage.getContent().parallelStream().map(adminRole -> {
-            AdminRoleDto adminRoleDto = new AdminRoleDto();
+        Optional<DataGridPageDto<AdminRoleDto>> userPage = this.query(pageNum, pageSize, searchParams, (adminRole, adminRoleDto) -> {
             BeanUtils.copyProperties(adminRole, adminRoleDto, "adminMenuButtons");
-            return adminRoleDto;
-        }).collect(Collectors.toList());
-
-        PageImpl<AdminRoleDto> adminRolePage = new PageImpl<AdminRoleDto>(adminRoleBos, null, userPage.getTotalElements());
-        return Optional.ofNullable(toDataGridPageDto(adminRolePage));
+        }, Sort.Direction.DESC, "id");
+        return userPage;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.php25.userservice.server.service;
 
 import com.php25.common.core.service.BaseService;
 import com.php25.common.core.service.SoftDeletable;
+import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
 
@@ -37,7 +38,7 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @author penghuiping
      * @Time 16/9/2.
      */
-    Optional<CustomerDto> findByUuidAndType(String uuid, Integer type);
+    Optional<CustomerDto> findByUuidAndType(String uuid, CustomerUuidType type);
 
     /**
      * 根据联系方式和密码查询

@@ -2,7 +2,10 @@ package com.php25.userservice.server.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 用户-角色实体类
@@ -16,11 +19,9 @@ public class UserRole {
     @Id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @Column(name = "user_id")
     private AdminUser adminUser;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @Column(name = "role_id")
     private AdminRole adminRole;
 }

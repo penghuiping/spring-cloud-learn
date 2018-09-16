@@ -46,7 +46,7 @@ public class Customer {
     @Column
     private String password;//密码
 
-    @Column(name = "email")
+    @Column
     private String email;//邮箱
 
     @Column(name = "create_time")

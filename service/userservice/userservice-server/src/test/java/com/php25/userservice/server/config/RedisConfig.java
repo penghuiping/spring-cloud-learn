@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
- * Created by penghuiping on 16/8/26.
+ * @author penghuiping
+ * @date 2016-08-26
  */
 @Configuration
 public class RedisConfig {

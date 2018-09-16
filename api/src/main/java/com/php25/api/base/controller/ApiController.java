@@ -61,9 +61,9 @@ public class ApiController extends JSONController {
     @PostMapping(value = "/common/SSOLogin.do")
     public ResponseEntity<JSONResponse> SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password, @RequestParam @NotEmpty String kaptchaCode) throws JsonException {
         //先效验图形验证码
-        if (!kaptcha.validate(kaptchaCode)) {
-            return ResponseEntity.ok(failed("登入失败"));
-        }
+//        if (!kaptcha.validate(kaptchaCode)) {
+//            return ResponseEntity.ok(failed("登入失败"));
+//        }
 
         CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
         if (customer != null) {
