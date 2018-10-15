@@ -24,7 +24,7 @@
         <userservice.version>0.0.2-SNAPSHOT</userservice.version>
         <notifyservice.version>0.0.2-SNAPSHOT</notifyservice.version>
         <mediaservice.version>0.0.2-SNAPSHOT</mediaservice.version>
-        <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+        <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <common-dependencies>0.0.1.RELEASE</common-dependencies>
         <simplemagic.version>1.12</simplemagic.version>
         <kaptcha.version>2.3.2</kaptcha.version>

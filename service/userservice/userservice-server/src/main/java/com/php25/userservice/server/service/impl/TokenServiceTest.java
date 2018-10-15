@@ -23,7 +23,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @Primary
-public class TokenServiceImpl<T> implements TokenService<T> {
+public class TokenServiceTest<T> implements TokenService<T> {
 
     @Value(value = "${app.oath2.access_token.expire_time:#{3600l}}")
     private Long access_token_expire_time;
