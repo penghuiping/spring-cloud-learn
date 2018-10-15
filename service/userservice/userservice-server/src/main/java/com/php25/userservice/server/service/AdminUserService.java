@@ -25,7 +25,7 @@ public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, L
      * @author penghuiping
      * @Time 2016-08-12
      */
-    Optional<AdminUserDto> findByLoginNameAndPassword(String loginName, String password);
+    Optional<AdminUserDto> findByUsernameAndPassword(String loginName, String password);
 
 
     /**

@@ -3,12 +3,16 @@ package com.php25.userservice.server.service.impl;
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.specification.Operator;
+import com.php25.common.core.specification.SearchParam;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.client.dto.AdminRoleDto;
 import com.php25.userservice.client.dto.AdminUserDto;
 import com.php25.userservice.server.model.AdminRole;
 import com.php25.userservice.server.model.AdminUser;
 import com.php25.userservice.server.model.UserRole;
+import com.php25.userservice.server.repository.AdminRoleRepository;
 import com.php25.userservice.server.repository.AdminUserRepository;
 import com.php25.userservice.server.repository.UserRoleRepository;
 import com.php25.userservice.server.service.AdminUserService;
@@ -38,6 +42,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     private AdminUserRepository adminUserRepository;
 
     private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private AdminRoleRepository adminRoleRepository;
 
     @Autowired
     private IdGeneratorService idGeneratorService;
@@ -106,9 +113,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             }).collect(Collectors.toList());
             adminUserRepository.save(adminUser);
             for (AdminRole adminRole : adminRoles) {
-                UserRole userRole = userRoleRepository.findOneByRoleIdAndUserId(adminRole.getId(), adminUser.getId());
-                if (null == userRole) {
-                    userRole = new UserRole();
+                Optional<UserRole> userRoleOptional = userRoleRepository.findOneByRoleIdAndUserId(adminRole.getId(), adminUser.getId());
+                if (!userRoleOptional.isPresent()) {
+                    UserRole userRole = new UserRole();
                     userRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                     userRole.setAdminUser(adminUser);
                     userRole.setAdminRole(adminRole);
@@ -156,20 +163,32 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     }
 
     @Override
-    public Optional<AdminUserDto> findByLoginNameAndPassword(String loginName, String password) {
+    public Optional<AdminUserDto> findByUsernameAndPassword(String loginName, String password) {
         Assert.hasText(loginName, "loginName不能为空");
         Assert.hasText(loginName, "password不能为空");
-        AdminUser adminUser = adminUserRepository.findByLoginNameAndPassword(loginName, password);
+        AdminUser adminUser = adminUserRepository.findByUsernameAndPassword(loginName, password);
         if (null != adminUser) {
             AdminUserDto adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
+
+            //根据userId获取所有的role
+            Optional<List<UserRole>> optionalUserRoles = userRoleRepository.findAllByUserId(adminUser.getId());
+            if (optionalUserRoles.isPresent() && optionalUserRoles.get().size() > 0) {
+                log.info(optionalUserRoles.get().toString());
+                List<Long> ids = optionalUserRoles.get().stream().map(UserRole::getId).collect(Collectors.toList());
+                List<AdminRole> adminRoles = adminRoleRepository.findAll(SearchParamBuilder.builder().append(SearchParam.of("id", Operator.IN, ids)));
+                adminUser.setRoles(adminRoles);
+            } else {
+                adminUser.setRoles(Lists.newArrayList());
+            }
+
             List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
                 AdminRoleDto adminRoleDto = new AdminRoleDto();
                 BeanUtils.copyProperties(role, adminRoleDto, "adminMenuButtons");
                 return adminRoleDto;
             }).collect(Collectors.toList());
             adminUserDto.setRoles(adminRoleDtos);
-            return Optional.ofNullable(adminUserDto);
+            return Optional.of(adminUserDto);
         } else {
             return Optional.empty();
         }

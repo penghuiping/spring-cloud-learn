@@ -23,7 +23,7 @@ public class AdminUserRepositoryImpl extends BaseRepositoryImpl<AdminUser, Long>
 
     @Transactional
     @Override
-    public AdminUser findByLoginNameAndPassword(String loginName, String password) {
+    public AdminUser findByUsernameAndPassword(String loginName, String password) {
         return db.cnd(AdminUser.class).whereEq("username", loginName).andEq("password", password).andEq("enable", 1).single();
     }
 

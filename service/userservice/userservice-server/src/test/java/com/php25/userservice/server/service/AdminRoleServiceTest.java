@@ -36,6 +36,9 @@ public class AdminRoleServiceTest {
 
     @Test
     public void findAll() {
-
+        Optional<List<AdminRoleDto>> adminRoleDtosOptional = adminRoleService.findAll();
+        if (adminRoleDtosOptional.isPresent()) {
+            log.info(JsonUtil.toPrettyJson(adminRoleDtosOptional.get()));
+        }
     }
 }

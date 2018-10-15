@@ -9,6 +9,13 @@ import com.php25.userservice.server.model.AdminUser;
  */
 public interface AdminUserRepository extends BaseRepository<AdminUser, Long> {
 
-    AdminUser findByLoginNameAndPassword(String username, String password);
+    /**
+     * 根据用户名与密码查询
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    AdminUser findByUsernameAndPassword(String username, String password);
 
 }
