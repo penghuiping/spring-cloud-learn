@@ -1,6 +1,5 @@
 package com.php25.userservice.server.rpc;
 
-import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.client.rpc.CustomerRpc;
 import com.php25.userservice.server.service.CustomerService;
@@ -29,11 +28,6 @@ public class CustomerRpcImpl implements CustomerRpc {
     @Override
     public CustomerDto findOneByUsernameAndPassword(String username, String password) {
         return customerService.findOneByUsernameAndPassword(username, password).get();
-    }
-
-    @Override
-    public CustomerDto findByUuidAndType(String uuid, Integer type) {
-        return customerService.findByUuidAndType(uuid, CustomerUuidType.values()[type]).get();
     }
 
     @Override

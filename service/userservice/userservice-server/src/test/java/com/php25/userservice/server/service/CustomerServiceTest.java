@@ -5,7 +5,6 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.CommonAutoConfigure;
 import lombok.extern.slf4j.Slf4j;
@@ -39,15 +38,6 @@ public class CustomerServiceTest {
     @Test
     public void findOneByUsernameAndPassword() {
         Optional<CustomerDto> customerDtoOptional = customerService.findOneByUsernameAndPassword("jack", "123456");
-        if (customerDtoOptional.isPresent()) {
-            System.out.println(JsonUtil.toPrettyJson(customerDtoOptional.get()));
-        }
-        Assert.assertTrue(customerDtoOptional.isPresent());
-    }
-
-    @Test
-    public void findByUuidAndType() {
-        Optional<CustomerDto> customerDtoOptional = customerService.findByUuidAndType("oLoLp1PzQivdAByVzUVOVdAW443c", CustomerUuidType.weixin);
         if (customerDtoOptional.isPresent()) {
             System.out.println(JsonUtil.toPrettyJson(customerDtoOptional.get()));
         }

@@ -26,18 +26,6 @@ public interface CustomerRpc {
     CustomerDto findOneByUsernameAndPassword(String username, String password);
 
     /**
-     * 根据uuid  和 type，查询出用户信息
-     * 根据uuid查询 uuid指的是 微信或者qq或者微博账号
-     *
-     * @param uuid
-     * @param type
-     * @return
-     * @author penghuiping
-     * @Time 16/9/2.
-     */
-    CustomerDto findByUuidAndType(String uuid, Integer type);
-
-    /**
      * 根据联系方式和密码查询
      *
      * @param phone

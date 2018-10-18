@@ -17,13 +17,5 @@ public interface CustomerRepository extends BaseRepository<Customer, Long> {
 
     Customer findOneByPhone(String phone);
 
-    Customer findOneByUidAndType(String uid, Integer type);
-
-    Customer findOneByWx(String wx);
-
-    Customer findOneByQQ(String qq);
-
-    Customer findOneBySina(String weibo);
-
     List<Customer> findByName(String name);
 }

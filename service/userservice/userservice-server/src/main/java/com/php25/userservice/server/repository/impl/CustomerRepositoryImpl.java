@@ -34,34 +34,11 @@ public class CustomerRepositoryImpl extends BaseRepositoryImpl<Customer, Long> i
         return db.cnd(Customer.class).whereEq("mobile", phone).andEq("password", password).andEq("enable", 1).single();
     }
 
-    @Transactional
-    @Override
-    public Customer findOneByUidAndType(String uid, Integer type) {
-        return db.cnd(Customer.class).whereEq("mobile", uid).andEq("type", type).andEq("enable", 1).single();
-    }
 
     @Transactional
     @Override
     public Customer findOneByPhone(String phone) {
         return db.cnd(Customer.class).whereEq("mobile", phone).andEq("enable", 1).single();
-    }
-
-    @Transactional
-    @Override
-    public Customer findOneByWx(String wx) {
-        return db.cnd(Customer.class).whereEq("wx", wx).andEq("enable", 1).single();
-    }
-
-    @Transactional
-    @Override
-    public Customer findOneByQQ(String qq) {
-        return db.cnd(Customer.class).whereEq("qq", qq).andEq("enable", 1).single();
-    }
-
-    @Transactional
-    @Override
-    public Customer findOneBySina(String weibo) {
-        return db.cnd(Customer.class).whereEq("weibo", weibo).andEq("enable", 1).single();
     }
 
     @Override

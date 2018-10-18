@@ -2,7 +2,6 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.jdbc.service.BaseServiceImpl;
-import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
 import com.php25.userservice.server.repository.CustomerRepository;
@@ -44,29 +43,6 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         Assert.hasText(password, "密码不能为空");
         Customer customer = customerRepository.findByUsernameAndPassword(username, password);
         return transOptional(customer);
-    }
-
-    @Override
-    public Optional<CustomerDto> findByUuidAndType(String uuid, CustomerUuidType type) {
-        Assert.hasText(uuid, "uuid表示wx,weibo,qq账号,不能为空");
-        Assert.notNull(type, "type不能为null");
-        Customer customer = null;
-        switch (type) {
-            case qq:
-                customer = customerRepository.findOneByQQ(uuid);
-                break;
-            case weibo:
-                customer = customerRepository.findOneBySina(uuid);
-                break;
-            case weixin:
-                customer = customerRepository.findOneByWx(uuid);
-                break;
-            default:
-                customer = customerRepository.findOneByWx(uuid);
-                break;
-        }
-        return transOptional(customer);
-
     }
 
     @Override

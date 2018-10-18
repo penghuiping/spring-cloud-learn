@@ -2,7 +2,6 @@ package com.php25.userservice.server.service;
 
 import com.php25.common.core.service.BaseService;
 import com.php25.common.core.service.SoftDeletable;
-import com.php25.userservice.client.constant.CustomerUuidType;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
 
@@ -27,18 +26,6 @@ public interface CustomerService extends BaseService<CustomerDto, Customer, Long
      * @Time 16/9/2.
      */
     Optional<CustomerDto> findOneByUsernameAndPassword(String username, String password);
-
-    /**
-     * 根据uuid  和 type，查询出用户信息
-     * 根据uuid查询 uuid指的是 微信或者qq或者微博账号
-     *
-     * @param uuid
-     * @param type
-     * @return
-     * @author penghuiping
-     * @Time 16/9/2.
-     */
-    Optional<CustomerDto> findByUuidAndType(String uuid, CustomerUuidType type);
 
     /**
      * 根据联系方式和密码查询

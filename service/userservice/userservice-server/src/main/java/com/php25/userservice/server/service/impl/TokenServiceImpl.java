@@ -2,6 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.core.util.TimeUtil;
 import com.php25.common.redis.RedisService;
 import com.php25.userservice.server.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,20 +102,12 @@ public class TokenServiceImpl<T> implements TokenService<T> {
             redisService.remove(token);
         }
 
-//        RAtomicLong rAtomicLong = ((RedisRedissonServiceImpl) redisService).getRedission().getAtomicLong(refreshToken.substring(8, 24));
-//        rAtomicLong.expireAt(TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
-//
-//        if ((rAtomicLong.isExists() && rAtomicLong.get() >= 10l) || (rAtomicLong.isExists() && rAtomicLong.get() < 0l)) {
-//            return null;
-//
-//        }
-//
-//
-//        if (!rAtomicLong.isExists()) {
-//            rAtomicLong.set(0l);
-//        }
-//
-//        rAtomicLong.getAndIncrement();
+        //每天只能获取10次
+        Long count = redisService.incr(refreshToken);
+        redisService.expireAt(refreshToken, TimeUtil.getBeginTimeOfDay(TimeUtil.offsetDay(new Date(), 1)));
+        if (count >= 10L) {
+            return null;
+        }
 
         String token = "t" + idGeneratorService.getModelPrimaryKey();
 

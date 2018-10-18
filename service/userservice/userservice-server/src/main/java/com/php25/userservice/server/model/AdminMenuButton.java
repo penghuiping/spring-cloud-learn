@@ -17,41 +17,77 @@ import java.util.List;
 @Entity
 @Table(name = "userservice_menu")
 public class AdminMenuButton {
+    /**
+     * 主键id
+     */
     @Id
-    private Long id;//主键id
+    private Long id;
 
-    @Column(length = 45)
-    private String name;//菜单或者按钮名
-
+    /**
+     * 菜单或者按钮名
+     */
     @Column
-    private String url;//菜单或者按钮对应的接口url
+    private String name;
+
+    /**
+     * 菜单或者按钮对应的接口url
+     */
+    @Column
+    private String url;
 
     private List<AdminMenuButton> children;
 
+    /**
+     * 父节点
+     */
     @Column(name = "parent")
-    private AdminMenuButton parent;//父节点
+    private AdminMenuButton parent;
 
+    /**
+     * 是否是叶子节点
+     */
     @Column(name = "is_leaf")
-    private Boolean isLeaf;//是否是叶子节点
+    private Boolean isLeaf;
 
+    /**
+     * 用于排序
+     */
     @Column(name = "sort")
-    private Integer sort;//用于排序
+    private Integer sort;
 
+    /**
+     * 创建时间
+     */
     @Column(name = "create_time")
-    private Date createTime;//创建时间
+    private Date createTime;
 
+    /**
+     * 更新时间
+     */
     @Column(name = "update_time")
-    private Date updateTime;//更新时间
+    private Date updateTime;
 
+    /**
+     * 图标
+     */
     @Column
-    private String icon; //图标
+    private String icon;
 
+    /**
+     * 判断是否是菜单，不是就是按钮
+     */
     @Column(name = "is_menu")
-    private Boolean isMenu;//判断是否是菜单，不是就是按钮
+    private Boolean isMenu;
 
+    /**
+     * 描述
+     */
     @Column
-    private String description;//描述
+    private String description;
 
+    /**
+     * 是否有效 0:无效 1:有效 2:软删除
+     */
     @Column
-    private Integer enable;//是否有效 0:无效 1:有效 2:软删除
+    private Integer enable;
 }

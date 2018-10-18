@@ -12,18 +12,16 @@ import java.util.Optional;
  * 后台用户
  *
  * @author penghuiping
- * @Time 2016-08-12
+ * @date 2016-08-12
  */
 public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, Long>, SoftDeletable<AdminUserDto> {
 
     /**
      * 根据用户名与密码获取用户信息
      *
-     * @param loginName
-     * @param password
+     * @param loginName 用户名
+     * @param password  密码
      * @return AdminUserDto
-     * @author penghuiping
-     * @Time 2016-08-12
      */
     Optional<AdminUserDto> findByUsernameAndPassword(String loginName, String password);
 
@@ -31,9 +29,9 @@ public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, L
     /**
      * 根据id获取集合列表
      *
-     * @param ids
+     * @param ids  后台管理用户id集合
      * @param lazy 对于对象里面的集合是否进行懒加载操作
-     * @return
+     * @return List<AdminUserDto>
      */
     Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy);
 }

@@ -17,32 +17,59 @@ import java.util.List;
 @Entity
 @Table(name = "userservice_user")
 public class AdminUser {
+    /**
+     * 主键id
+     */
     @Id
-    private Long id;//主键id
+    private Long id;
 
+    /**
+     * 用户名
+     */
     @Column(name = "username")
-    private String username;//用户名
+    private String username;
 
+    /**
+     * 昵称
+     */
     @Column(name = "nickname")
-    private String nickname;//昵称
+    private String nickname;
 
+    /**
+     * 邮箱
+     */
     @Column(name = "email")
-    private String email;//邮箱
+    private String email;
 
+    /**
+     * 手机
+     */
     @Column(name = "mobile")
-    private String mobile;//手机
+    private String mobile;
 
+    /**
+     * 创建时间
+     */
     @Column(name = "create_time")
-    private Date createTime;//创建时间
+    private Date createTime;
 
+    /**
+     * 更新时间
+     */
     @Column(name = "update_time")
-    private Date updateTime;//更新时间
+    private Date updateTime;
 
+    /**
+     * 密码
+     */
     @Column
-    private String password;//密码
+    private String password;
 
+    /**
+     * 是否有效 0:无效,1:有效,2:软删除
+     */
     @Column
-    private Integer enable;//是否有效 0:无效,1:有效,2:软删除
+    private Integer enable;
 
     private List<AdminRole> roles;
 }

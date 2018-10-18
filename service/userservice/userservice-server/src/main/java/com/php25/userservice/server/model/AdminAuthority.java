@@ -7,37 +7,33 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
-import java.util.List;
 
 /**
- * 后台管理操作实体类
- * Created by penghuiping on 1/13/15.
+ * @author: penghuiping
+ * @date: 2018/10/17 13:22
+ * @description: 权限表，用于后台拦截直接用户浏览器访问url
  */
 @Data
 @Entity
-@Table(name = "userservice_role")
-public class AdminRole {
-
-    /**
-     * 主键id
-     */
+@Table(name = "userservice_admin_authority")
+public class AdminAuthority {
     @Id
     private Long id;
 
     /**
-     * 角色代码
+     * 权限地址
      */
     @Column
-    private String code;
+    private String url;
 
     /**
-     * 角色名
+     * 权限名称
      */
-    @Column(name = "role_name")
+    @Column
     private String name;
 
     /**
-     * 角色描述
+     * 权限描述
      */
     @Column
     private String description;
@@ -55,18 +51,8 @@ public class AdminRole {
     private Date updateTime;
 
     /**
-     * 是否有效 0:无效 1:有效 2:软删除
+     * 对应关联的菜单与按钮表id
      */
-    @Column
-    private Integer enable;
-
-    /**
-     * 此角色对应的菜单与按钮集合
-     */
-    private List<AdminMenuButton> adminMenuButtons;
-
-    /**
-     * 此角色对应的权限集合
-     */
-    private List<AdminAuthority> adminAuthorities;
+    @Column(name = "admin_menu_button_id")
+    private AdminMenuButton adminMenuButton;
 }
