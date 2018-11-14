@@ -13,7 +13,7 @@ public interface MobileMessageService {
      * @param code
      * @return
      */
-    Boolean findOneByPhoneAndCode(String mobile, String code);
+    Boolean validateSMS(String mobile, String code);
 
     /**
      * 发送验证短信
@@ -21,5 +21,5 @@ public interface MobileMessageService {
      * @param mobile
      * @return
      */
-    Boolean newMessage(String mobile);
+    Boolean sendSMS(String mobile);
 }

@@ -20,5 +20,5 @@ public interface MobileMessageRpc {
      * @param code
      * @return
      */
-    Boolean findOneByPhoneAndCode(String mobile, String code);
+    Boolean validateSMS(String mobile, String code);
 }

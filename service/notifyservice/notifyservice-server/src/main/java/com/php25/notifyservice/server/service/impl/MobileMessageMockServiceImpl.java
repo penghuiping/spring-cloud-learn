@@ -3,7 +3,7 @@ package com.php25.notifyservice.server.service.impl;
 import cn.jsms.api.common.SMSClient;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisService;
-import com.php25.notifyservice.client.contant.Constant;
+import com.php25.notifyservice.client.constant.Constant;
 import com.php25.notifyservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class MobileMessageMockServiceImpl implements MobileMessageService {
 
 
     @Override
-    public Boolean findOneByPhoneAndCode(String mobile, String code) {
+    public Boolean validateSMS(String mobile, String code) {
         String mobileCode = redisService.get("sms" + mobile, String.class);
         if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
             redisService.remove("sms" + mobile);
@@ -33,7 +33,7 @@ public class MobileMessageMockServiceImpl implements MobileMessageService {
     }
 
     @Override
-    public Boolean newMessage(String mobile) {
+    public Boolean sendSMS(String mobile) {
         String message = "1111";
         redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
         return true;

@@ -1,4 +1,4 @@
-package com.php25.notifyservice.client.contant;
+package com.php25.notifyservice.client.constant;
 
 /**
  * Created by penghuiping on 2017/1/22.
