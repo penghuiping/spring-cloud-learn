@@ -34,6 +34,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     @Autowired
     public void setAdminMenuButtonRepository(AdminMenuButtonRepository adminMenuButtonRepository) {
         this.adminMenuButtonRepository = adminMenuButtonRepository;
+        this.baseRepository = adminMenuButtonRepository;
     }
 
     @Override

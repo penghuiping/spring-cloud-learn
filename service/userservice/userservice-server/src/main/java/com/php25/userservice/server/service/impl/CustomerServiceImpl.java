@@ -34,6 +34,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+        this.baseRepository = customerRepository;
     }
 
 

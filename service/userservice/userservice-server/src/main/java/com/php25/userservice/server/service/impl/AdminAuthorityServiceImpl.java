@@ -32,6 +32,7 @@ public class AdminAuthorityServiceImpl extends BaseServiceImpl<AdminAuthorityDto
     @Autowired
     public void setAdminAuthorityRepository(AdminAuthorityRepository adminAuthorityRepository) {
         this.adminAuthorityRepository = adminAuthorityRepository;
+        this.baseRepository = adminAuthorityRepository;
     }
 
     @Override

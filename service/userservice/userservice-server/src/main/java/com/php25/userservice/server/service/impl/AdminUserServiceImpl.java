@@ -52,6 +52,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     @Autowired
     public void setAdminUserRepository(AdminUserRepository adminUserRepository) {
         this.adminUserRepository = adminUserRepository;
+        this.baseRepository = adminUserRepository;
     }
 
     @Autowired

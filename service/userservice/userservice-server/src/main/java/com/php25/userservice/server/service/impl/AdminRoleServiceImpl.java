@@ -44,6 +44,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     @Autowired
     public void setAdminRoleRepository(AdminRoleRepository adminRoleRepository) {
         this.adminRoleRepository = adminRoleRepository;
+        this.baseRepository = adminRoleRepository;
     }
 
     @Autowired

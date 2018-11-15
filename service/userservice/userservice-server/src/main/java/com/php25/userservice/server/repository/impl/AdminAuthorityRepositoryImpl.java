@@ -5,6 +5,7 @@ import com.php25.common.jdbc.repository.BaseRepositoryImpl;
 import com.php25.userservice.server.model.AdminAuthority;
 import com.php25.userservice.server.repository.AdminAuthorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
  * @date: 2018/10/17 14:20
  * @description:
  */
+@Repository
 public class AdminAuthorityRepositoryImpl extends BaseRepositoryImpl<AdminAuthority, Long> implements AdminAuthorityRepository {
 
     @Autowired
