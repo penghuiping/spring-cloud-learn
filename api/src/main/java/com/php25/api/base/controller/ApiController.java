@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,17 +44,15 @@ public class ApiController extends JSONController {
     private Kaptcha kaptcha;
 
     /**
-     * 登入接口，返回access_token与refresh_token
-     * access_token用于应用访问
-     * refresh_token用于重新获取access_token
+     * 登入接口
      *
      * @param mobile
      * @param password
-     * @return
+     * @return jwt
      * @author penghuiping
      * @Time 1/6/15.
      */
-    @ApiOperation(value = "登入", notes = "输入手机号与密码登入")
+    @ApiOperation(value = "登入", notes = "输入手机号与密码登入</br>1.你好</br>1.知道")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", paramType = "query")
@@ -61,9 +60,9 @@ public class ApiController extends JSONController {
     @PostMapping(value = "/common/SSOLogin.do")
     public ResponseEntity<JSONResponse> SSSLogin(@RequestParam @NotEmpty String mobile, @RequestParam @NotEmpty String password, @RequestParam @NotEmpty String kaptchaCode) throws JsonException {
         //先效验图形验证码
-//        if (!kaptcha.validate(kaptchaCode)) {
-//            return ResponseEntity.ok(failed("登入失败"));
-//        }
+        if (!kaptcha.validate(kaptchaCode)) {
+            return ResponseEntity.ok(failed("登入失败"));
+        }
 
         CustomerDto customer = customerRest.findOneByPhoneAndPassword(mobile, password);
         if (customer != null) {
@@ -105,7 +104,7 @@ public class ApiController extends JSONController {
         return ResponseEntity.ok(succeed(customerDto));
     }
 
-    @ApiOperation(value = "图形验证码", notes = "图形验证码")
+    @ApiOperation(value = "图形验证码", notes = "图形验证码",produces = MediaType.IMAGE_JPEG_VALUE)
     @GetMapping("/common/render.do")
     public void render() throws JsonException {
         kaptcha.render();

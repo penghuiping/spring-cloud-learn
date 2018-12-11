@@ -10,5 +10,4 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan
 @EnableAutoConfiguration
 public class CommonAutoConfigure {
-
 }

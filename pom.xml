@@ -8,6 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
+        <module>common-parent</module>
         <module>service</module>
         <module>api</module>
         <module>admin</module>
@@ -15,85 +16,7 @@
     </modules>
 
     <packaging>pom</packaging>
-    <properties>
-        <image.version>0.0.8-test</image.version>
-        <docker.registry.ip>192.168.99.100</docker.registry.ip>
-        <docker.registry.port>30007</docker.registry.port>
-        <spring.boot.maven.plugin>2.0.0.RELEASE</spring.boot.maven.plugin>
-        <fabric8.maven.plugin>3.5.33</fabric8.maven.plugin>
-        <userservice.version>0.0.2-SNAPSHOT</userservice.version>
-        <notifyservice.version>0.0.2-SNAPSHOT</notifyservice.version>
-        <mediaservice.version>0.0.2-SNAPSHOT</mediaservice.version>
-        <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
-        <common-dependencies>0.0.1.RELEASE</common-dependencies>
-        <simplemagic.version>1.12</simplemagic.version>
-        <kaptcha.version>2.3.2</kaptcha.version>
-        <java.version>1.8</java.version>
-    </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>common-dependencies</artifactId>
-                <version>${common-dependencies}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.j256.simplemagic</groupId>
-                <artifactId>simplemagic</artifactId>
-                <version>${simplemagic.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.penggle</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>${kaptcha.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.userservice.client</groupId>
-                <artifactId>userservice-client</artifactId>
-                <version>${userservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.userservice</groupId>
-                <artifactId>userservice</artifactId>
-                <version>${userservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.notifyservice.server</groupId>
-                <artifactId>notifyservice-server</artifactId>
-                <version>${notifyservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.notifyservice.client</groupId>
-                <artifactId>notifyservice-client</artifactId>
-                <version>${notifyservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.mediaservice.server</groupId>
-                <artifactId>mediaservice-server</artifactId>
-                <version>${mediaservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.mediaservice.client</groupId>
-                <artifactId>mediaservice-client</artifactId>
-                <version>${mediaservice.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <dependencies>
-
-    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -104,60 +27,60 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!--配置生成源码包-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>fabric8-maven-plugin</artifactId>
-                <version>${fabric8.maven.plugin}</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <images>
-                        <image>
-                            <name>
-                                ${docker.registry.ip}:${docker.registry.port}/${artifactId}:${project.version}
-                            </name>
-                            <build>
-                                <from>openjdk:8-jdk-alpine</from>
-                                <volumes>
-                                    <volume>/tmp</volume>
-                                </volumes>
-                                <entryPoint>
-                                    <exec>
-                                        <arg>java</arg>
-                                        <arg>-Djava.security.egd=file:/dev/./urandom</arg>
-                                        <arg>-jar</arg>
-                                        <arg>/maven/${project.artifactId}-${project.version}.${project.packaging}</arg>
-                                        <arg>--spring.config.location=/maven/config/</arg>
-                                    </exec>
-                                </entryPoint>
-                                <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
-                            </build>
-                        </image>
-                    </images>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <!--<goal>build</goal>-->
-                            <!--<goal>resource</goal>-->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--&lt;!&ndash;配置生成源码包&ndash;&gt;-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-source-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>attach-sources</id>-->
+                        <!--<goals>-->
+                            <!--<goal>jar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>io.fabric8</groupId>-->
+                <!--<artifactId>fabric8-maven-plugin</artifactId>-->
+                <!--<version>${fabric8.maven.plugin}</version>-->
+                <!--<configuration>-->
+                    <!--<verbose>true</verbose>-->
+                    <!--<images>-->
+                        <!--<image>-->
+                            <!--<name>-->
+                                <!--${docker.registry.ip}:${docker.registry.port}/${artifactId}:${project.version}-->
+                            <!--</name>-->
+                            <!--<build>-->
+                                <!--<from>openjdk:8-jdk-alpine</from>-->
+                                <!--<volumes>-->
+                                    <!--<volume>/tmp</volume>-->
+                                <!--</volumes>-->
+                                <!--<entryPoint>-->
+                                    <!--<exec>-->
+                                        <!--<arg>java</arg>-->
+                                        <!--<arg>-Djava.security.egd=file:/dev/./urandom</arg>-->
+                                        <!--<arg>-jar</arg>-->
+                                        <!--<arg>/maven/${project.artifactId}-${project.version}.${project.packaging}</arg>-->
+                                        <!--<arg>&#45;&#45;spring.config.location=/maven/config/</arg>-->
+                                    <!--</exec>-->
+                                <!--</entryPoint>-->
+                                <!--<assembly>-->
+                                    <!--<descriptorRef>artifact</descriptorRef>-->
+                                <!--</assembly>-->
+                            <!--</build>-->
+                        <!--</image>-->
+                    <!--</images>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--&lt;!&ndash;<goal>build</goal>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<goal>resource</goal>&ndash;&gt;-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>
