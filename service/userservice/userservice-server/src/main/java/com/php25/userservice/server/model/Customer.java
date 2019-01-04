@@ -53,6 +53,12 @@ public class Customer {
     private String email;
 
     /**
+     * 头像
+     */
+    @Column(name = "image_id")
+    private String imageId;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")

@@ -3,7 +3,7 @@ package com.php25.api.base.interceptor;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.php25.api.base.constant.AccessRequired;
-import com.php25.userservice.client.rpc.TokenRpc;
+import com.php25.userservice.client.rpc.CustomerRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Reference(check = false)
-    TokenRpc<String> tokenRest;
+    CustomerRpc customerRpc;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -46,7 +46,7 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
             }
 
             //直接判断redis里的token值是否有效
-            if (tokenRest.checkTokenValidation(token, String.class)) return true;
+            if (customerRpc.validateJwt(token)) return true;
 
             //返回403状态码 访问被禁止
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

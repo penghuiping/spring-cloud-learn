@@ -7,6 +7,7 @@ import com.php25.userservice.server.model.AdminAuthority;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author: penghuiping
@@ -16,4 +17,6 @@ import java.util.Optional;
 public interface AdminAuthorityService extends BaseService<AdminAuthorityDto, AdminAuthority, Long>, SoftDeletable<AdminAuthorityDto> {
 
     public Optional<List<AdminAuthorityDto>> findAllByAdminMenuButtonIds(List<Long> ids);
+
+    public Optional<Set<AdminAuthorityDto>> findAllDistinctByAdminMenuButtonIds(List<Long> ids);
 }

@@ -5,6 +5,8 @@ import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.client.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
 import com.php25.userservice.server.repository.CustomerRepository;
+import com.php25.userservice.server.repository.RoleMenuRepository;
+import com.php25.userservice.server.repository.UserRoleRepository;
 import com.php25.userservice.server.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -50,7 +52,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
     public Optional<CustomerDto> findOneByPhoneAndPassword(String phone, String password) {
         Assert.hasText(phone, "手机不能为空");
         Assert.hasText(password, "密码不能为空");
-        Customer customer = customerRepository.findOneByPhoneAndPassword(phone, password);
+        Customer customer = customerRepository.findOneByMobileAndPassword(phone, password);
         return transOptional(customer);
     }
 
@@ -58,7 +60,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
     @Override
     public Optional<CustomerDto> findOneByPhone(String phone) {
         Assert.hasText(phone, "手机不能为空");
-        Customer customer = customerRepository.findOneByPhone(phone);
+        Customer customer = customerRepository.findOneByMobile(phone);
         return transOptional(customer);
     }
 
@@ -109,16 +111,43 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
         if (null != customer) {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);
-            return Optional.ofNullable(customerDto);
+            return Optional.of(customerDto);
         } else {
             return Optional.empty();
         }
     }
 
     @Override
-    public Optional<List<CustomerDto>> findByName(String name) {
+    public Optional<List<CustomerDto>> findByUsername(String name) {
         Assert.hasText(name, "name不能为空");
-        List<Customer> customers = customerRepository.findByName(name);
-        return Optional.ofNullable(customers.stream().map(customer -> trans(customer)).collect(Collectors.toList()));
+        List<Customer> customers = customerRepository.findByUsername(name);
+        return Optional.of(customers.stream().map(customer -> trans(customer)).collect(Collectors.toList()));
     }
+
+    @Override
+    public Optional<CustomerDto> findOneByEmailAndPassword(String email, String password) {
+        Customer customer = customerRepository.findOneByEmailAndPassword(email, password);
+        if (null != customer) {
+            CustomerDto customerDto = new CustomerDto();
+            BeanUtils.copyProperties(customer, customerDto);
+            return Optional.of(customerDto);
+        } else {
+            return Optional.empty();
+
+        }
+    }
+
+    @Override
+    public Optional<CustomerDto> findOneByEmail(String email) {
+        Customer customer = customerRepository.findByEmail(email);
+        if (null != customer) {
+            CustomerDto customerDto = new CustomerDto();
+            BeanUtils.copyProperties(customer, customerDto);
+            return Optional.of(customerDto);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
 }

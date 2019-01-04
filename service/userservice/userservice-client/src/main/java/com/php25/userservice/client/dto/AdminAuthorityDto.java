@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author: penghuiping
@@ -48,4 +49,17 @@ public class AdminAuthorityDto {
      * 对应关联的菜单与按钮表id
      */
     private AdminMenuButtonDto adminMenuButton;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdminAuthorityDto that = (AdminAuthorityDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

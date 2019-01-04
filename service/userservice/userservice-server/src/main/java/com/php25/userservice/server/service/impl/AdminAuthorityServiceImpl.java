@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +45,21 @@ public class AdminAuthorityServiceImpl extends BaseServiceImpl<AdminAuthorityDto
                 BeanUtils.copyProperties(adminAuthority, adminAuthorityDto);
                 return adminAuthorityDto;
             }).collect(Collectors.toList());
+            return Optional.of(adminAuthorityDtos);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Set<AdminAuthorityDto>> findAllDistinctByAdminMenuButtonIds(List<Long> ids) {
+        Optional<List<AdminAuthority>> optionalAdminAuthorities = adminAuthorityRepository.findAllByAdminMenuButtonIds(ids);
+        if (optionalAdminAuthorities.isPresent() && optionalAdminAuthorities.get().size() > 0) {
+            Set<AdminAuthorityDto> adminAuthorityDtos = optionalAdminAuthorities.get().stream().map(adminAuthority -> {
+                AdminAuthorityDto adminAuthorityDto = new AdminAuthorityDto();
+                BeanUtils.copyProperties(adminAuthority, adminAuthorityDto);
+                return adminAuthorityDto;
+            }).collect(Collectors.toSet());
             return Optional.of(adminAuthorityDtos);
         } else {
             return Optional.empty();

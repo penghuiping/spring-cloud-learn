@@ -6,7 +6,6 @@ import com.php25.userservice.server.model.Customer;
 import com.php25.userservice.server.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,27 +21,34 @@ public class CustomerRepositoryImpl extends BaseRepositoryImpl<Customer, Long> i
     @Autowired
     private Db db;
 
-    @Transactional
     @Override
     public Customer findByUsernameAndPassword(String username, String password) {
         return db.cnd(Customer.class).whereEq("username", username).andEq("password", password).andEq("enable", 1).single();
     }
 
-    @Transactional
     @Override
-    public Customer findOneByPhoneAndPassword(String phone, String password) {
-        return db.cnd(Customer.class).whereEq("mobile", phone).andEq("password", password).andEq("enable", 1).single();
-    }
-
-
-    @Transactional
-    @Override
-    public Customer findOneByPhone(String phone) {
-        return db.cnd(Customer.class).whereEq("mobile", phone).andEq("enable", 1).single();
+    public Customer findOneByMobileAndPassword(String mobile, String password) {
+        return db.cnd(Customer.class).whereEq("mobile", mobile).andEq("password", password).andEq("enable", 1).single();
     }
 
     @Override
-    public List<Customer> findByName(String name) {
-        return db.cnd(Customer.class).whereLike("username", "%" + name + "%").andEq("enable", 1).select();
+    public Customer findOneByEmailAndPassword(String email, String password) {
+        return db.cnd(Customer.class).whereEq("email", email).andEq("password", password).andEq("enable", 1).single();
+    }
+
+
+    @Override
+    public Customer findOneByMobile(String mobile) {
+        return db.cnd(Customer.class).whereEq("mobile", mobile).andEq("enable", 1).single();
+    }
+
+    @Override
+    public List<Customer> findByUsername(String name) {
+        return db.cnd(Customer.class).whereLike("username", name + "%").andEq("enable", 1).select();
+    }
+
+    @Override
+    public Customer findByEmail(String email) {
+        return db.cnd(Customer.class).whereEq("email", email).single();
     }
 }

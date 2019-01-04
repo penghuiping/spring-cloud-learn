@@ -2,6 +2,8 @@ package com.php25.mediaservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Maps;
+import com.php25.common.jdbc.Db;
+import com.php25.common.jdbc.DbType;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -165,5 +167,10 @@ public class DruidConfig {
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public Db db(JdbcTemplate jdbcTemplate) {
+        return new Db(jdbcTemplate, DbType.MYSQL);
     }
 }

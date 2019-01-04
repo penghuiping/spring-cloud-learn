@@ -34,4 +34,15 @@ public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, L
      * @return List<AdminUserDto>
      */
     Optional<List<AdminUserDto>> findAll(Iterable<Long> ids, Boolean lazy);
+
+    /**
+     * 批量更新后台用户密码
+     *
+     * @param password 密码
+     * @param ids      后台用户id
+     * @return true:批量更新成功,false:批量更新失败
+     */
+    Boolean updatePassword(String password, List<Long> ids);
+
+
 }

@@ -3,6 +3,9 @@ package com.php25.mediaservice.server.service.impl;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import com.php25.common.core.util.DigestUtil;
+import com.php25.common.jdbc.service.BaseServiceImpl;
+import com.php25.mediaservice.client.dto.ImgDto;
+import com.php25.mediaservice.server.model.Img;
 import com.php25.mediaservice.server.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +23,7 @@ import java.nio.file.Paths;
  * @Description:
  */
 @Service
-public class ImageServiceImpl implements ImageService {
+public class ImageServiceImpl extends BaseServiceImpl<ImgDto, Img, String> implements ImageService {
     private Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Value("${base_assets_upload_path}")

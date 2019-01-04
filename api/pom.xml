@@ -27,6 +27,10 @@
             <artifactId>userservice-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.php25.service.mediaservice.client</groupId>
+            <artifactId>mediaservice-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.php25.service.notifyservice.client</groupId>
             <artifactId>notifyservice-client</artifactId>
         </dependency>

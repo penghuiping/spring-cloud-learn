@@ -16,24 +16,59 @@ public class CustomerDto implements Serializable {
 
     private Long id;
 
-    private String username;//用户名
+    /**
+     * 用户名
+     */
+    private String username;
 
-    private String nickname;//昵称
+    /**
+     * 昵称
+     */
+    private String nickname;
 
-    private String mobile;//手机
+    /**
+     * 手机
+     */
+    private String mobile;
 
-    private Integer sex;//性别
+    /**
+     * 性别
+     */
+    private Integer sex;
 
-    private String wx;//微信
+    /**
+     * 微信
+     */
+    private String wx;
 
-    private String qq;//qq号
+    /**
+     * qq号
+     */
+    private String qq;
 
-    private String weibo;//微博
+    /**
+     * 微博号
+     */
+    private String weibo;
 
-    private String password;//密码
+    /**
+     * 密码
+     */
+    private String password;
 
-    private String email;//邮箱
+    /**
+     * 邮箱
+     */
+    private String email;
 
+    /**
+     * 图片id
+     */
+    private String imageId;
+
+    /**
+     * 创建时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private Date createTime;//创建时间
 

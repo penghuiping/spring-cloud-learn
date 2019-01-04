@@ -1,67 +1,43 @@
 package com.php25.userservice.client.rpc;
 
+import com.php25.common.core.dto.ResultDto;
 import com.php25.userservice.client.dto.AdminMenuButtonDto;
-import com.php25.userservice.client.dto.AdminRoleDto;
 
 import java.util.List;
 
 /**
- * Created by penghuiping on 16/8/12.
+ * 菜单与按钮操作类
+ *
+ * @author: penghuiping
+ * @date: 2019/1/2 11:06
+ * @description:
  */
 public interface AdminMenuRpc {
 
     /**
-     * 根据角色查询所有的有效菜单按钮
+     * 获取本系统中所有的菜单
      *
-     * @param adminRole
-     * @return
+     * @return 返回本系统中所有的菜单按钮
      */
-    List<AdminMenuButtonDto> findMenusEnabledByRole(AdminRoleDto adminRole);
+    ResultDto<List<AdminMenuButtonDto>> findAllMenuTree();
+
 
     /**
-     * 根据父菜单与角色所有的有效菜单按钮
+     * 判断这个后台管理用户是否有权限访问次url
      *
-     * @param parent
-     * @param adminRole
-     * @return
+     * @param url         需要访问的url
+     * @param adminUserId 访问人
+     * @return true:有权限访问,false:无权限访问
      */
-    List<AdminMenuButtonDto> findMenusEnabledByParentAndRole(AdminMenuButtonDto parent, AdminRoleDto adminRole);
+    Boolean hasRightAccessUrl(String url, Long adminUserId);
+
 
     /**
-     * 获取菜单按钮树状结构
+     * 根据角色id获取这个角色对应的所有菜单按钮
      *
-     * @return
+     * @param roleId
+     * @return 返回角色对应的菜单按钮
      */
-    List<AdminMenuButtonDto> findRootMenus();
+    ResultDto<List<AdminMenuButtonDto>> findAllByAdminRoleId(Long roleId);
 
-    /**
-     * 根据父菜单按钮查询字菜单按钮
-     *
-     * @param parent
-     * @return
-     */
-    List<AdminMenuButtonDto> findMenusByParent(AdminMenuButtonDto parent);
-
-    /**
-     * 根据角色查询菜单按钮
-     *
-     * @param role
-     * @return
-     */
-    List<AdminMenuButtonDto> findMenusByRole(AdminRoleDto role);
-
-    /**
-     * 获取有效的菜单按钮树状结构
-     *
-     * @return
-     */
-    List<AdminMenuButtonDto> findRootMenusEnabled();
-
-    /**
-     * 根据父菜单按钮获取所有有效的菜单按钮
-     *
-     * @param parent
-     * @return
-     */
-    List<AdminMenuButtonDto> findMenusEnabledByParent(AdminMenuButtonDto parent);
 }

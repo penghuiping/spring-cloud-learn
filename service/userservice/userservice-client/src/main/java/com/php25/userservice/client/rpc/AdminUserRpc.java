@@ -1,35 +1,82 @@
 package com.php25.userservice.client.rpc;
 
+import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.ResultDto;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.userservice.client.dto.AdminUserDto;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 /**
- * 后台用户
+ * 此方法用于后台用户操作
  *
- * @author penghuiping
- * @Time 2016-08-12
+ * @author: penghuiping
+ * @date: 2018/12/28 14:13
+ * @description:
  */
 public interface AdminUserRpc {
 
     /**
-     * 根据用户名与密码获取用户信息
+     * 后台用户登入
      *
-     * @param loginName
-     * @param password
-     * @return AdminUserDto
-     * @author penghuiping
-     * @Time 2016-08-12
+     * @param username 后台用户名
+     * @param password 后台密码
+     * @return 后台管理用户信息
      */
-    AdminUserDto findByLoginNameAndPassword(String loginName, String password);
+    ResultDto<AdminUserDto> login(String username, String password);
+
+    /**
+     * 重置用户密码
+     *
+     * @param adminUserIds 需要重置用户的id
+     * @return true:重置成功，false:重置失败
+     */
+    Boolean resetPassword(List<Long> adminUserIds);
+
+    /**
+     * 修改某个后台用户密码
+     *
+     * @param adminUserId    后台管理用户id
+     * @param originPassword 原来的密码
+     * @param newPassword    新密码
+     * @return true:修改密码成功,false:修改密码失败
+     */
+    Boolean changePassword(Long adminUserId, String originPassword, String newPassword);
+
+    /**
+     * 根据用户id获取详情
+     *
+     * @param id 后台管理用户id
+     * @return 后台管理用户详情信息
+     */
+    ResultDto<AdminUserDto> findOne(Long id);
+
+    /**
+     * 新增或者更新后台管理用户
+     *
+     * @param adminUserDto 后台管理用户
+     * @return 新增或者更新后的用户信息
+     */
+    ResultDto<AdminUserDto> save(AdminUserDto adminUserDto);
 
 
     /**
-     * 根据id获取集合列表
+     * 软删除用户id
      *
-     * @param ids
-     * @param lazy 对于对象里面的集合是否进行懒加载操作
-     * @return
+     * @param ids 需要删除的后台管理用户id
+     * @return Boolean true:软删除成功,false:软删除失败
      */
-    List<AdminUserDto> findAll(Iterable<Long> ids, Boolean lazy);
+    Boolean softDelete(List<Long> ids);
+
+    /**
+     * 分页查询
+     *
+     * @param searchParamBuilder 搜索参数创建器
+     * @param pageNum            当前第几页
+     * @param pageSize           一页多少条数据
+     * @return 返回后台管理用户分页列表
+     */
+    ResultDto<DataGridPageDto<AdminUserDto>> query(SearchParamBuilder searchParamBuilder, Integer pageNum, Integer pageSize, Sort sort);
+
 }

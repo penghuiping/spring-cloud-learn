@@ -1,5 +1,10 @@
 package com.php25.mediaservice.client.rpc;
 
+import com.php25.common.core.dto.ResultDto;
+import com.php25.mediaservice.client.dto.ImgDto;
+
+import java.util.List;
+
 /**
  * @Auther: penghuiping
  * @Date: 2018/6/22 11:09
@@ -13,5 +18,22 @@ public interface ImageRpc {
      * @param base64Image
      * @return
      */
-    public String save(String base64Image);
+    public ResultDto<String> save(String base64Image);
+
+    /**
+     * 通过图片id查询图片信息
+     *
+     * @param imageId 图片id
+     * @return 图片信息
+     */
+    public ResultDto<ImgDto> findOne(String imageId);
+
+
+    /**
+     * 批量查询图片信息
+     *
+     * @param imageIds 多个图片id
+     * @return 图片列表信息
+     */
+    public ResultDto<List<ImgDto>> findAll(List<String> imageIds);
 }

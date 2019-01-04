@@ -79,6 +79,11 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     }
 
     @Override
+    public Boolean updatePassword(String password, List<Long> ids) {
+        return adminUserRepository.updatePassword(password,ids);
+    }
+
+    @Override
     public Optional<List<AdminUserDto>> findAll(Iterable<Long> ids) {
         return findAll(ids, true);
     }

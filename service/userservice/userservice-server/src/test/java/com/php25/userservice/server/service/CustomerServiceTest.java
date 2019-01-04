@@ -75,7 +75,7 @@ public class CustomerServiceTest {
 
     @Test
     public void findByName() {
-        Optional<List<CustomerDto>> optionalCustomerList = customerService.findByName("jack");
+        Optional<List<CustomerDto>> optionalCustomerList = customerService.findByUsername("jack");
         if (optionalCustomerList.isPresent()) {
             System.out.println(JsonUtil.toPrettyJson(optionalCustomerList.get()));
         }
