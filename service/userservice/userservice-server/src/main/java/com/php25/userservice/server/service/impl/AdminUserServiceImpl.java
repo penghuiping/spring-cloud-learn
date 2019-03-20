@@ -75,7 +75,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             return adminRoleDto;
         }).collect(Collectors.toList());
         adminUserDto.setRoles(adminRoleDtos);
-        return Optional.ofNullable(adminUserDto);
+        return Optional.of(adminUserDto);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
                     userRoleRepository.save(userRole);
                 }
             }
-            return Optional.ofNullable(obj);
+            return Optional.of(obj);
         } else {
             obj.setCreateTime(new Date());
             obj.setUpdateTime(new Date());
@@ -150,7 +150,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             }
             AdminUserDto adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto);
-            return Optional.ofNullable(adminUserDto);
+            return Optional.of(adminUserDto);
         }
     }
 

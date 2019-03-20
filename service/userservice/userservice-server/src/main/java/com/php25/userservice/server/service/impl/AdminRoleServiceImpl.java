@@ -82,7 +82,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
         }
         AdminRoleDto adminRoleDto = new AdminRoleDto();
         BeanUtils.copyProperties(adminRole, adminRoleDto);
-        return Optional.ofNullable(adminRoleDto);
+        return Optional.of(adminRoleDto);
     }
 
 
@@ -151,7 +151,7 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
         }
         AdminRoleDto adminRoleDto = new AdminRoleDto();
         BeanUtils.copyProperties(adminRole, adminRoleDto);
-        return Optional.ofNullable(adminRoleDto);
+        return Optional.of(adminRoleDto);
     }
 
 }

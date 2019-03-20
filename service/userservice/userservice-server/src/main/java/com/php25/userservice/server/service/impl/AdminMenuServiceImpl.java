@@ -109,7 +109,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
         AdminRole adminRole = new AdminRole();
         BeanUtils.copyProperties(adminRoleDto, adminRole);
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParentAndRole(adminMenuButton_, adminRole);
-        return Optional.ofNullable(adminMenuButtons.stream().map(this::trans).collect(Collectors.toList()));
+        return Optional.of(adminMenuButtons.stream().map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
@@ -118,14 +118,14 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
         AdminRole adminRole = new AdminRole();
         BeanUtils.copyProperties(adminRoleDto, adminRole);
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByRole(adminRole);
-        return Optional.ofNullable(adminMenuButtons.stream()
+        return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findRootMenus() {
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findRootMenus();
-        return Optional.ofNullable(adminMenuButtons.stream().filter(adminMenuButton -> {
+        return Optional.of(adminMenuButtons.stream().filter(adminMenuButton -> {
             return adminMenuButton.getEnable() != 2;
         }).map(this::trans).collect(Collectors.toList()));
     }
@@ -136,7 +136,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
         AdminMenuButton adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusByParent(adminMenuButton_);
-        return Optional.ofNullable(adminMenuButtons.stream()
+        return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 
@@ -146,7 +146,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
         AdminRole adminRole = new AdminRole();
         BeanUtils.copyProperties(role, adminRole);
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusByRole(adminRole);
-        return Optional.ofNullable(adminMenuButtons.stream()
+        return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 
@@ -166,7 +166,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
         AdminMenuButton adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
         List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton_);
-        return Optional.ofNullable(adminMenuButtons.stream()
+        return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 

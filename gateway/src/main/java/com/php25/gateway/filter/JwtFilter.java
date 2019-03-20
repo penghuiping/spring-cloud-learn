@@ -1,6 +1,6 @@
 package com.php25.gateway.filter;
 
-import com.php25.userservice.client.rpc.TokenJwtRpc;
+import com.php25.userservice.client.rpc.CustomerRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -24,9 +24,9 @@ import java.util.List;
 @Component
 public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
-    private TokenJwtRpc tokenJwtRpc;
+    private CustomerRpc tokenJwtRpc;
 
-    public void setTokenJwtRpc(TokenJwtRpc tokenJwtRpc) {
+    public void setTokenJwtRpc(CustomerRpc tokenJwtRpc) {
         this.tokenJwtRpc = tokenJwtRpc;
     }
 
@@ -52,10 +52,8 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             String jwt = request.getHeaders().getFirst("jwt");
 
             if (!StringUtils.isEmpty(jwt)) {
-                if (tokenJwtRpc.verifyToken(jwt)) {
+                if (tokenJwtRpc.validateJwt(jwt)) {
                     //认证通过
-                    String customerId = tokenJwtRpc.getKeyByToken(jwt);
-                    request = request.mutate().header("customerId", customerId).build();
                     return chain.filter(exchange.mutate().request(request).build()).then(Mono.fromRunnable(() -> {
                         log.info("second post filter");
                     }));
@@ -67,10 +65,8 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             jwt = multiValueMap.getFirst("jwt");
 
             if (!StringUtils.isEmpty(jwt)) {
-                if (tokenJwtRpc.verifyToken(jwt)) {
+                if (tokenJwtRpc.validateJwt(jwt)) {
                     //认证通过
-                    String customerId = tokenJwtRpc.getKeyByToken(jwt);
-                    request = request.mutate().header("customerId", customerId).build();
                     return chain.filter(exchange.mutate().request(request).build()).then(Mono.fromRunnable(() -> {
                         log.info("second post filter");
                     }));
@@ -85,9 +81,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
 
     public static class Config {
-
         List<String> excludeUris;
-
 
         public Config(List<String> excludeUris) {
             if (null == excludeUris) {

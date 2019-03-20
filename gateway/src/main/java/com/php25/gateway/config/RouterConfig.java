@@ -3,7 +3,7 @@ package com.php25.gateway.config;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.google.common.collect.Lists;
 import com.php25.gateway.filter.JwtFilter;
-import com.php25.userservice.client.rpc.TokenJwtRpc;
+import com.php25.userservice.client.rpc.CustomerRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class RouterConfig {
     private Logger logger = LoggerFactory.getLogger(RouterConfig.class);
 
     @Reference(check = false)
-    private TokenJwtRpc tokenJwtRpc;
+    private CustomerRpc tokenJwtRpc;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder, @Autowired @Qualifier("jwtFilter") GatewayFilter jwtFilter) {
@@ -48,6 +48,6 @@ public class RouterConfig {
     public GatewayFilter jwtFilter() {
         JwtFilter jwtFilter = new JwtFilter();
         jwtFilter.setTokenJwtRpc(tokenJwtRpc);
-        return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do","/api/common/render.do")));
+        return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do", "/api/common/render.do")));
     }
 }
