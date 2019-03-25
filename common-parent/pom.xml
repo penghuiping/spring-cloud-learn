@@ -44,6 +44,7 @@
         <jiguang-common>1.0.5</jiguang-common>
         <jjwt>0.9.0</jjwt>
         <beetl>2.8.5</beetl>
+        <apollo>1.1.0</apollo>
         <jsms-client>1.2.0</jsms-client>
         <php-common.es>2.0.3-SNAPSHOT</php-common.es>
         <php-common.jdbc>2.0.3-SNAPSHOT</php-common.jdbc>
@@ -315,6 +316,78 @@
                 <artifactId>mediaservice-client</artifactId>
                 <version>${mediaservice.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.ctrip.framework.apollo</groupId>
+                <artifactId>apollo-client</artifactId>
+                <version>${apollo}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <!--配置生成源码包-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>fabric8-maven-plugin</artifactId>
+                <version>${fabric8.maven.plugin}</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <images>
+                        <image>
+                            <name>
+                                ${docker.registry.ip}:${docker.registry.port}/${artifactId}:${project.version}
+                            </name>
+                            <build>
+                                <from>openjdk:8-jdk-alpine</from>
+                                <volumes>
+                                    <volume>/tmp</volume>
+                                </volumes>
+                                <entryPoint>
+                                    <exec>
+                                        <arg>java</arg>
+                                        <arg>-Djava.security.egd=file:/dev/./urandom</arg>
+                                        <arg>-jar</arg>
+                                        <arg>/maven/${project.artifactId}-${project.version}.${project.packaging}</arg>
+                                        <arg>--spring.config.location=/maven/config/</arg>
+                                    </exec>
+                                </entryPoint>
+                                <assembly>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!--<goal>build</goal>-->
+                            <!--<goal>resource</goal>-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

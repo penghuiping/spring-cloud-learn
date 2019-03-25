@@ -3,6 +3,8 @@ package com.php25.api.base.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.kaptcha.Kaptcha;
+import com.baomidou.kaptcha.exception.KaptchaIncorrectException;
+import com.baomidou.kaptcha.exception.KaptchaNotFoundException;
 import com.php25.api.base.constant.BusinessError;
 import com.php25.api.base.vo.CustomerVo;
 import com.php25.common.core.dto.ResultDto;
@@ -101,10 +103,10 @@ public class ApiCommonController extends JSONController {
                 CustomerVo customerVo = new CustomerVo();
                 BeanUtils.copyProperties(customerDto, customerVo);
                 //获取头像
-                ResultDto<ImgDto> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
-                if (imgDtoResultDto.isStatus()) {
-                    customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
-                }
+//                ResultDto<ImgDto> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
+//                if (imgDtoResultDto.isStatus()) {
+//                    customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
+//                }
                 customerVo.setToken(jwt);
                 return ResponseEntity.ok(succeed(customerVo));
             } else {
@@ -126,7 +128,11 @@ public class ApiCommonController extends JSONController {
     @PostMapping(value = "/common/loginByUsername.do")
     public ResponseEntity<JSONResponse> loginByUsername(@RequestParam @NotBlank String username, @RequestParam @NotBlank String password, @NotBlank String kaptchaCode) throws JsonException {
         //验证图形验证码
-        if (!kaptcha.validate(kaptchaCode)) {
+        try {
+            if (!kaptcha.validate(kaptchaCode)) {
+                return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
+            }
+        }catch (KaptchaNotFoundException | KaptchaIncorrectException e) {
             return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
         }
 

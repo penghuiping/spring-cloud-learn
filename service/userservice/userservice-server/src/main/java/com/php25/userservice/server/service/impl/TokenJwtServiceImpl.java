@@ -12,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,9 @@ public class TokenJwtServiceImpl implements TokenJwtService {
     @Autowired
     private RedisService redisService;
 
-    private static final String secret = "%TGB6yhn";
+    @Value("${jwt_secret}")
+    private String secret = "%TGB6yhn";
+
     private static final String REDIS_JWT = "jwt:";
     private static final Long REDIS_KEY_EXPIRE_TIME = 1800L;
     @Autowired
@@ -104,6 +107,7 @@ public class TokenJwtServiceImpl implements TokenJwtService {
     }
 
     private String getJwtSecret() {
+        log.info("jwt_secret为:{}",this.secret);
         return DigestUtil.encodeBase64(secret.getBytes());
     }
 }
