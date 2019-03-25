@@ -1,4 +1,4 @@
-package com.php25.userservice.client.constant;
+package com.php25.userservice.server.constant;
 
 /**
  * Created by penghuiping on 2017/1/22.

@@ -1,4 +1,4 @@
-package com.php25.userservice.client.dto;
+package com.php25.userservice.server.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,28 +9,20 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by penghuiping on 2016/2/23.
+ * Created by penghuiping on 16/3/31.
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AdminMenuButtonDto implements Serializable {
+public class AdminUserDto implements Serializable {
     private Long id;
 
-    private String name;
+    private String username;
 
-    private String url;
+    private String nickname;
 
-    private List<AdminMenuButtonDto> children;
+    private String email;
 
-    private AdminMenuButtonDto parent;
-
-    private Long parentId;
-
-    private Boolean isShow = false;
-
-    private Boolean isLeaf;
-
-    private Integer sort;
+    private String mobile;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", locale = "zh", timezone = "GMT+8")
     private Date createTime;
@@ -38,11 +30,11 @@ public class AdminMenuButtonDto implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", locale = "zh", timezone = "GMT+8")
     private Date updateTime;
 
+    private String password;
+
+    private List<AdminRoleDto> roles;
+
+    private List<AdminMenuButtonDto> menus;
+
     private Integer enable;
-
-    private Boolean isMenu;
-
-    private String description;
-
-    private String icon;
 }
