@@ -7,7 +7,7 @@ import com.php25.common.jdbc.DbType;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,110 +30,112 @@ import java.util.Properties;
 @ConditionalOnExpression("'${server.type}'.contains('provider')")
 public class DruidConfig {
 
+    @Autowired
+    private DbProperties dbProperties;
+
+    @Autowired
+    private DbSlave0Properties dbSlave0Properties;
+
     @Bean
     @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
-    public DataSource druidDataSource(
-            @Value("${spring.datasource.driverClassName}") String driver,
-            @Value("${spring.datasource.url}") String url,
-            @Value("${spring.datasource.username}") String username,
-            @Value("${spring.datasource.password}") String password) {
+    public DataSource druidDataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
-        druidDataSource.setDriverClassName(driver);
-        druidDataSource.setUrl(url);
-        druidDataSource.setUsername(username);
-        druidDataSource.setPassword(password);
-        druidDataSource.setInitialSize(5);
-        druidDataSource.setMinIdle(1);
-        druidDataSource.setMaxActive(20);
-        druidDataSource.setMaxWait(60000);
-        druidDataSource.setTimeBetweenEvictionRunsMillis(60000);
-        druidDataSource.setMinEvictableIdleTimeMillis(300000);
-        druidDataSource.setValidationQuery("SELECT 'x' FROM DUAL");
-        druidDataSource.setTestWhileIdle(true);
-        druidDataSource.setTestOnBorrow(false);
-        druidDataSource.setTestOnReturn(false);
-        druidDataSource.setPoolPreparedStatements(true);
-        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(20);
-        Properties properties = new Properties();
-        properties.setProperty("druid.stat.mergeSql", "true");
-        properties.setProperty("druid.stat.slowSqlMillis", "5000");
-        druidDataSource.setConnectProperties(properties);
+        druidDataSource.setDriverClassName(dbProperties.getDriverClassName());
+        druidDataSource.setUrl(dbProperties.getUrl());
+        druidDataSource.setUsername(dbProperties.getUsername());
+        druidDataSource.setPassword(dbProperties.getPassword());
+        druidDataSource.setInitialSize(dbProperties.getInitSize());
+        druidDataSource.setMinIdle(dbProperties.getMinIdle());
+        druidDataSource.setMaxActive(dbProperties.getMaxActive());
+        druidDataSource.setMaxWait(dbProperties.getMaxWait());
+        druidDataSource.setTimeBetweenEvictionRunsMillis(dbProperties.getTimeBetweenEvictionRunsMillis());
+        druidDataSource.setMinEvictableIdleTimeMillis(dbProperties.getMinEvictableIdleTimeMillis());
+        druidDataSource.setValidationQuery(dbProperties.getValidationQuery());
+        druidDataSource.setTestWhileIdle(dbProperties.getTestWhileIdle());
+        druidDataSource.setTestOnBorrow(dbProperties.getTestOnBorrow());
+        druidDataSource.setTestOnReturn(dbProperties.getTestOnReturn());
+        druidDataSource.setPoolPreparedStatements(dbProperties.getPoolPreparedStatements());
+        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(dbProperties.getMaxPoolPreparedStatementPerConnectionSize());
         try {
-            druidDataSource.setFilters("stat, wall");
+            //druidDataSource.setFilters("stat, wall");
+            druidDataSource.setFilters("config");
         } catch (SQLException e) {
-            log.error("数据库连接失败", e);
+            log.error("druid设置过滤器失败", e);
         }
+
+        Properties properties = new Properties();
+        //properties.setProperty("druid.stat.mergeSql", "true");
+        //properties.setProperty("druid.stat.slowSqlMillis", "5000");
+        properties.setProperty("config.decrypt", dbProperties.getDecrypt());
+        properties.setProperty("config.decrypt.key", dbProperties.getPublicKey());
+        druidDataSource.setConnectProperties(properties);
         return druidDataSource;
     }
 
     @Bean
     @ConditionalOnExpression("!'${spring.profiles.active}'.contains('development')")
-    public DataSource shareingJdbcDataSource(
-            @Value("${spring.datasource.driverClassName}") String driver,
-            @Value("${spring.datasource.url}") String url,
-            @Value("${spring.datasource.username}") String username,
-            @Value("${spring.datasource.password}") String password,
-            @Value("${spring.slave-datasource.driverClassName}") String slaveDriver,
-            @Value("${spring.slave-datasource.url}") String slaveUrl,
-            @Value("${spring.slave-datasource.username}") String slaveUsername,
-            @Value("${spring.slave-datasource.password}") String slavePassword
-
-    ) {
+    public DataSource shareingJdbcDataSource() {
         // 构建读写分离数据源, 读写分离数据源实现了DataSource接口, 可直接当做数据源处理. masterDataSource, slaveDataSource0, slaveDataSource1等为使用DBCP等连接池配置的真实数据源
         DruidDataSource druidDataSource_master = new DruidDataSource();
-        druidDataSource_master.setDriverClassName(driver);
-        druidDataSource_master.setUrl(url);
-        druidDataSource_master.setUsername(username);
-        druidDataSource_master.setPassword(password);
-        druidDataSource_master.setInitialSize(5);
-        druidDataSource_master.setMinIdle(1);
-        druidDataSource_master.setMaxActive(20);
-        druidDataSource_master.setMaxWait(60000);
-        druidDataSource_master.setTimeBetweenEvictionRunsMillis(60000);
-        druidDataSource_master.setMinEvictableIdleTimeMillis(300000);
-        druidDataSource_master.setValidationQuery("SELECT 'x' FROM DUAL");
-        druidDataSource_master.setTestWhileIdle(true);
-        druidDataSource_master.setTestOnBorrow(false);
-        druidDataSource_master.setTestOnReturn(false);
-        druidDataSource_master.setPoolPreparedStatements(true);
-        druidDataSource_master.setMaxPoolPreparedStatementPerConnectionSize(20);
-        Properties properties_master = new Properties();
-        properties_master.setProperty("druid.stat.mergeSql", "true");
-        properties_master.setProperty("druid.stat.slowSqlMillis", "5000");
-        druidDataSource_master.setConnectProperties(properties_master);
+        druidDataSource_master.setDriverClassName(dbProperties.getDriverClassName());
+        druidDataSource_master.setUrl(dbProperties.getUrl());
+        druidDataSource_master.setUsername(dbProperties.getUsername());
+        druidDataSource_master.setPassword(dbProperties.getPassword());
+        druidDataSource_master.setInitialSize(dbProperties.getInitSize());
+        druidDataSource_master.setMinIdle(dbProperties.getMinIdle());
+        druidDataSource_master.setMaxActive(dbProperties.getMaxActive());
+        druidDataSource_master.setMaxWait(dbProperties.getMaxWait());
+        druidDataSource_master.setTimeBetweenEvictionRunsMillis(dbProperties.getTimeBetweenEvictionRunsMillis());
+        druidDataSource_master.setMinEvictableIdleTimeMillis(dbProperties.getMinEvictableIdleTimeMillis());
+        druidDataSource_master.setValidationQuery(dbProperties.getValidationQuery());
+        druidDataSource_master.setTestWhileIdle(dbProperties.getTestWhileIdle());
+        druidDataSource_master.setTestOnBorrow(dbProperties.getTestOnBorrow());
+        druidDataSource_master.setTestOnReturn(dbProperties.getTestOnReturn());
+        druidDataSource_master.setPoolPreparedStatements(dbProperties.getPoolPreparedStatements());
+        druidDataSource_master.setMaxPoolPreparedStatementPerConnectionSize(dbProperties.getMaxPoolPreparedStatementPerConnectionSize());
         try {
-            druidDataSource_master.setFilters("stat, wall");
+            //druidDataSource_master.setFilters("stat, wall");
+            druidDataSource_master.setFilters("config");
         } catch (SQLException e) {
-            log.error("数据库连接失败", e);
+            log.error("druid设置过滤器失败", e);
         }
+        Properties properties_master = new Properties();
+        //properties_master.setProperty("druid.stat.mergeSql", "true");
+        //properties_master.setProperty("druid.stat.slowSqlMillis", "5000");
+        properties_master.setProperty("config.decrypt", dbProperties.getDecrypt());
+        properties_master.setProperty("config.decrypt.key", dbProperties.getPublicKey());
+        druidDataSource_master.setConnectProperties(properties_master);
+
 
         DruidDataSource druidDataSource_slave = new DruidDataSource();
-        druidDataSource_slave.setDriverClassName(slaveDriver);
-        druidDataSource_slave.setUrl(slaveUrl);
-        druidDataSource_slave.setUsername(slaveUsername);
-        druidDataSource_slave.setPassword(slavePassword);
-        druidDataSource_slave.setInitialSize(5);
-        druidDataSource_slave.setMinIdle(1);
-        druidDataSource_slave.setMaxActive(20);
-        druidDataSource_slave.setMaxWait(60000);
-        druidDataSource_slave.setTimeBetweenEvictionRunsMillis(60000);
-        druidDataSource_slave.setMinEvictableIdleTimeMillis(300000);
-        druidDataSource_slave.setValidationQuery("SELECT 'x' FROM DUAL");
-        druidDataSource_slave.setTestWhileIdle(true);
-        druidDataSource_slave.setTestOnBorrow(false);
-        druidDataSource_slave.setTestOnReturn(false);
-        druidDataSource_slave.setPoolPreparedStatements(true);
-        druidDataSource_slave.setMaxPoolPreparedStatementPerConnectionSize(20);
-        Properties properties_slave = new Properties();
-        properties_slave.setProperty("druid.stat.mergeSql", "true");
-        properties_slave.setProperty("druid.stat.slowSqlMillis", "5000");
-        druidDataSource_slave.setConnectProperties(properties_slave);
+        druidDataSource_slave.setDriverClassName(dbSlave0Properties.getDriverClassName());
+        druidDataSource_slave.setUrl(dbSlave0Properties.getUrl());
+        druidDataSource_slave.setUsername(dbSlave0Properties.getUsername());
+        druidDataSource_slave.setPassword(dbSlave0Properties.getPassword());
+        druidDataSource_slave.setInitialSize(dbSlave0Properties.getInitSize());
+        druidDataSource_slave.setMinIdle(dbSlave0Properties.getMinIdle());
+        druidDataSource_slave.setMaxActive(dbSlave0Properties.getMaxActive());
+        druidDataSource_slave.setMaxWait(dbSlave0Properties.getMaxWait());
+        druidDataSource_slave.setTimeBetweenEvictionRunsMillis(dbSlave0Properties.getTimeBetweenEvictionRunsMillis());
+        druidDataSource_slave.setMinEvictableIdleTimeMillis(dbSlave0Properties.getMinEvictableIdleTimeMillis());
+        druidDataSource_slave.setValidationQuery(dbSlave0Properties.getValidationQuery());
+        druidDataSource_slave.setTestWhileIdle(dbSlave0Properties.getTestWhileIdle());
+        druidDataSource_slave.setTestOnBorrow(dbSlave0Properties.getTestOnBorrow());
+        druidDataSource_slave.setTestOnReturn(dbSlave0Properties.getTestOnReturn());
+        druidDataSource_slave.setPoolPreparedStatements(dbSlave0Properties.getPoolPreparedStatements());
+        druidDataSource_slave.setMaxPoolPreparedStatementPerConnectionSize(dbSlave0Properties.getMaxPoolPreparedStatementPerConnectionSize());
         try {
-            druidDataSource_slave.setFilters("stat, wall");
+            //druidDataSource_slave.setFilters("stat, wall");
+            druidDataSource_master.setFilters("config");
         } catch (SQLException e) {
-            log.error("数据库连接失败", e);
+            log.error("druid设置过滤器失败", e);
         }
-
+        Properties properties_slave = new Properties();
+//        properties_slave.setProperty("druid.stat.mergeSql", "true");
+//        properties_slave.setProperty("druid.stat.slowSqlMillis", "5000");
+        properties_slave.setProperty("config.decrypt", dbSlave0Properties.getDecrypt());
+        properties_slave.setProperty("config.decrypt.key", dbSlave0Properties.getPublicKey());
+        druidDataSource_slave.setConnectProperties(properties_slave);
 
         Map<String, DataSource> dataSourceMap = new HashMap<>();
         dataSourceMap.put("masterDataSource", druidDataSource_master);
