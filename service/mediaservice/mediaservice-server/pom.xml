@@ -73,6 +73,10 @@
             <groupId>com.php25.service.mediaservice.client</groupId>
             <artifactId>mediaservice-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ctrip.framework.apollo</groupId>
+            <artifactId>apollo-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
