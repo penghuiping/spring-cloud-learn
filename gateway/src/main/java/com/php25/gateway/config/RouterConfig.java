@@ -3,7 +3,7 @@ package com.php25.gateway.config;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.google.common.collect.Lists;
 import com.php25.gateway.filter.JwtFilter;
-import com.php25.userservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

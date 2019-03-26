@@ -1,6 +1,6 @@
 package com.php25.gateway.filter;
 
-import com.php25.userservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;

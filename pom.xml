@@ -11,6 +11,7 @@
         <module>common-parent</module>
         <module>gateway</module>
         <module>dubbo-learn</module>
+        <module>service</module>
     </modules>
 
     <packaging>pom</packaging>

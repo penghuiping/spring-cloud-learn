@@ -20,6 +20,8 @@
     <modules>
         <module>api</module>
         <module>admin</module>
-        <module>service</module>
+        <module>user-microservice</module>
+        <module>notify-microservice</module>
+        <module>media-microservice</module>
     </modules>
 </project>

@@ -11,7 +11,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api</artifactId>
-    <version>${image.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -22,18 +22,7 @@
             <groupId>com.alibaba.boot</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.php25.service.userservice.client</groupId>
-            <artifactId>userservice-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.service.mediaservice.client</groupId>
-            <artifactId>mediaservice-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.service.notifyservice.client</groupId>
-            <artifactId>notifyservice-client</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -100,6 +89,19 @@
             <groupId>com.baomidou</groupId>
             <artifactId>kaptcha-spring-boot-starter</artifactId>
             <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.php25.user-microservice.client</groupId>
+            <artifactId>user-microservice-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.notify-microservice.client</groupId>
+            <artifactId>notify-microservice-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.media-microservice.client</groupId>
+            <artifactId>media-microservice-client</artifactId>
         </dependency>
     </dependencies>
 

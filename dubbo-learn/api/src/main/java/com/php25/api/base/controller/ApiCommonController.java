@@ -12,12 +12,12 @@ import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.mvc.JSONController;
 import com.php25.common.mvc.JSONResponse;
 import com.php25.common.mvc.JsonException;
-import com.php25.mediaservice.client.dto.ImgDto;
+import com.php25.mediaservice.client.bo.ImgBo;
 import com.php25.mediaservice.client.rpc.ImageRpc;
 import com.php25.notifyservice.client.rpc.MailRpc;
 import com.php25.notifyservice.client.rpc.MobileMessageRpc;
-import com.php25.userservice.client.dto.CustomerDto;
-import com.php25.userservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.bo.CustomerBo;
+import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -97,9 +97,9 @@ public class ApiCommonController extends JSONController {
             return ResponseEntity.ok(failed(BusinessError.MOBILE_NOT_EXIST_ERROR));
         } else {
             String jwt = resultDto.getObject();
-            ResultDto<CustomerDto> customerDtoResultDto = customerRest.findOne(jwt);
+            ResultDto<CustomerBo> customerDtoResultDto = customerRest.findOne(jwt);
             if (customerDtoResultDto.isStatus()) {
-                CustomerDto customerDto = customerDtoResultDto.getObject();
+                CustomerBo customerDto = customerDtoResultDto.getObject();
                 CustomerVo customerVo = new CustomerVo();
                 BeanUtils.copyProperties(customerDto, customerVo);
                 //获取头像
@@ -132,7 +132,7 @@ public class ApiCommonController extends JSONController {
             if (!kaptcha.validate(kaptchaCode)) {
                 return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
             }
-        }catch (KaptchaNotFoundException | KaptchaIncorrectException e) {
+        } catch (KaptchaNotFoundException | KaptchaIncorrectException e) {
             return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
         }
 
@@ -141,13 +141,13 @@ public class ApiCommonController extends JSONController {
             return ResponseEntity.ok(failed(BusinessError.USERNAME_PASSWORD_ERROR));
         } else {
             String jwt = resultDto.getObject();
-            ResultDto<CustomerDto> customerDtoResultDto = customerRest.findOne(jwt);
+            ResultDto<CustomerBo> customerDtoResultDto = customerRest.findOne(jwt);
             if (customerDtoResultDto.isStatus()) {
-                CustomerDto customerDto = customerDtoResultDto.getObject();
+                CustomerBo customerDto = customerDtoResultDto.getObject();
                 CustomerVo customerVo = new CustomerVo();
                 BeanUtils.copyProperties(customerDto, customerVo);
                 //获取头像
-                ResultDto<ImgDto> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
+                ResultDto<ImgBo> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
                 if (imgDtoResultDto.isStatus()) {
                     customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
                 }
@@ -182,13 +182,13 @@ public class ApiCommonController extends JSONController {
         }
 
         //判断此手机是否可以注册
-        ResultDto<CustomerDto> customerDtoResultDto = customerRest.findCustomerDtoByMobile(mobile);
+        ResultDto<CustomerBo> customerDtoResultDto = customerRest.findCustomerDtoByMobile(mobile);
         if (customerDtoResultDto.isStatus()) {
             log.info("{},此手机号在系统中已经存在", mobile);
             return ResponseEntity.ok(failed(BusinessError.MOBILE_ALREADY_EXIST_ERROR));
         }
 
-        CustomerDto customerDto = new CustomerDto();
+        CustomerBo customerDto = new CustomerBo();
         customerDto.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
         customerDto.setCreateTime(new Date());
         customerDto.setEnable(1);
@@ -219,16 +219,16 @@ public class ApiCommonController extends JSONController {
     })
     @GetMapping(value = "/common/showCustomerInfo.do")
     public ResponseEntity<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) throws JsonException {
-        ResultDto<CustomerDto> customerDtoResultDto = customerRest.findOne(jwt);
+        ResultDto<CustomerBo> customerDtoResultDto = customerRest.findOne(jwt);
         if (!customerDtoResultDto.isStatus()) {
             return ResponseEntity.ok(failed(BusinessError.COMMON_ERROR));
         }
 
-        CustomerDto customerDto = customerDtoResultDto.getObject();
+        CustomerBo customerDto = customerDtoResultDto.getObject();
         CustomerVo customerVo = new CustomerVo();
         BeanUtils.copyProperties(customerDto, customerVo);
         customerVo.setToken(jwt);
-        ResultDto<ImgDto> imgDtoResultDto = imageRpc.findOne(customerDto.getEmail());
+        ResultDto<ImgBo> imgDtoResultDto = imageRpc.findOne(customerDto.getEmail());
         if (imgDtoResultDto.isStatus()) {
             customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
         }
@@ -250,7 +250,7 @@ public class ApiCommonController extends JSONController {
     })
     @PostMapping("/common/changePersonInfo.do")
     public ResponseEntity<JSONResponse> changePersonInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) throws JsonException {
-        ResultDto<CustomerDto> resultDto = customerRest.findOne(jwt);
+        ResultDto<CustomerBo> resultDto = customerRest.findOne(jwt);
         return null;
     }
 

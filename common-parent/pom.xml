@@ -29,14 +29,10 @@
         <jmh.version>1.21</jmh.version>
         <mybatis-plus.version>3.0.5</mybatis-plus.version>
         <jfairy.version>0.5.9</jfairy.version>
-        <userservice.version>0.0.2-SNAPSHOT</userservice.version>
-        <notifyservice.version>0.0.2-SNAPSHOT</notifyservice.version>
-        <mediaservice.version>0.0.2-SNAPSHOT</mediaservice.version>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <simplemagic.version>1.12</simplemagic.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <dubbo.starter.version>0.2.0</dubbo.starter.version>
-        <php25.common>2.0.3-SNAPSHOT</php25.common>
         <commons-fileupload>1.3.1</commons-fileupload>
         <thumbnailator>0.4.8</thumbnailator>
         <swaggerui>2.7.0</swaggerui>
@@ -46,15 +42,22 @@
         <beetl>2.8.5</beetl>
         <apollo>1.1.0</apollo>
         <jsms-client>1.2.0</jsms-client>
+        <java.version>1.8</java.version>
         <php-common.es>2.0.3-SNAPSHOT</php-common.es>
         <php-common.jdbc>2.0.3-SNAPSHOT</php-common.jdbc>
         <php-common.jpa>2.0.3-SNAPSHOT</php-common.jpa>
         <php-common.core>2.0.3-SNAPSHOT</php-common.core>
         <php-common.mvc>2.0.3-SNAPSHOT</php-common.mvc>
         <php-common.redis>2.0.3-SNAPSHOT</php-common.redis>
-        <java.version>1.8</java.version>
+        <php25.common>2.0.3-SNAPSHOT</php25.common>
 
-
+        <userservice.version>0.0.1-SNAPSHOT</userservice.version>
+        <usermicroservice.version>0.0.1-SNAPSHOT</usermicroservice.version>
+        <notifyservice.version>0.0.1-SNAPSHOT</notifyservice.version>
+        <notifymicroservice.version>0.0.1-SNAPSHOT</notifymicroservice.version>
+        <mediaservice.version>0.0.1-SNAPSHOT</mediaservice.version>
+        <mediamicroservice.version>0.0.1-SNAPSHOT</mediamicroservice.version>
+        <api.version>0.0.1-SNAPSHOT</api.version>
 
         <image.version>0.0.8-test</image.version>
         <docker.registry.ip>192.168.99.100</docker.registry.ip>
@@ -284,37 +287,36 @@
                 <scope>compile</scope>
             </dependency>
 
-
-
-            <dependency>
-                <groupId>com.php25.service.userservice.client</groupId>
-                <artifactId>userservice-client</artifactId>
-                <version>${userservice.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.php25.service.userservice</groupId>
                 <artifactId>userservice</artifactId>
                 <version>${userservice.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.php25.service.notifyservice.server</groupId>
-                <artifactId>notifyservice-server</artifactId>
+                <groupId>com.php25.service.notifyservice</groupId>
+                <artifactId>notifyservice</artifactId>
                 <version>${notifyservice.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.php25.service.notifyservice.client</groupId>
-                <artifactId>notifyservice-client</artifactId>
-                <version>${notifyservice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.php25.service.mediaservice.server</groupId>
-                <artifactId>mediaservice-server</artifactId>
+                <groupId>com.php25.service.mediaservice</groupId>
+                <artifactId>mediaservice</artifactId>
                 <version>${mediaservice.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>com.php25.service.mediaservice.client</groupId>
-                <artifactId>mediaservice-client</artifactId>
-                <version>${mediaservice.version}</version>
+                <groupId>com.php25.user-microservice.client</groupId>
+                <artifactId>user-microservice-client</artifactId>
+                <version>${usermicroservice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.php25.notify-microservice.client</groupId>
+                <artifactId>notify-microservice-client</artifactId>
+                <version>${notifymicroservice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.php25.media-microservice.client</groupId>
+                <artifactId>media-microservice-client</artifactId>
+                <version>${mediamicroservice.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ctrip.framework.apollo</groupId>
