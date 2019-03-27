@@ -15,11 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * Oauth2 token认证
- * Created by penghuiping on 16/8/30.
+ * jwt token认证
+ *
+ * @author penghuiping
+ * @date 2019-03-27
+ *
  */
 @Component
-public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
+public class JwtAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Reference(check = false)
     CustomerRpc customerRpc;
@@ -40,15 +43,15 @@ public class ApiAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
             //如果为空直接返回未登入提示
             if (StringUtils.isEmpty(token)) {
-                //返回403状态码 访问被禁止
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                //返回401状态码 访问被禁止
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
 
             //直接判断redis里的token值是否有效
             if (customerRpc.validateJwt(token)) return true;
 
-            //返回403状态码 访问被禁止
+            //返回401状态码 访问被禁止
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         } else {

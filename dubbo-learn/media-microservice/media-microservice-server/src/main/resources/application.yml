@@ -12,15 +12,16 @@ server:
 ###############################################
 ## dubbo配置
 ###############################################
-## ApplicationConfig Bean
 dubbo:
   scan:
     basePackages: com.php25.mediaservice.server.rpc
+  ## ApplicationConfig Bean
   application:
     id: dubbo-provider-mediaservice
     name: dubbo-provider-mediaservice
     qos-port: 22224
     qos-enable: true
+    qosAcceptForeignIp: false
   ## ProtocolConfig Bean
   protocol:
     id: dubbo

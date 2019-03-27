@@ -5,6 +5,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.kaptcha.Kaptcha;
 import com.baomidou.kaptcha.exception.KaptchaIncorrectException;
 import com.baomidou.kaptcha.exception.KaptchaNotFoundException;
+import com.php25.api.base.constant.AccessRequired;
 import com.php25.api.base.constant.BusinessError;
 import com.php25.api.base.vo.CustomerVo;
 import com.php25.common.core.dto.ResultDto;
@@ -103,10 +104,10 @@ public class ApiCommonController extends JSONController {
                 CustomerVo customerVo = new CustomerVo();
                 BeanUtils.copyProperties(customerDto, customerVo);
                 //获取头像
-//                ResultDto<ImgDto> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
-//                if (imgDtoResultDto.isStatus()) {
-//                    customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
-//                }
+                ResultDto<ImgBo> imgDtoResultDto = imageRpc.findOne(customerDto.getImageId());
+                if (imgDtoResultDto.isStatus()) {
+                    customerVo.setImage(imgDtoResultDto.getObject().getImgUrl());
+                }
                 customerVo.setToken(jwt);
                 return ResponseEntity.ok(succeed(customerVo));
             } else {
@@ -200,7 +201,7 @@ public class ApiCommonController extends JSONController {
         return ResponseEntity.ok(succeed(result));
     }
 
-
+    @AccessRequired
     @ApiOperation(value = "登出", notes = "登出", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jwt", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),
@@ -211,6 +212,7 @@ public class ApiCommonController extends JSONController {
     }
 
 
+    @AccessRequired
     @ApiOperation(value = "查询客户信息", notes = "查询客户信息<br>" +
             "错误状态码:<br>" +
             "10000=出错啦,请重试", response = CustomerVo.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -242,6 +244,7 @@ public class ApiCommonController extends JSONController {
     }
 
 
+    @AccessRequired
     @ApiOperation(value = "修改个人信息", notes = "修改个人信息", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jwt", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),

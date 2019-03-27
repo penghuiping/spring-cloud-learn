@@ -5,29 +5,21 @@ spring:
   profiles:
     active: development
   application:
-    name: springbootlearn-notifyservice
+    name: springbootlearn-api
 server:
-  port: 9091
+  port: 8081
   type: provider
 ###############################################
 ## dubbo配置
 ###############################################
 dubbo:
-  scan:
-    basePackages: com.php25.notifyservice.server.rpc
   ## ApplicationConfig Bean
   application:
-    id: dubbo-provider-userservice
-    name: dubbo-provider-userservice
-    qos-port: 22223
+    id: dubbo-consumer-api
+    name: dubbo-consumer-api
+    qos-port: 22221
     qos-enable: true
     qosAcceptForeignIp: false
-  ## ProtocolConfig Bean
-  protocol:
-    id: dubbo
-    name: dubbo
-    port: 12346
-    serialization: hessian2
   ## RegistryConfig Bean
   registry:
     id: my-registry

@@ -1,6 +1,6 @@
 package com.php25.api.config;
 
-import com.php25.api.base.interceptor.ApiAuthenticationInterceptor;
+import com.php25.api.base.interceptor.JwtAuthenticationInterceptor;
 import com.php25.common.mvc.CommonInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +23,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     CommonInterceptor commonInterceptor;
 
     @Autowired
-    ApiAuthenticationInterceptor apiAuthenticationInterceptor;
+    JwtAuthenticationInterceptor apiAuthenticationInterceptor;
 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        super.addInterceptors(registry);
         registry.addInterceptor(commonInterceptor).addPathPatterns("/**/*");
     }
 
