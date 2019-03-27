@@ -1,0 +1,36 @@
+###############################################
+## common配置
+###############################################
+spring:
+  profiles:
+    active: development
+  application:
+    name: springbootlearn-authserver
+server:
+  port: 8083
+  type: provider
+###############################################
+## dubbo配置
+###############################################
+dubbo:
+  ## ApplicationConfig Bean
+  application:
+    id: dubbo-consumer-authserver
+    name: dubbo-consumer-authserver
+    qos-enable: false
+    qosAcceptForeignIp: false
+  ## RegistryConfig Bean
+  registry:
+    id: my-registry
+    address: zookeeper://localhost:2181
+    client: curator
+###############################################
+## apollo配置
+###############################################
+app:
+  id: java_spring_boot_learn_api
+apollo:
+  bootstrap:
+    enabled: true
+  cacheDir: /tmp/data/apollo-cache
+  meta: http://localhost:8080

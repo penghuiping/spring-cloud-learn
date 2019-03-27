@@ -20,6 +20,7 @@
     <modules>
         <module>api</module>
         <module>admin</module>
+        <module>authserver</module>
         <module>user-microservice</module>
         <module>notify-microservice</module>
         <module>media-microservice</module>
