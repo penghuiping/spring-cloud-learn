@@ -48,7 +48,7 @@ public class JwtAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
 
-            //直接判断redis里的token值是否有效
+            //验证jwt的有效性
             if (customerRpc.validateJwt(token)) return true;
 
             //返回401状态码 访问被禁止

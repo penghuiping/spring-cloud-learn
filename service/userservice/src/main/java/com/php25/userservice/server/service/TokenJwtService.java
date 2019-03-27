@@ -1,24 +1,35 @@
 package com.php25.userservice.server.service;
 
+import java.util.Map;
+
 /**
  * Created by penghuiping on 2018/3/15.
  */
 public interface TokenJwtService {
 
     /**
-     * 通过key生成token
-     *
+     * 通过userId生成token
+     * @param userId
+     * @param value
      * @return
      */
-    public String getToken(String key);
+    public String getToken(String userId, Map<String,Object> value);
 
     /**
-     * 通过token反向获取key
+     * 通过token反向获取userId
      *
      * @param token
      * @return
      */
     public String getKeyByToken(String token);
+
+    /**
+     * 通过token反向获取value
+     *
+     * @param token
+     * @return
+     */
+    public Map<String,Object> getValueByToken(String token);
 
 
     /**

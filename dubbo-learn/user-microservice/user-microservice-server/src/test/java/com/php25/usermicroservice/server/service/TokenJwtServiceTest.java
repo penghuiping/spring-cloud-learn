@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
+
 /**
  * @author: penghuiping
  * @date: 2018/10/12 10:04
@@ -25,28 +27,28 @@ public class TokenJwtServiceTest {
 
     @Test
     public void getToken() {
-        String token = tokenJwtService.getToken("test");
+        String token = tokenJwtService.getToken("test", Collections.emptyMap());
         Assert.assertNotNull(token);
         log.info("token:" + token);
     }
 
     @Test
     public void getKeyByToken() {
-        String token = tokenJwtService.getToken("test");
+        String token = tokenJwtService.getToken("test",Collections.emptyMap());
         String key = tokenJwtService.getKeyByToken(token);
         Assert.assertEquals(key, "test");
     }
 
     @Test
     public void cleanToken() {
-        String token = tokenJwtService.getToken("test");
+        String token = tokenJwtService.getToken("test",Collections.emptyMap());
         Boolean result = tokenJwtService.cleanToken(token);
         Assert.assertTrue(result);
     }
 
     @Test
     public void verifyToken() {
-        String token = tokenJwtService.getToken("test");
+        String token = tokenJwtService.getToken("test",Collections.emptyMap());
         Boolean result = tokenJwtService.verifyToken(token);
         Assert.assertTrue(result);
         tokenJwtService.cleanToken(token);

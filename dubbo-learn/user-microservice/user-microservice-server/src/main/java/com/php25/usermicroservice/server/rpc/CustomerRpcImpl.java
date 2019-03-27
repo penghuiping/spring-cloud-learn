@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -74,8 +76,10 @@ public class CustomerRpcImpl implements CustomerRpc {
         }
 
         CustomerDto customerDto = optionalCustomerDto.get();
+        Map<String, Object> map = new HashMap<>();
+        map.put("customer", customerDto);
         //生成jwt
-        String jwt = tokenJwtService.getToken(customerDto.getId().toString());
+        String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
         return new ResultDto<>(true, jwt);
     }
 
@@ -90,8 +94,10 @@ public class CustomerRpcImpl implements CustomerRpc {
         }
 
         CustomerDto customerDto = optionalCustomerDto.get();
+        Map<String, Object> map = new HashMap<>();
+        map.put("customer", customerDto);
         //生成jwt
-        String jwt = tokenJwtService.getToken(customerDto.getId().toString());
+        String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
         return new ResultDto<>(true, jwt);
     }
 
@@ -107,8 +113,10 @@ public class CustomerRpcImpl implements CustomerRpc {
         }
 
         CustomerDto customerDto = optionalCustomerDto.get();
+        Map<String, Object> map = new HashMap<>();
+        map.put("customer", customerDto);
         //生成jwt
-        String jwt = tokenJwtService.getToken(customerDto.getId().toString());
+        String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
         return new ResultDto<>(true, jwt);
     }
 
