@@ -2,6 +2,7 @@ package com.php25.gateway.config;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.google.common.collect.Lists;
+import com.php25.common.core.service.SnowflakeIdWorker;
 import com.php25.gateway.filter.JwtFilter;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import org.slf4j.Logger;
@@ -49,5 +50,11 @@ public class RouterConfig {
         JwtFilter jwtFilter = new JwtFilter();
         jwtFilter.setTokenJwtRpc(tokenJwtRpc);
         return jwtFilter.apply(new JwtFilter.Config(Lists.newArrayList("/api/common/SSOLogin.do", "/api/common/render.do")));
+    }
+
+
+    @Bean
+    public SnowflakeIdWorker snowflakeIdWorker() {
+        return new SnowflakeIdWorker();
     }
 }

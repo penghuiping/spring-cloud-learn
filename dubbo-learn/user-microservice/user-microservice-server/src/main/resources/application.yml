@@ -6,6 +6,13 @@ spring:
     active: development
   application:
     name: springbootlearn-userservice
+  data:
+    redis:
+      repositories:
+        enabled: false
+    elasticsearch:
+      repositories:
+        enabled: false
 server:
   port: 9090
   type: provider
@@ -14,7 +21,7 @@ server:
 ###############################################
 dubbo:
   scan:
-    basePackages: com.php25.userservice.server.rpc
+    basePackages: com.php25.usermicroservice.server.rpc
   ## ApplicationConfig Bean
   application:
     id: dubbo-provider-userservice
@@ -43,3 +50,4 @@ apollo:
     enabled: true
   cacheDir: /tmp/data/apollo-cache
   meta: http://localhost:8080
+

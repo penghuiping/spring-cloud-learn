@@ -1,11 +1,11 @@
 package com.php25.authserver.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.redis.RedisService;
 import com.php25.common.redis.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
@@ -13,6 +13,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @Configuration
 public class RedisConfig {
+
+    @Autowired
+    RedisConnectionFactory redisConnectionFactory;
 
     @Bean
     public RedisService redisService(@Autowired StringRedisTemplate stringRedisTemplate) {

@@ -27,7 +27,7 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     com.php25: INFO
-    org.springframework.security: debug
+    org.springframework.security: INFO
 spring:
   ########################################################
   ### redis
