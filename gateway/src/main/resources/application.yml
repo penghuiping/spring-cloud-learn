@@ -1,0 +1,20 @@
+###############################################
+## common配置
+###############################################
+spring:
+  profiles:
+    active: development
+  application:
+    name: springbootlearn-gateway
+server:
+  port: 8080
+###############################################
+## apollo配置
+###############################################
+app:
+  id: java_spring_boot_learn_api
+apollo:
+  bootstrap:
+    enabled: true
+  cacheDir: /tmp/data/apollo-cache
+  meta: http://localhost:8080

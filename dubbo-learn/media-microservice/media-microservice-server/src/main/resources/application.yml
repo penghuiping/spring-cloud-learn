@@ -14,7 +14,7 @@ server:
 ###############################################
 dubbo:
   scan:
-    basePackages: com.php25.mediaservice.server.rpc
+    basePackages: com.php25.mediamicroservice.server.rpc
   ## ApplicationConfig Bean
   application:
     id: dubbo-provider-mediaservice

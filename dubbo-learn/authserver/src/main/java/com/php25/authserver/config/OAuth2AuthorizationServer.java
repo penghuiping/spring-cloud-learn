@@ -1,5 +1,7 @@
 package com.php25.authserver.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.php25.authserver.service.MyTokenServices;
@@ -22,8 +24,11 @@ import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.client.InMemoryClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.JdkSerializationStrategy;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.StandardStringSerializationStrategy;
 
+import java.io.IOException;
 import java.util.Collections;
 
 //授权服务器配置
@@ -44,6 +49,8 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
     @Autowired
     private MyUserDetailsService myUserDetailsService;
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Bean
     public ClientDetailsService clientDetailsService() {
         BaseClientDetails clientDetails = new BaseClientDetails();
@@ -62,17 +69,12 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
         oauthServer.allowFormAuthenticationForClients();
     }
 
-    @Bean
-    public ApprovalStore approvalStore() {
-        TokenApprovalStore store = new TokenApprovalStore();
-        store.setTokenStore(tokenStore());
-        return store;
-    }
-
 
     @Bean
-    public TokenStore tokenStore() {
-        return new RedisTokenStore(redisConnectionFactory);
+    TokenStore tokenStore() {
+        RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
+        tokenStore.setSerializationStrategy(new JdkSerializationStrategy());
+        return tokenStore;
     }
 
     @Override

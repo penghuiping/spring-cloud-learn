@@ -1,0 +1,62 @@
+########################################################
+###common
+########################################################
+app:
+  redis:
+    host: ${redis_host}
+    port: ${redis_port}
+    nodes: ${redis_nodes}
+    password: ${redis_password}
+    database: ${redis_database}
+########################################################
+### LOG
+########################################################
+logging:
+  file: logs/gateway.log
+  level:
+    root: INFO
+    com.php25: INFO
+    org.springframework.security: INFO
+spring:
+  ########################################################
+  ### redis
+  ########################################################
+  redis:
+    host: ${app.redis.host}
+    port: ${app.redis.port}
+    database: ${app.redis.database}
+    ssl: false
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1s
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1s
+        min-idle: 0
+    timeout: 5s
+  #    cluster:
+  #      max-redirects: 3
+  #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
+  #    sentinel:
+  #      master: master
+  #      nodes: 10.182.175.63:26380,10.182.175.64:26380
+  #    password: ${app.redis.password}
+  data:
+    redis:
+      repositories:
+        enabled: false
+    elasticsearch:
+      repositories:
+        enabled: false
+
+
+
+
+
+
+
