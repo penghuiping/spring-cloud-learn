@@ -7,7 +7,7 @@ spring:
   application:
     name: springbootlearn-gateway
 server:
-  port: 8080
+  port: 7080
 ###############################################
 ## apollo配置
 ###############################################

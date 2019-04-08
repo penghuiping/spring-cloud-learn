@@ -53,6 +53,21 @@ spring:
     elasticsearch:
       repositories:
         enabled: false
+  cloud:
+    gateway:
+      routes:
+      - id: rewritepath_route
+        uri: http://localhost:8081
+        predicates:
+          - Path=/api/**
+        filters:
+          - RewritePath=/api/(?<segment>.*), /api/$\{segment}
+      - id: rewritepath_route
+        uri: http://localhost:8082
+        predicates:
+        - Path=/admin/**
+        filters:
+        - RewritePath=/admin/(?<segment>.*), /admin/$\{segment}
 
 
 

@@ -76,15 +76,15 @@ spring:
       pool:
         max-active: 8
         max-idle: 8
-        max-wait: -1
+        max-wait: -1s
         min-idle: 0
     lettuce:
       pool:
         max-active: 8
         max-idle: 8
-        max-wait: -1
+        max-wait: -1s
         min-idle: 0
-    timeout: 0
+    timeout: 0s
   #    cluster:
   #      max-redirects: 3
   #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380

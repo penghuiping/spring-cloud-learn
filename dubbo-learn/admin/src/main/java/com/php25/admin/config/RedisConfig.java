@@ -1,6 +1,5 @@
 package com.php25.admin.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.redis.RedisService;
 import com.php25.common.redis.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,8 @@ public class RedisConfig {
 
     @Bean
     public RedisService redisService(@Autowired StringRedisTemplate stringRedisTemplate) {
-        RedisService redisService = new RedisSpringBootServiceImpl(stringRedisTemplate);
-        return redisService;
+        return new RedisSpringBootServiceImpl(stringRedisTemplate);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
+
 }

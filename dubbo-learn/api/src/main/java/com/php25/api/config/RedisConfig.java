@@ -16,12 +16,7 @@ public class RedisConfig {
 
     @Bean
     public RedisService redisService(@Autowired StringRedisTemplate stringRedisTemplate) {
-        RedisService redisService = new RedisSpringBootServiceImpl(stringRedisTemplate);
-        return redisService;
+        return new RedisSpringBootServiceImpl(stringRedisTemplate);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 }
