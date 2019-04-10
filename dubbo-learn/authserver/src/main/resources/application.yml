@@ -32,5 +32,5 @@ app:
 apollo:
   bootstrap:
     enabled: true
-  cacheDir: /tmp/data/apollo-cache
+  cacheDir: /data/apollo-cache
   meta: http://localhost:8080

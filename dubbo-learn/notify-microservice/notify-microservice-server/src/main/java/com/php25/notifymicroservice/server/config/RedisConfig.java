@@ -1,6 +1,5 @@
 package com.php25.notifymicroservice.server.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.redis.RedisService;
 import com.php25.common.redis.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,5 @@ public class RedisConfig {
         return redisService;
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 }
 

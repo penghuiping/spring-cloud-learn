@@ -56,20 +56,52 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: rewritepath_route
+      - id: hystrix_route
         uri: http://localhost:8081
         predicates:
-          - Path=/api/**
+        - Path=/api/**
         filters:
-          - RewritePath=/api/(?<segment>.*), /api/$\{segment}
-      - id: rewritepath_route
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/fallback
+        - RewritePath=/api/(?<segment>.*), /api/$\{segment}
+      - id: hystrix_route
         uri: http://localhost:8082
         predicates:
         - Path=/admin/**
         filters:
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/fallback
         - RewritePath=/admin/(?<segment>.*), /admin/$\{segment}
-
-
+hystrix:
+  command:
+    fallbackcmd:
+      circuitBreaker:
+        enabled: true
+        requestVolumeThreshold: 20
+        sleepWindowInMilliseconds: 5000
+        errorThresholdPercentage: 50
+        forceOpen: false
+        forceClosed: false
+      fallback:
+        enabled: true
+        isolation:
+          semaphore:
+            maxConcurrentRequests: 10
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 10
+          thread:
+            timeoutInMilliseconds: 1000
+            interruptOnTimeout: true
+            interruptOnCancel: false
+        timeout:
+          enabled: true
 
 
 
