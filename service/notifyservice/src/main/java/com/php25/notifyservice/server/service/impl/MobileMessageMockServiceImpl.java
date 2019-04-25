@@ -7,6 +7,7 @@ import com.php25.notifyservice.server.service.MobileMessageService;
 import com.php25.notifyservice.server.service.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@Primary
 public class MobileMessageMockServiceImpl implements MobileMessageService {
     private SMSClient client = null;
 

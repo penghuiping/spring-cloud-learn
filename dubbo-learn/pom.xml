@@ -10,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dubbo-learn</artifactId>
-    <version>${image.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>dubbo-learn</name>
     <description>dubbo-learn</description>
@@ -18,11 +18,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api</module>
-        <module>admin</module>
-        <module>authserver</module>
         <module>user-microservice</module>
         <module>notify-microservice</module>
         <module>media-microservice</module>
+        <module>api</module>
+        <module>admin</module>
+        <module>authserver</module>
     </modules>
 </project>

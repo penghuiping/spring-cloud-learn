@@ -4,9 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.php25</groupId>
-        <artifactId>common-parent</artifactId>
+        <artifactId>dubbo-learn</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../common-parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,8 +15,8 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>user-microservice-server</module>
         <module>user-microservice-client</module>
+        <module>user-microservice-server</module>
     </modules>
 
     <packaging>pom</packaging>

@@ -59,6 +59,7 @@
         <mediamicroservice.version>0.0.1-SNAPSHOT</mediamicroservice.version>
         <api.version>0.0.1-SNAPSHOT</api.version>
 
+        <sleuth.version>2.1.0.RELEASE</sleuth.version>
         <image.version>0.0.8-test</image.version>
         <docker.registry.ip>192.168.99.100</docker.registry.ip>
         <docker.registry.port>30007</docker.registry.port>
@@ -72,6 +73,13 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-bom</artifactId>
                 <version>5.1.4.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-sleuth</artifactId>
+                <version>${sleuth.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -329,6 +337,21 @@
                 <groupId>com.ctrip.framework.apollo</groupId>
                 <artifactId>apollo-client</artifactId>
                 <version>${apollo}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>kaptcha-spring-boot-starter</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>2.3.5.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

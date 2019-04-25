@@ -6,6 +6,10 @@ spring:
     active: development
   application:
     name: springbootlearn-api
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
 server:
   port: 8081
   type: provider
@@ -25,6 +29,10 @@ dubbo:
     id: my-registry
     address: zookeeper://localhost:2181
     client: curator
+  provider:
+    filter: tracing
+  consumer:
+    filter: tracing
 ###############################################
 ## apollo配置
 ###############################################

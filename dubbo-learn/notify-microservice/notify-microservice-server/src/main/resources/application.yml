@@ -6,6 +6,10 @@ spring:
     active: development
   application:
     name: springbootlearn-notifyservice
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
 server:
   port: 9091
   type: provider
@@ -17,8 +21,8 @@ dubbo:
     basePackages: com.php25.notifymicroservice.server.rpc
   ## ApplicationConfig Bean
   application:
-    id: dubbo-provider-userservice
-    name: dubbo-provider-userservice
+    id: dubbo-provider-notifyservice
+    name: dubbo-provider-notifyservice
     qos-port: 22223
     qos-enable: true
     qosAcceptForeignIp: false
@@ -33,6 +37,10 @@ dubbo:
     id: my-registry
     address: zookeeper://localhost:2181
     client: curator
+  provider:
+    filter: tracing
+  consumer:
+    filter: tracing
 ###############################################
 ## apollo配置
 ###############################################

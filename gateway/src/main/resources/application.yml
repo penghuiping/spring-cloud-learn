@@ -6,6 +6,10 @@ spring:
     active: development
   application:
     name: springbootlearn-gateway
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
 server:
   port: 7080
 ###############################################
@@ -18,3 +22,4 @@ apollo:
     enabled: true
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
+

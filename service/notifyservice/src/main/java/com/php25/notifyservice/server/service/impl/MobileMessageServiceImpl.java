@@ -24,7 +24,6 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-@Primary
 public class MobileMessageServiceImpl implements MobileMessageService {
 
     @Value("${jiguang.sms.APP_KEY}")
