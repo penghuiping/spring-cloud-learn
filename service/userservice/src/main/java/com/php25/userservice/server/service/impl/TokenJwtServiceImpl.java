@@ -45,6 +45,11 @@ public class TokenJwtServiceImpl implements TokenJwtService {
     private IdGeneratorService idGeneratorService;
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
+
+    @Override
     public String getToken(String userId,Map<String,Object> value) {
         Assert.hasText(userId, "key不能为空");
         String id = idGeneratorService.getModelPrimaryKey();

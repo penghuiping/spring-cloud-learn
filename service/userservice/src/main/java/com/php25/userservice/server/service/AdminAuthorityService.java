@@ -4,6 +4,7 @@ import com.php25.common.core.service.BaseService;
 import com.php25.common.core.service.SoftDeletable;
 import com.php25.userservice.server.dto.AdminAuthorityDto;
 import com.php25.userservice.server.model.AdminAuthority;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Set;
  * @date: 2018/10/17 17:22
  * @description:
  */
-public interface AdminAuthorityService extends BaseService<AdminAuthorityDto, AdminAuthority, Long>, SoftDeletable<AdminAuthorityDto> {
+public interface AdminAuthorityService extends InitializingBean {
 
     public Optional<List<AdminAuthorityDto>> findAllByAdminMenuButtonIds(List<Long> ids);
 

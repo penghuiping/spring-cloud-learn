@@ -28,13 +28,19 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, AdminMenuButton, Long> implements AdminMenuService {
+public class AdminMenuServiceImpl implements AdminMenuService {
     private AdminMenuButtonRepository adminMenuButtonRepository;
+
+    private BaseServiceImpl<AdminMenuButtonDto, AdminMenuButton, Long> baseService;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        baseService = new BaseServiceImpl<>(adminMenuButtonRepository);
+    }
 
     @Autowired
     public void setAdminMenuButtonRepository(AdminMenuButtonRepository adminMenuButtonRepository) {
         this.adminMenuButtonRepository = adminMenuButtonRepository;
-        this.baseRepository = adminMenuButtonRepository;
     }
 
     @Override
@@ -186,7 +192,7 @@ public class AdminMenuServiceImpl extends BaseServiceImpl<AdminMenuButtonDto, Ad
     @Override
     public void softDelete(AdminMenuButtonDto obj) {
         Assert.notNull(obj, "obj不能为null");
-        super.softDelete(obj);
+        baseService.softDelete(obj);
         if (!obj.getIsLeaf()) {
             AdminMenuButton adminMenuButton = new AdminMenuButton();
             adminMenuButton.setId(obj.getId());

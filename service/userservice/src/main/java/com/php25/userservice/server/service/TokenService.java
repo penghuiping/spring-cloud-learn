@@ -1,5 +1,7 @@
 package com.php25.userservice.server.service;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.Map;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Map;
  * @author penghuiping
  * @timer 2017/1/24.
  */
-public interface TokenService<T> {
+public interface TokenService<T> extends InitializingBean {
 
     /**
      * 根据用户 获取 token

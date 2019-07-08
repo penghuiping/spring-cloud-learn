@@ -39,6 +39,11 @@ public class TokenServiceImpl<T> implements TokenService<T> {
     @Autowired
     private IdGeneratorService idGeneratorService;
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
+
     /**
      * 根据用户，获取access token
      *

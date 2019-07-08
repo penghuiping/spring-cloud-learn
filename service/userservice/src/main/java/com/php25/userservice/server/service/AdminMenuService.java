@@ -1,10 +1,8 @@
 package com.php25.userservice.server.service;
 
-import com.php25.common.core.service.BaseService;
-import com.php25.common.core.service.SoftDeletable;
 import com.php25.userservice.server.dto.AdminMenuButtonDto;
 import com.php25.userservice.server.dto.AdminRoleDto;
-import com.php25.userservice.server.model.AdminMenuButton;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +10,11 @@ import java.util.Optional;
 /**
  * Created by penghuiping on 16/8/12.
  */
-public interface AdminMenuService extends BaseService<AdminMenuButtonDto, AdminMenuButton, Long>, SoftDeletable<AdminMenuButtonDto> {
+public interface AdminMenuService extends InitializingBean {
+
+    Optional<AdminMenuButtonDto> findOne(Long id);
+
+    Optional<AdminMenuButtonDto> save(AdminMenuButtonDto menu);
 
     /**
      * 根据角色查询所有的有效菜单按钮
@@ -68,4 +70,9 @@ public interface AdminMenuService extends BaseService<AdminMenuButtonDto, AdminM
      * @return
      */
     Optional<List<AdminMenuButtonDto>> findMenusEnabledByParent(AdminMenuButtonDto parent);
+
+
+    void softDelete(AdminMenuButtonDto obj);
+
+    void softDelete(List<AdminMenuButtonDto> objs);
 }

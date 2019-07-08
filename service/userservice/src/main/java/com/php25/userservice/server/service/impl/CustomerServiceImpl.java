@@ -26,17 +26,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 @Service
-public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, Long> implements CustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
 
     private CustomerRepository customerRepository;
 
+    private BaseServiceImpl<CustomerDto,Customer,Long> baseService;
+
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
-        this.baseRepository = customerRepository;
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        baseService = new BaseServiceImpl<>(customerRepository);
+    }
+
+    @Override
+    public Optional<CustomerDto> findOne(Long id) {
+        return baseService.findOne(id);
+    }
 
     @Override
     public Optional<CustomerDto> findOneByUsernameAndPassword(String username, String password) {
@@ -69,13 +79,13 @@ public class CustomerServiceImpl extends BaseServiceImpl<CustomerDto, Customer, 
             obj.setCreateTime(new Date());
         }
         obj.setUpdateTime(new Date());
-        return super.save(obj);
+        return new BaseServiceImpl<CustomerDto,Customer,Long>(customerRepository).save(obj);
     }
 
 
     @Override
     public Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        return this.query(pageNum, pageSize, searchParams, BeanUtils::copyProperties, Sort.Direction.DESC, "id");
+        return baseService.query(pageNum, pageSize, searchParams, BeanUtils::copyProperties, Sort.Direction.DESC, "id");
     }
 
     @Override

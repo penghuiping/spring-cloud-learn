@@ -1,9 +1,8 @@
 package com.php25.userservice.server.service;
 
-import com.php25.common.core.service.BaseService;
-import com.php25.common.core.service.SoftDeletable;
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.userservice.server.dto.CustomerDto;
-import com.php25.userservice.server.model.Customer;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,13 @@ import java.util.Optional;
  * @author penghuiping
  * @Time 16/9/2.
  */
-public interface CustomerService extends BaseService<CustomerDto, Customer, Long>, SoftDeletable<CustomerDto> {
+public interface CustomerService extends InitializingBean {
+
+    Optional<CustomerDto> findOne(Long id);
+
+    Optional<CustomerDto> save(CustomerDto obj);
+
+    Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams);
 
     /**
      * 根据用户名与密码，查询出用户信息

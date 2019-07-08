@@ -1,11 +1,13 @@
 package com.php25.userservice.server.service;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.Map;
 
 /**
  * Created by penghuiping on 2018/3/15.
  */
-public interface TokenJwtService {
+public interface TokenJwtService extends InitializingBean {
 
     /**
      * 通过userId生成token

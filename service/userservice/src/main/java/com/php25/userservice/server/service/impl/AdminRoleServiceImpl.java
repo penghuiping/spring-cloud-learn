@@ -2,6 +2,8 @@ package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.service.ModelToDtoTransferable;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.server.dto.AdminMenuButtonDto;
 import com.php25.userservice.server.dto.AdminRoleDto;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRole, Long> implements AdminRoleService {
+public class AdminRoleServiceImpl implements AdminRoleService {
 
     private AdminRoleRepository adminRoleRepository;
 
@@ -41,10 +43,16 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
     @Autowired
     private IdGeneratorService idGeneratorService;
 
+    private BaseServiceImpl<AdminRoleDto, AdminRole, Long> baseService;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        baseService = new BaseServiceImpl<>(adminRoleRepository);
+    }
+
     @Autowired
     public void setAdminRoleRepository(AdminRoleRepository adminRoleRepository) {
         this.adminRoleRepository = adminRoleRepository;
-        this.baseRepository = adminRoleRepository;
     }
 
     @Autowired
@@ -134,9 +142,10 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
         }).collect(Collectors.toList()));
     }
 
+
     @Override
     public Optional<DataGridPageDto<AdminRoleDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        Optional<DataGridPageDto<AdminRoleDto>> userPage = this.query(pageNum, pageSize, searchParams, (adminRole, adminRoleDto) -> {
+        Optional<DataGridPageDto<AdminRoleDto>> userPage = baseService.query(pageNum, pageSize, searchParams, (adminRole, adminRoleDto) -> {
             BeanUtils.copyProperties(adminRole, adminRoleDto, "adminMenuButtons");
         }, Sort.Direction.DESC, "id");
         return userPage;
@@ -154,4 +163,13 @@ public class AdminRoleServiceImpl extends BaseServiceImpl<AdminRoleDto, AdminRol
         return Optional.of(adminRoleDto);
     }
 
+    @Override
+    public Optional<DataGridPageDto<AdminRoleDto>> query(Integer pageNum, Integer pageSize, SearchParamBuilder searchParamBuilder, ModelToDtoTransferable modelToDtoTransferable, Sort sort) {
+        return baseService.query(pageNum, pageSize, searchParamBuilder, modelToDtoTransferable, sort);
+    }
+
+    @Override
+    public void softDelete(List<AdminRoleDto> adminRoleDtos) {
+        baseService.softDelete(adminRoleDtos);
+    }
 }

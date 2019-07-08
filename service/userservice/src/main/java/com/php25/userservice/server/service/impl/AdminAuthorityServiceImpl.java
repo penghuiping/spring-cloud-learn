@@ -26,14 +26,20 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminAuthorityServiceImpl extends BaseServiceImpl<AdminAuthorityDto, AdminAuthority, Long> implements AdminAuthorityService {
+public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     private AdminAuthorityRepository adminAuthorityRepository;
+
+    private BaseServiceImpl<AdminAuthorityDto, AdminAuthority, Long> baseService;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        baseService = new BaseServiceImpl<>(adminAuthorityRepository);
+    }
 
     @Autowired
     public void setAdminAuthorityRepository(AdminAuthorityRepository adminAuthorityRepository) {
         this.adminAuthorityRepository = adminAuthorityRepository;
-        this.baseRepository = adminAuthorityRepository;
     }
 
     @Override

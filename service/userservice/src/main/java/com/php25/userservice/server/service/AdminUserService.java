@@ -1,9 +1,11 @@
 package com.php25.userservice.server.service;
 
-import com.php25.common.core.service.BaseService;
-import com.php25.common.core.service.SoftDeletable;
+import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.service.ModelToDtoTransferable;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.userservice.server.dto.AdminUserDto;
-import com.php25.userservice.server.model.AdminUser;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,20 @@ import java.util.Optional;
  * @author penghuiping
  * @date 2016-08-12
  */
-public interface AdminUserService extends BaseService<AdminUserDto, AdminUser, Long>, SoftDeletable<AdminUserDto> {
+public interface AdminUserService extends InitializingBean {
+
+    Optional<AdminUserDto> findOne(Long id);
+
+    Optional<List<AdminUserDto>> findAll(Iterable<Long> ids);
+
+    Optional<AdminUserDto> save(AdminUserDto obj);
+
+    Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, String searchParams);
+
+    Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, SearchParamBuilder searchParamBuilder, ModelToDtoTransferable modelToDtoTransferable, Sort sort);
+
+    void softDelete(List<AdminUserDto> adminUsers);
+
 
     /**
      * 根据用户名与密码获取用户信息

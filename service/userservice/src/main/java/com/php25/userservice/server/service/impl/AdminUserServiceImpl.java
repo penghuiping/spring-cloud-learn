@@ -3,6 +3,7 @@ package com.php25.userservice.server.service.impl;
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.service.ModelToDtoTransferable;
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @Primary
-public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUser, Long> implements AdminUserService {
+public class AdminUserServiceImpl implements AdminUserService {
 
     private AdminUserRepository adminUserRepository;
 
@@ -49,15 +50,21 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
     @Autowired
     private IdGeneratorService idGeneratorService;
 
+    private BaseServiceImpl<AdminUserDto, AdminUser, Long> baseService;
+
     @Autowired
     public void setAdminUserRepository(AdminUserRepository adminUserRepository) {
         this.adminUserRepository = adminUserRepository;
-        this.baseRepository = adminUserRepository;
     }
 
     @Autowired
     public void setUserRoleRepository(UserRoleRepository userRoleRepository) {
         this.userRoleRepository = userRoleRepository;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.baseService = new BaseServiceImpl<>(adminUserRepository);
     }
 
     @Override
@@ -157,7 +164,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
 
     @Override
     public Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
-        return this.query(pageNum, pageSize, searchParams, (adminUser, adminUserDto) -> {
+        return baseService.query(pageNum, pageSize, searchParams, (adminUser, adminUserDto) -> {
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
             List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
                 AdminRoleDto adminRoleDto = new AdminRoleDto();
@@ -166,6 +173,11 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
             }).collect(Collectors.toList());
             adminUserDto.setRoles(adminRoleDtos);
         }, Sort.Direction.DESC, "id");
+    }
+
+    @Override
+    public Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, SearchParamBuilder searchParamBuilder, ModelToDtoTransferable modelToDtoTransferable, Sort sort) {
+        return baseService.query(pageNum, pageSize, searchParamBuilder, modelToDtoTransferable, sort);
     }
 
     @Override
@@ -198,5 +210,10 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserDto, AdminUse
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public void softDelete(List<AdminUserDto> adminUsers) {
+        baseService.delete(adminUsers);
     }
 }
