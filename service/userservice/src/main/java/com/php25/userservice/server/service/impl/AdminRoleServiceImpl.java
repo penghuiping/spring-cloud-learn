@@ -48,7 +48,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        baseService = new BaseServiceImpl<>(adminRoleRepository);
+        baseService = new BaseServiceImpl<>(AdminRoleDto.class, AdminRole.class, adminRoleRepository);
     }
 
     @Autowired

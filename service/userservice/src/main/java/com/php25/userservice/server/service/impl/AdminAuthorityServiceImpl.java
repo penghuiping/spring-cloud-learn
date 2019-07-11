@@ -35,7 +35,7 @@ public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.baseService = new BaseServiceImpl<>(adminAuthorityRepository);
+        this.baseService = new BaseServiceImpl<>(AdminAuthorityDto.class, AdminAuthority.class, adminAuthorityRepository);
     }
 
     @Autowired

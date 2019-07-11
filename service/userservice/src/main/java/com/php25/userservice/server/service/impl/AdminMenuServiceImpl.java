@@ -37,7 +37,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        baseService = new BaseServiceImpl<>(adminMenuButtonRepository);
+        baseService = new BaseServiceImpl<>(AdminMenuButtonDto.class, AdminMenuButton.class, adminMenuButtonRepository);
     }
 
     @Autowired

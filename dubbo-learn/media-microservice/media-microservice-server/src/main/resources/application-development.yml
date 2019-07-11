@@ -45,7 +45,7 @@ spring:
   ########################################################
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
     username: ${app.db.username}
     password: ${app.db.password}
@@ -119,10 +119,10 @@ spring:
   ########################################################
   ### fileupload
   ########################################################
-  servlet:
-    multipart:
-      max-file-size: 10Mb
-      max-request-size: 1000Mb
+#  servlet:
+#    multipart:
+#      max-file-size: 10Mb
+#      max-request-size: 1000Mb
 
 
 

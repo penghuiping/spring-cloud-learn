@@ -44,7 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        baseService = new BaseServiceImpl<>(customerRepository);
+        baseService = new BaseServiceImpl<>(CustomerDto.class, Customer.class, customerRepository);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
             obj.setCreateTime(new Date());
         }
         obj.setUpdateTime(new Date());
-        return new BaseServiceImpl<CustomerDto, Customer, Long>(customerRepository).save(obj);
+        return baseService.save(obj);
     }
 
 

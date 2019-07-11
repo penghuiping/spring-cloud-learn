@@ -41,7 +41,7 @@ public class ImageServiceImpl implements ImageService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.baseService = new BaseServiceImpl<>(imgRepository);
+        this.baseService = new BaseServiceImpl<>(ImgDto.class, Img.class, imgRepository);
     }
 
     @Override

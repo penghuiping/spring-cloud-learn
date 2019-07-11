@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
- * @date  2019-07-11
+ * @date 2019-07-11
  */
 @Slf4j
 @Service
@@ -66,7 +66,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.baseService = new BaseServiceImpl<>(adminUserRepository);
+        this.baseService = new BaseServiceImpl<>(AdminUserDto.class, AdminUser.class, adminUserRepository);
     }
 
     @Override
