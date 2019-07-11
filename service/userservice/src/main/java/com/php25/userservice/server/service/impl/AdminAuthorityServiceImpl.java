@@ -1,5 +1,6 @@
 package com.php25.userservice.server.service.impl;
 
+import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.server.dto.AdminAuthorityDto;
 import com.php25.userservice.server.model.AdminAuthority;
@@ -23,9 +24,9 @@ import java.util.stream.Collectors;
  * @description:
  */
 @Slf4j
-@Transactional
 @Service
 @Primary
+@Transactional(rollbackFor = ServiceException.class)
 public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     private AdminAuthorityRepository adminAuthorityRepository;
@@ -34,7 +35,7 @@ public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        baseService = new BaseServiceImpl<>(adminAuthorityRepository);
+        this.baseService = new BaseServiceImpl<>(adminAuthorityRepository);
     }
 
     @Autowired
@@ -44,10 +45,10 @@ public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     @Override
     public Optional<List<AdminAuthorityDto>> findAllByAdminMenuButtonIds(List<Long> ids) {
-        Optional<List<AdminAuthority>> optionalAdminAuthorities = adminAuthorityRepository.findAllByAdminMenuButtonIds(ids);
+        var optionalAdminAuthorities = adminAuthorityRepository.findAllByAdminMenuButtonIds(ids);
         if (optionalAdminAuthorities.isPresent() && optionalAdminAuthorities.get().size() > 0) {
-            List<AdminAuthorityDto> adminAuthorityDtos = optionalAdminAuthorities.get().stream().map(adminAuthority -> {
-                AdminAuthorityDto adminAuthorityDto = new AdminAuthorityDto();
+            var adminAuthorityDtos = optionalAdminAuthorities.get().stream().map(adminAuthority -> {
+                var adminAuthorityDto = new AdminAuthorityDto();
                 BeanUtils.copyProperties(adminAuthority, adminAuthorityDto);
                 return adminAuthorityDto;
             }).collect(Collectors.toList());
@@ -59,10 +60,10 @@ public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     @Override
     public Optional<Set<AdminAuthorityDto>> findAllDistinctByAdminMenuButtonIds(List<Long> ids) {
-        Optional<List<AdminAuthority>> optionalAdminAuthorities = adminAuthorityRepository.findAllByAdminMenuButtonIds(ids);
+        var optionalAdminAuthorities = adminAuthorityRepository.findAllByAdminMenuButtonIds(ids);
         if (optionalAdminAuthorities.isPresent() && optionalAdminAuthorities.get().size() > 0) {
-            Set<AdminAuthorityDto> adminAuthorityDtos = optionalAdminAuthorities.get().stream().map(adminAuthority -> {
-                AdminAuthorityDto adminAuthorityDto = new AdminAuthorityDto();
+            var adminAuthorityDtos = optionalAdminAuthorities.get().stream().map(adminAuthority -> {
+                var adminAuthorityDto = new AdminAuthorityDto();
                 BeanUtils.copyProperties(adminAuthority, adminAuthorityDto);
                 return adminAuthorityDto;
             }).collect(Collectors.toSet());

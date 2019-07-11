@@ -32,7 +32,7 @@ public class MailRpcImpl implements MailRpc {
 
     @Override
     public void sendAttachmentsMail(String sendTo, String title, String content, List<PairBo<String, File>> attachments) {
-        if(null == attachments) attachments = Lists.newArrayList();
+        if(null == attachments) {attachments = Lists.newArrayList();}
         List<PairDto<String, File>> pairDtos = attachments.stream().map(stringFilePairBo -> {
             PairDto<String,File> pairDto = new PairDto<>();
             BeanUtils.copyProperties(stringFilePairBo, pairDto);
@@ -43,7 +43,7 @@ public class MailRpcImpl implements MailRpc {
 
     @Override
     public void sendTemplateMail(String sendTo, String title, Map<String, Object> content, List<PairBo<String, File>> attachments) {
-        if(null == attachments) attachments = Lists.newArrayList();
+        if(null == attachments) {attachments = Lists.newArrayList();}
         List<PairDto<String, File>> pairDtos = attachments.stream().map(stringFilePairBo -> {
             PairDto<String,File> pairDto = new PairDto<>();
             BeanUtils.copyProperties(stringFilePairBo, pairDto);

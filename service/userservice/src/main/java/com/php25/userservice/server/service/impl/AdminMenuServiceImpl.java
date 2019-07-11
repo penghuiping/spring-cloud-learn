@@ -1,5 +1,6 @@
 package com.php25.userservice.server.service.impl;
 
+import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.server.dto.AdminMenuButtonDto;
 import com.php25.userservice.server.dto.AdminRoleDto;
@@ -20,14 +21,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by penghuiping on 16/8/12.
- */
 
+/**
+ * @author penghuiping
+ * @date 2019-07-11
+ */
 @Slf4j
-@Transactional
 @Service
 @Primary
+@Transactional(rollbackFor = ServiceException.class)
 public class AdminMenuServiceImpl implements AdminMenuService {
     private AdminMenuButtonRepository adminMenuButtonRepository;
 
@@ -46,7 +48,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     @Override
     public Optional<AdminMenuButtonDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
-        AdminMenuButton adminMenuButton = adminMenuButtonRepository.findById(id).orElse(null);
+        var adminMenuButton = adminMenuButtonRepository.findById(id).orElse(null);
         if (adminMenuButton == null) {
             return Optional.empty();
         }
@@ -54,7 +56,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         if (null != adminMenuButton.getParent()) {
             adminMenuButton.getParent().getId();
         }
-        AdminMenuButtonDto adminMenuButtonDto = new AdminMenuButtonDto();
+        var adminMenuButtonDto = new AdminMenuButtonDto();
         BeanUtils.copyProperties(adminMenuButton, adminMenuButtonDto, "children", "parent");
         adminMenuButtonDto.setParentId(parentId);
         return Optional.of(adminMenuButtonDto);
@@ -66,11 +68,11 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         AdminMenuButton result = null;
         if (null != menu.getId() && menu.getId() > 0) {
             //编辑
-            AdminMenuButton adminMenuButton = new AdminMenuButton();
+            var adminMenuButton = new AdminMenuButton();
             BeanUtils.copyProperties(menu, adminMenuButton);
 
             if (null != menu.getParent()) {
-                AdminMenuButton parent = new AdminMenuButton();
+                var parent = new AdminMenuButton();
                 BeanUtils.copyProperties(menu.getParent(), parent);
                 adminMenuButton.setParent(parent);
             }
@@ -78,22 +80,22 @@ public class AdminMenuServiceImpl implements AdminMenuService {
             result = adminMenuButtonRepository.save(adminMenuButton);
         } else {
             //新增
-            Integer sort = adminMenuButtonRepository.findMenusMaxSort();
+            var sort = adminMenuButtonRepository.findMenusMaxSort();
             menu.setSort(sort + 1);
             if (null == menu.getParentId() || menu.getParentId() == 0) {
                 menu.setIsLeaf(false);
-                AdminMenuButton adminMenuButton = new AdminMenuButton();
+                var adminMenuButton = new AdminMenuButton();
                 BeanUtils.copyProperties(menu, adminMenuButton);
                 adminMenuButton.setCreateTime(new Date());
                 adminMenuButton.setUpdateTime(new Date());
                 result = adminMenuButtonRepository.save(adminMenuButton);
             } else {
-                AdminMenuButton parent = adminMenuButtonRepository.findById(menu.getParentId()).orElse(null);
+                var parent = adminMenuButtonRepository.findById(menu.getParentId()).orElse(null);
                 if (null == parent) {
                     return Optional.empty();
                 }
                 adminMenuButtonRepository.save(parent);
-                AdminMenuButton adminMenuButton = new AdminMenuButton();
+                var adminMenuButton = new AdminMenuButton();
                 BeanUtils.copyProperties(menu, adminMenuButton);
                 adminMenuButton.setParent(parent);
                 adminMenuButton.setCreateTime(new Date());
@@ -101,7 +103,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
                 result = adminMenuButtonRepository.save(adminMenuButton);
             }
         }
-        AdminMenuButtonDto adminMenuButtonDto = new AdminMenuButtonDto();
+        var adminMenuButtonDto = new AdminMenuButtonDto();
         BeanUtils.copyProperties(result, adminMenuButtonDto, "parent", "children");
         return Optional.of(adminMenuButtonDto);
     }
@@ -110,38 +112,38 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByParentAndRole(AdminMenuButtonDto parent, AdminRoleDto adminRoleDto) {
         Assert.notNull(parent, "parent不能为null");
         Assert.notNull(adminRoleDto, "adminRoleDto不能为null");
-        AdminMenuButton adminMenuButton_ = new AdminMenuButton();
+        var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
-        AdminRole adminRole = new AdminRole();
+        var adminRole = new AdminRole();
         BeanUtils.copyProperties(adminRoleDto, adminRole);
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParentAndRole(adminMenuButton_, adminRole);
+        var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParentAndRole(adminMenuButton_, adminRole);
         return Optional.of(adminMenuButtons.stream().map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByRole(AdminRoleDto adminRoleDto) {
         Assert.notNull(adminRoleDto, "adminRoleDto不能为null");
-        AdminRole adminRole = new AdminRole();
+        var adminRole = new AdminRole();
         BeanUtils.copyProperties(adminRoleDto, adminRole);
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByRole(adminRole);
+        var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByRole(adminRole);
         return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findRootMenus() {
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findRootMenus();
-        return Optional.of(adminMenuButtons.stream().filter(adminMenuButton -> {
-            return adminMenuButton.getEnable() != 2;
-        }).map(this::trans).collect(Collectors.toList()));
+        var adminMenuButtons = adminMenuButtonRepository.findRootMenus();
+        return Optional.of(adminMenuButtons.stream()
+                .filter(adminMenuButton -> adminMenuButton.getEnable() != 2)
+                .map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusByParent(AdminMenuButtonDto parent) {
         Assert.notNull(parent, "parent不能为null");
-        AdminMenuButton adminMenuButton_ = new AdminMenuButton();
+        var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusByParent(adminMenuButton_);
+        var adminMenuButtons = adminMenuButtonRepository.findMenusByParent(adminMenuButton_);
         return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
@@ -149,18 +151,18 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusByRole(AdminRoleDto role) {
         Assert.notNull(role, "role不能为null");
-        AdminRole adminRole = new AdminRole();
+        var adminRole = new AdminRole();
         BeanUtils.copyProperties(role, adminRole);
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusByRole(adminRole);
+        var adminMenuButtons = adminMenuButtonRepository.findMenusByRole(adminRole);
         return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findRootMenusEnabled() {
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findRootMenusEnabled();
+        var adminMenuButtons = adminMenuButtonRepository.findRootMenusEnabled();
         return Optional.ofNullable(adminMenuButtons.stream().map(adminMenuButton -> {
-            AdminMenuButtonDto adminMenuButtonDto = new AdminMenuButtonDto();
+            var adminMenuButtonDto = new AdminMenuButtonDto();
             BeanUtils.copyProperties(adminMenuButton, adminMenuButtonDto, "children");
             return adminMenuButtonDto;
         }).collect(Collectors.toList()));
@@ -169,9 +171,9 @@ public class AdminMenuServiceImpl implements AdminMenuService {
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByParent(AdminMenuButtonDto parent) {
         Assert.notNull(parent, "parent不能为null");
-        AdminMenuButton adminMenuButton_ = new AdminMenuButton();
+        var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
-        List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton_);
+        var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton_);
         return Optional.of(adminMenuButtons.stream()
                 .map(this::trans).collect(Collectors.toList()));
     }
@@ -182,7 +184,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         if (null != adminMenuButton.getParent()) {
             parentId = adminMenuButton.getParent().getId();
         }
-        AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
+        var adminMenuButtonBo = new AdminMenuButtonDto();
         BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo, "children", "parent");
         adminMenuButtonBo.setParentId(parentId);
         return adminMenuButtonBo;
@@ -194,10 +196,10 @@ public class AdminMenuServiceImpl implements AdminMenuService {
         Assert.notNull(obj, "obj不能为null");
         baseService.softDelete(obj);
         if (!obj.getIsLeaf()) {
-            AdminMenuButton adminMenuButton = new AdminMenuButton();
+            var adminMenuButton = new AdminMenuButton();
             adminMenuButton.setId(obj.getId());
-            List<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton);
-            List<AdminMenuButtonDto> adminMenuButtonDtos = adminMenuButtons.stream().map(adminMenuButton1 -> {
+            var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton);
+            var adminMenuButtonDtos = adminMenuButtons.stream().map(adminMenuButton1 -> {
                 AdminMenuButtonDto adminMenuButtonDto = new AdminMenuButtonDto();
                 BeanUtils.copyProperties(adminMenuButton1, adminMenuButtonDto);
                 return adminMenuButtonDto;

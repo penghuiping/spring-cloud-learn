@@ -1,5 +1,6 @@
 package com.php25.userservice.server.service.impl;
 
+import com.php25.common.core.exception.ServiceException;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
@@ -69,7 +70,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
             String key = obj + "";
             redisService.set(key, token + "," + refreshToken);
 
-            Map<String, String> map = new HashMap<String, String>();
+            var map = new HashMap<String, String>();
             map.put("access_token", token);
             map.put("refresh_token", refreshToken);
             map.put("expires_in", access_token_expire_time + "");
@@ -122,7 +123,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
 
         //放入redis缓存
         redisService.set(token, obj, access_token_expire_time);
-        Map<String, String> map = new HashMap<String, String>();
+        var map = new HashMap<String, String>();
         map.put("access_token", token);
         map.put("refresh_token", refreshToken);
         map.put("expires_in", access_token_expire_time + "");
@@ -196,7 +197,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
             }
             return true;
         } else {
-            throw new RuntimeException("obj只能是String或者Long类型");
+            throw new ServiceException("obj只能是String或者Long类型");
         }
     }
 

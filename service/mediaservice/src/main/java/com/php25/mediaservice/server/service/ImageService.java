@@ -1,16 +1,16 @@
 package com.php25.mediaservice.server.service;
 
-import com.php25.common.core.service.BaseService;
-import com.php25.common.core.service.SoftDeletable;
-import com.php25.mediaservice.client.bo.ImgDto;
-import com.php25.mediaservice.server.model.Img;
+import com.php25.mediaservice.server.dto.ImgDto;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @Auther: penghuiping
  * @Date: 2018/6/22 11:09
  * @Description:
  */
-public interface ImageService extends BaseService<ImgDto, Img, String>, SoftDeletable<ImgDto> {
+public interface ImageService {
 
     /**
      * 保存base64Image图片，并返回保存的文件名
@@ -19,4 +19,8 @@ public interface ImageService extends BaseService<ImgDto, Img, String>, SoftDele
      * @return
      */
     public String save(String base64Image);
+
+    public Optional<ImgDto> findOne(String id);
+
+    public Optional<List<ImgDto>> findAll(List<String> ids);
 }

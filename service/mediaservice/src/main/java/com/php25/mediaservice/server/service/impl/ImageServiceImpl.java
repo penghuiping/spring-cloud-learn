@@ -1,56 +1,77 @@
 package com.php25.mediaservice.server.service.impl;
 
-import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
+import com.php25.common.core.exception.ServiceException;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.jdbc.service.BaseServiceImpl;
-import com.php25.mediaservice.client.bo.ImgDto;
+import com.php25.mediaservice.server.dto.ImgDto;
 import com.php25.mediaservice.server.model.Img;
+import com.php25.mediaservice.server.repository.ImgRepository;
 import com.php25.mediaservice.server.service.ImageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @Auther: penghuiping
  * @Date: 2018/6/22 11:12
  * @Description:
  */
+@Slf4j
 @Service
-public class ImageServiceImpl extends BaseServiceImpl<ImgDto, Img, String> implements ImageService {
-    private Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
-
+public class ImageServiceImpl implements ImageService, InitializingBean {
     @Value("${base_assets_upload_path}")
     private String resourcePath;
 
     @Value("${base_assets_upload_url}")
     private String resourceUrl;
 
+    private BaseServiceImpl<ImgDto, Img, String> baseService;
+
+    @Autowired
+    private ImgRepository imgRepository;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.baseService = new BaseServiceImpl<>(imgRepository);
+    }
 
     @Override
     public String save(String base64Image) {
         //获取文件类型
-        byte[] arr = DigestUtil.decodeBase64(base64Image);
-        ContentInfoUtil util = new ContentInfoUtil();
-        ContentInfo info = util.findMatch(arr);
+        var arr = DigestUtil.decodeBase64(base64Image);
+        var util = new ContentInfoUtil();
+        var info = util.findMatch(arr);
         String name = DigestUtil.SHAStr(base64Image) + "." + info.getFileExtensions()[0];
         String absolutePath = resourcePath + "/" + name;
 
         //写入文件
-        Path path1 = Paths.get(absolutePath);
+        var path1 = Paths.get(absolutePath);
         try {
-            if (!Files.exists(path1))
+            if (!Files.exists(path1)) {
                 Files.write(path1, arr);
+            }
         } catch (IOException e) {
-            logger.error("写入文件出错", e);
-            throw new RuntimeException(e);
+            throw new ServiceException("写入文件出错", e);
         }
         return name;
+    }
+
+    @Override
+    public Optional<ImgDto> findOne(String id) {
+        return baseService.findOne(id);
+    }
+
+    @Override
+    public Optional<List<ImgDto>> findAll(List<String> ids) {
+        return baseService.findAll(ids);
     }
 }

@@ -1,6 +1,9 @@
 package com.php25.userservice.server.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.exception.ServiceException;
+import com.php25.common.core.service.ModelToDtoTransferable;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.userservice.server.dto.CustomerDto;
 import com.php25.userservice.server.model.Customer;
@@ -21,17 +24,18 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by penghuiping on 16/9/2.
+ * @author penghuiping
+ * @date 2019-07-11
  */
 @Slf4j
-@Transactional
 @Service
+@Transactional(rollbackFor = ServiceException.class)
 public class CustomerServiceImpl implements CustomerService {
 
 
     private CustomerRepository customerRepository;
 
-    private BaseServiceImpl<CustomerDto,Customer,Long> baseService;
+    private BaseServiceImpl<CustomerDto, Customer, Long> baseService;
 
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
@@ -52,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Optional<CustomerDto> findOneByUsernameAndPassword(String username, String password) {
         Assert.hasText(username, "用户名不能为空");
         Assert.hasText(password, "密码不能为空");
-        Customer customer = customerRepository.findByUsernameAndPassword(username, password);
+        var customer = customerRepository.findByUsernameAndPassword(username, password);
         return transOptional(customer);
     }
 
@@ -60,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Optional<CustomerDto> findOneByPhoneAndPassword(String phone, String password) {
         Assert.hasText(phone, "手机不能为空");
         Assert.hasText(password, "密码不能为空");
-        Customer customer = customerRepository.findOneByMobileAndPassword(phone, password);
+        var customer = customerRepository.findOneByMobileAndPassword(phone, password);
         return transOptional(customer);
     }
 
@@ -68,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<CustomerDto> findOneByPhone(String phone) {
         Assert.hasText(phone, "手机不能为空");
-        Customer customer = customerRepository.findOneByMobile(phone);
+        var customer = customerRepository.findOneByMobile(phone);
         return transOptional(customer);
     }
 
@@ -79,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
             obj.setCreateTime(new Date());
         }
         obj.setUpdateTime(new Date());
-        return new BaseServiceImpl<CustomerDto,Customer,Long>(customerRepository).save(obj);
+        return new BaseServiceImpl<CustomerDto, Customer, Long>(customerRepository).save(obj);
     }
 
 
@@ -89,8 +93,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, SearchParamBuilder searchParamBuilder, ModelToDtoTransferable modelToDtoTransferable, Sort sort) {
+        return baseService.query(pageNum, pageSize, searchParamBuilder, modelToDtoTransferable, sort);
+    }
+
+    @Override
     public Optional<List<CustomerDto>> query(String searchParams, Integer pageNum, Integer pageSize) {
-        Optional<DataGridPageDto<CustomerDto>> customerDtoDataGridPageDto = query(pageNum, pageSize, searchParams);
+        var customerDtoDataGridPageDto = query(pageNum, pageSize, searchParams);
         if (customerDtoDataGridPageDto.isPresent()) {
             return Optional.ofNullable(customerDtoDataGridPageDto.get().getData());
         }
@@ -104,7 +113,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      */
     private CustomerDto trans(Customer customer) {
-        CustomerDto customerDto = new CustomerDto();
+        var customerDto = new CustomerDto();
         BeanUtils.copyProperties(customer, customerDto);
         return customerDto;
     }
@@ -117,7 +126,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     private Optional<CustomerDto> transOptional(Customer customer) {
         if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
+            var customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);
             return Optional.of(customerDto);
         } else {
@@ -128,15 +137,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<List<CustomerDto>> findByUsername(String name) {
         Assert.hasText(name, "name不能为空");
-        List<Customer> customers = customerRepository.findByUsername(name);
-        return Optional.of(customers.stream().map(customer -> trans(customer)).collect(Collectors.toList()));
+        var customers = customerRepository.findByUsername(name);
+        return Optional.of(customers.stream().map(this::trans).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<CustomerDto> findOneByEmailAndPassword(String email, String password) {
-        Customer customer = customerRepository.findOneByEmailAndPassword(email, password);
+        var customer = customerRepository.findOneByEmailAndPassword(email, password);
         if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
+            var customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);
             return Optional.of(customerDto);
         } else {
@@ -147,9 +156,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Optional<CustomerDto> findOneByEmail(String email) {
-        Customer customer = customerRepository.findByEmail(email);
+        var customer = customerRepository.findByEmail(email);
         if (null != customer) {
-            CustomerDto customerDto = new CustomerDto();
+            var customerDto = new CustomerDto();
             BeanUtils.copyProperties(customer, customerDto);
             return Optional.of(customerDto);
         } else {

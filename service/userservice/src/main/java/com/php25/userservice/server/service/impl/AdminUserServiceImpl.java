@@ -2,6 +2,7 @@ package com.php25.userservice.server.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.exception.ServiceException;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.service.ModelToDtoTransferable;
 import com.php25.common.core.specification.Operator;
@@ -32,12 +33,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Created by penghuiping on 16/8/12.
+ * @author penghuiping
+ * @date  2019-07-11
  */
 @Slf4j
-@Transactional
 @Service
 @Primary
+@Transactional(rollbackFor = ServiceException.class)
 public class AdminUserServiceImpl implements AdminUserService {
 
     private AdminUserRepository adminUserRepository;
@@ -68,15 +70,20 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
+    public Optional<List<AdminUserDto>> findAll() {
+        return baseService.findAll();
+    }
+
+    @Override
     public Optional<AdminUserDto> findOne(Long id) {
         Assert.notNull(id, "id不能为null");
-        AdminUser adminUser = adminUserRepository.findById(id).orElse(null);
+        var adminUser = adminUserRepository.findById(id).orElse(null);
         if (null == adminUser) {
             return Optional.empty();
         }
-        AdminUserDto adminUserDto = new AdminUserDto();
+        var adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
-        List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
+        var adminRoleDtos = adminUser.getRoles().stream().map(role -> {
             AdminRoleDto adminRoleDto = new AdminRoleDto();
             BeanUtils.copyProperties(role, adminRoleDto, "adminMenuButtons");
             return adminRoleDto;
@@ -100,7 +107,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         Assert.notEmpty(Lists.newArrayList(ids), "ids至少需要一个元素");
         Assert.notNull(lazy, "lazy需要填入true或者false");
         return Optional.ofNullable(Lists.newArrayList(adminUserRepository.findAllById(ids)).stream().map(adminUser -> {
-            AdminUserDto temp = new AdminUserDto();
+            var temp = new AdminUserDto();
             if (lazy) {
                 BeanUtils.copyProperties(adminUser, temp, "roles", "menus");
             } else {
@@ -117,16 +124,16 @@ public class AdminUserServiceImpl implements AdminUserService {
         Long id = obj.getId();
         if (null != id && id > 0) {
             obj.setUpdateTime(new Date());
-            AdminUser adminUser = new AdminUser();
+            var adminUser = new AdminUser();
             BeanUtils.copyProperties(obj, adminUser, "roles");
-            List<AdminRole> adminRoles = obj.getRoles().stream().map(role -> {
-                AdminRole adminRole = new AdminRole();
+            var adminRoles = obj.getRoles().stream().map(role -> {
+                var adminRole = new AdminRole();
                 BeanUtils.copyProperties(role, adminRole, "adminMenuButtons");
                 return adminRole;
             }).collect(Collectors.toList());
             adminUserRepository.save(adminUser);
-            for (AdminRole adminRole : adminRoles) {
-                Optional<UserRole> userRoleOptional = userRoleRepository.findOneByRoleIdAndUserId(adminRole.getId(), adminUser.getId());
+            for (var adminRole : adminRoles) {
+                var userRoleOptional = userRoleRepository.findOneByRoleIdAndUserId(adminRole.getId(), adminUser.getId());
                 if (!userRoleOptional.isPresent()) {
                     UserRole userRole = new UserRole();
                     userRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
@@ -140,22 +147,22 @@ public class AdminUserServiceImpl implements AdminUserService {
             obj.setCreateTime(new Date());
             obj.setUpdateTime(new Date());
             obj.setPassword(obj.getPassword());
-            AdminUser adminUser = new AdminUser();
+            var adminUser = new AdminUser();
             BeanUtils.copyProperties(obj, adminUser, "roles");
-            List<AdminRole> adminRoles = obj.getRoles().stream().map(role -> {
-                AdminRole adminRole = new AdminRole();
+            var adminRoles = obj.getRoles().stream().map(role -> {
+                var adminRole = new AdminRole();
                 BeanUtils.copyProperties(role, adminRole, "adminMenuButtons");
                 return adminRole;
             }).collect(Collectors.toList());
             adminUser = adminUserRepository.save(adminUser);
-            for (AdminRole adminRole : adminRoles) {
+            for (var adminRole : adminRoles) {
                 UserRole userRole = new UserRole();
                 userRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 userRole.setAdminUser(adminUser);
                 userRole.setAdminRole(adminRole);
                 userRoleRepository.save(userRole);
             }
-            AdminUserDto adminUserDto = new AdminUserDto();
+            var adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto);
             return Optional.of(adminUserDto);
         }
@@ -166,7 +173,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     public Optional<DataGridPageDto<AdminUserDto>> query(Integer pageNum, Integer pageSize, String searchParams) {
         return baseService.query(pageNum, pageSize, searchParams, (adminUser, adminUserDto) -> {
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
-            List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
+            var adminRoleDtos = adminUser.getRoles().stream().map(role -> {
                 AdminRoleDto adminRoleDto = new AdminRoleDto();
                 BeanUtils.copyProperties(role, adminRoleDto, "adminMenuButtons");
                 return adminRoleDto;
@@ -184,24 +191,24 @@ public class AdminUserServiceImpl implements AdminUserService {
     public Optional<AdminUserDto> findByUsernameAndPassword(String loginName, String password) {
         Assert.hasText(loginName, "loginName不能为空");
         Assert.hasText(loginName, "password不能为空");
-        AdminUser adminUser = adminUserRepository.findByUsernameAndPassword(loginName, password);
+        var adminUser = adminUserRepository.findByUsernameAndPassword(loginName, password);
         if (null != adminUser) {
-            AdminUserDto adminUserDto = new AdminUserDto();
+            var adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
 
             //根据userId获取所有的role
-            Optional<List<UserRole>> optionalUserRoles = userRoleRepository.findAllByUserId(adminUser.getId());
+            var optionalUserRoles = userRoleRepository.findAllByUserId(adminUser.getId());
             if (optionalUserRoles.isPresent() && optionalUserRoles.get().size() > 0) {
                 log.info(optionalUserRoles.get().toString());
-                List<Long> ids = optionalUserRoles.get().stream().map(UserRole::getId).collect(Collectors.toList());
-                List<AdminRole> adminRoles = adminRoleRepository.findAll(SearchParamBuilder.builder().append(SearchParam.of("id", Operator.IN, ids)));
+                var ids = optionalUserRoles.get().stream().map(UserRole::getId).collect(Collectors.toList());
+                var adminRoles = adminRoleRepository.findAll(SearchParamBuilder.builder().append(SearchParam.of("id", Operator.IN, ids)));
                 adminUser.setRoles(adminRoles);
             } else {
                 adminUser.setRoles(Lists.newArrayList());
             }
 
-            List<AdminRoleDto> adminRoleDtos = adminUser.getRoles().stream().map(role -> {
-                AdminRoleDto adminRoleDto = new AdminRoleDto();
+            var adminRoleDtos = adminUser.getRoles().stream().map(role -> {
+                var adminRoleDto = new AdminRoleDto();
                 BeanUtils.copyProperties(role, adminRoleDto, "adminMenuButtons");
                 return adminRoleDto;
             }).collect(Collectors.toList());

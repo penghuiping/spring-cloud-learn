@@ -1,8 +1,11 @@
 package com.php25.userservice.server.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.service.ModelToDtoTransferable;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.userservice.server.dto.CustomerDto;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,8 @@ public interface CustomerService extends InitializingBean {
     Optional<CustomerDto> save(CustomerDto obj);
 
     Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, String searchParams);
+
+    Optional<DataGridPageDto<CustomerDto>> query(Integer pageNum, Integer pageSize, SearchParamBuilder searchParamBuilder, ModelToDtoTransferable modelToDtoTransferable, Sort sort);
 
     /**
      * 根据用户名与密码，查询出用户信息

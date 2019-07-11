@@ -1,4 +1,4 @@
-package com.php25.mediaservice.client.bo;
+package com.php25.mediaservice.server.dto;
 
 import lombok.Data;
 

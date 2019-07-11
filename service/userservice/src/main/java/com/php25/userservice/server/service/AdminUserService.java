@@ -20,6 +20,8 @@ public interface AdminUserService extends InitializingBean {
 
     Optional<AdminUserDto> findOne(Long id);
 
+    Optional<List<AdminUserDto>> findAll();
+
     Optional<List<AdminUserDto>> findAll(Iterable<Long> ids);
 
     Optional<AdminUserDto> save(AdminUserDto obj);

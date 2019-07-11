@@ -1,6 +1,5 @@
 package com.php25.notifyservice.server.service.impl;
 
-import cn.jsms.api.common.SMSClient;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisService;
 import com.php25.notifyservice.server.service.MobileMessageService;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Primary
 public class MobileMessageMockServiceImpl implements MobileMessageService {
-    private SMSClient client = null;
-
     @Autowired
     private RedisService redisService;
 
