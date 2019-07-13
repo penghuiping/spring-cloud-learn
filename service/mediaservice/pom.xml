@@ -18,13 +18,22 @@
     <dependencies>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>common-spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.php25</groupId>
-                    <artifactId>es</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>jdbc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>redis</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -37,10 +46,6 @@
         <dependency>
             <groupId>com.j256.simplemagic</groupId>
             <artifactId>simplemagic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
