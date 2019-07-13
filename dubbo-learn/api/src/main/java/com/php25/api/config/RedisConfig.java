@@ -1,6 +1,5 @@
 package com.php25.api.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.php25.common.redis.RedisService;
 import com.php25.common.redis.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

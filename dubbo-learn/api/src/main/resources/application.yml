@@ -10,6 +10,8 @@ spring:
     sampler:
       probability: 1.0
     traceId128: true
+  main:
+    allow-bean-definition-overriding: false
 server:
   port: 8081
   type: provider
@@ -43,3 +45,4 @@ apollo:
     enabled: true
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
+

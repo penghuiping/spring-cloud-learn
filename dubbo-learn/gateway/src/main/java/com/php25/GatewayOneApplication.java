@@ -2,7 +2,6 @@ package com.php25;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
 
 
 /**
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2018/7/16 11:08
  * @Description:
  */
-@Configuration
 @SpringBootApplication
 public class GatewayOneApplication {
 

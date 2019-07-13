@@ -7,6 +7,7 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import com.php25.userservice.server.dto.CustomerDto;
+import com.php25.userservice.server.mq.GreetingsService;
 import com.php25.userservice.server.service.CustomerService;
 import com.php25.userservice.server.service.TokenJwtService;
 import lombok.extern.slf4j.Slf4j;
@@ -223,5 +224,13 @@ public class CustomerRpcImpl implements CustomerRpc {
             return false;
         }
         return tokenJwtService.cleanToken(jwt);
+    }
+
+    @Autowired
+    GreetingsService greetingsService;
+
+    @Override
+    public void testMessage() {
+        greetingsService.sendGreeting();
     }
 }

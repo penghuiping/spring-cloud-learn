@@ -10,6 +10,8 @@ spring:
     sampler:
       probability: 1.0
     traceId128: true
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: 7080
 ###############################################
@@ -23,3 +25,23 @@ apollo:
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
 
+###############################################
+## dubbo配置
+###############################################
+dubbo:
+  ## ApplicationConfig Bean
+  application:
+    id: dubbo-consumer-api-gateway
+    name: dubbo-consumer-api-gateway
+    qos-port: 22221
+    qos-enable: true
+    qosAcceptForeignIp: false
+  ## RegistryConfig Bean
+  registry:
+    id: my-registry
+    address: zookeeper://localhost:2181
+    client: curator
+  provider:
+    filter: tracing
+  consumer:
+    filter: tracing

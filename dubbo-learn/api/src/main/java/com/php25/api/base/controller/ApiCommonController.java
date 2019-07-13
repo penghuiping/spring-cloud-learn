@@ -2,17 +2,15 @@ package com.php25.api.base.controller;
 
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.baomidou.kaptcha.Kaptcha;
-import com.baomidou.kaptcha.exception.KaptchaIncorrectException;
-import com.baomidou.kaptcha.exception.KaptchaNotFoundException;
-import com.php25.api.base.constant.AccessRequired;
 import com.php25.api.base.constant.BusinessError;
 import com.php25.api.base.vo.CustomerVo;
 import com.php25.common.core.dto.ResultDto;
 import com.php25.common.core.service.IdGeneratorService;
+import com.php25.common.core.util.RandomUtil;
 import com.php25.common.mvc.JSONController;
 import com.php25.common.mvc.JSONResponse;
 import com.php25.common.mvc.JsonException;
+import com.php25.common.redis.RedisService;
 import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.notifymicroservice.client.rpc.MailRpc;
@@ -27,12 +25,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -42,7 +40,7 @@ import java.util.Date;
  * @date 2018/03/15
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api")
 public class ApiCommonController extends JSONController {
 
@@ -62,7 +60,7 @@ public class ApiCommonController extends JSONController {
     private IdGeneratorService idGeneratorService;
 
     @Autowired
-    private Kaptcha kaptcha;
+    private RedisService redisService;
 
 
     @ApiOperation(value = "获取短信验证码", notes = "获取短信验证码", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -129,11 +127,7 @@ public class ApiCommonController extends JSONController {
     @PostMapping(value = "/common/loginByUsername.do")
     public ResponseEntity<JSONResponse> loginByUsername(@RequestParam @NotBlank String username, @RequestParam @NotBlank String password, @NotBlank String kaptchaCode) throws JsonException {
         //验证图形验证码
-        try {
-            if (!kaptcha.validate(kaptchaCode)) {
-                return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
-            }
-        } catch (KaptchaNotFoundException | KaptchaIncorrectException e) {
+        if (!redisService.exists("kaptcha" + kaptchaCode)) {
             return ResponseEntity.ok(failed(BusinessError.KAPTCHA_ERROR));
         }
 
@@ -201,7 +195,6 @@ public class ApiCommonController extends JSONController {
         return ResponseEntity.ok(succeed(result));
     }
 
-    @AccessRequired
     @ApiOperation(value = "登出", notes = "登出", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jwt", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),
@@ -212,7 +205,6 @@ public class ApiCommonController extends JSONController {
     }
 
 
-    @AccessRequired
     @ApiOperation(value = "查询客户信息", notes = "查询客户信息<br>" +
             "错误状态码:<br>" +
             "10000=出错啦,请重试", response = CustomerVo.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -237,14 +229,14 @@ public class ApiCommonController extends JSONController {
         return ResponseEntity.ok(succeed(customerVo));
     }
 
-    @ApiOperation(value = "获取图形验证码", notes = "获取图形验证码", produces = MediaType.IMAGE_JPEG_VALUE)
+    @ApiOperation(value = "获取图形验证码", notes = "获取图形验证码", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @GetMapping("/common/kaptchaRender.do")
-    public void kaptchaRender() throws JsonException {
-        kaptcha.render();
+    public ResponseEntity<String> kaptchaRender() throws JsonException {
+        String kaptcha = RandomUtil.getRandom(6) + "";
+        redisService.set("kaptcha" + kaptcha, 1);
+        return ResponseEntity.ok(kaptcha);
     }
 
-
-    @AccessRequired
     @ApiOperation(value = "修改个人信息", notes = "修改个人信息", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jwt", value = "用户的jwt-token", required = true, dataType = "String", paramType = "header"),
@@ -255,6 +247,13 @@ public class ApiCommonController extends JSONController {
     public ResponseEntity<JSONResponse> changePersonInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) throws JsonException {
         ResultDto<CustomerBo> resultDto = customerRest.findOne(jwt);
         return null;
+    }
+
+    @ApiOperation(value = "测试spring cloud stream", notes = "测试spring cloud stream", response = Boolean.class, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping("/testMessage.do")
+    public ResponseEntity<String> testMessage() {
+        customerRest.testMessage();
+        return ResponseEntity.ok("ok");
     }
 
 

@@ -34,7 +34,6 @@
         <dependency>
             <groupId>com.php25</groupId>
             <artifactId>core</artifactId>
-            <version>${php-common.core}</version>
         </dependency>
     </dependencies>
 </project>

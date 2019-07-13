@@ -1,8 +1,5 @@
-package com.php25.usermicroservice.server.config;
+package com.php25.gateway.config;
 
-import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.service.IdGeneratorServiceImpl;
-import com.php25.common.core.service.SnowflakeIdWorker;
 import com.php25.common.redis.RedisService;
 import com.php25.common.redis.RedisSpringBootServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +15,7 @@ public class RedisConfig {
 
     @Bean
     public RedisService redisService(@Autowired StringRedisTemplate stringRedisTemplate) {
-        RedisService redisService = new RedisSpringBootServiceImpl(stringRedisTemplate);
-        return redisService;
+        return new RedisSpringBootServiceImpl(stringRedisTemplate);
     }
 
-    @Bean
-    public IdGeneratorService idGeneratorService() {
-        return new IdGeneratorServiceImpl();
-    }
 }
-

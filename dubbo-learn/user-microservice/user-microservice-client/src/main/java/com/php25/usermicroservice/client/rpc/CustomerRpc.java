@@ -107,4 +107,7 @@ public interface CustomerRpc {
      */
     Boolean logout(String jwt);
 
+
+    void testMessage();
+
 }

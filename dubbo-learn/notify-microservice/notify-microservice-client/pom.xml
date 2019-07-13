@@ -15,15 +15,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.php25</groupId>
-            <artifactId>common-spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.php25</groupId>
-                    <artifactId>es</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
     </dependencies>
 </project>

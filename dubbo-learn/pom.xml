@@ -22,6 +22,7 @@
         <module>notify-microservice</module>
         <module>media-microservice</module>
         <module>api</module>
+        <module>gateway</module>
         <module>admin</module>
         <module>authserver</module>
     </modules>
