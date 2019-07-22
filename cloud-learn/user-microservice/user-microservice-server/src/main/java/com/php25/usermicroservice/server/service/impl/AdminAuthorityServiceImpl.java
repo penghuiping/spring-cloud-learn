@@ -2,10 +2,10 @@ package com.php25.usermicroservice.server.service.impl;
 
 import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
-import com.php25.userservice.server.dto.AdminAuthorityDto;
-import com.php25.userservice.server.model.AdminAuthority;
-import com.php25.userservice.server.repository.AdminAuthorityRepository;
-import com.php25.userservice.server.service.AdminAuthorityService;
+import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
+import com.php25.usermicroservice.server.model.AdminAuthority;
+import com.php25.usermicroservice.server.repository.AdminAuthorityRepository;
+import com.php25.usermicroservice.server.service.AdminAuthorityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@ package com.php25.usermicroservice.server;
 
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
-import com.php25.userservice.server.mq.GreetingsStreams;
+import com.php25.usermicroservice.server.mq.GreetingsStreams;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author penghuiping
  * @date
  */
-@ComponentScan(value = {"com.php25.usermicroservice", "com.php25.userservice"})
+@ComponentScan(value = {"com.php25.usermicroservice"})
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableApolloConfig

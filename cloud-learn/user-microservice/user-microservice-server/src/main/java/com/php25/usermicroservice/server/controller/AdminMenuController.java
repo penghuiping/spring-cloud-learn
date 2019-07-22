@@ -2,19 +2,21 @@ package com.php25.usermicroservice.server.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
-import com.php25.common.core.util.AssertUtil;
+import com.php25.common.core.exception.Exceptions;
+import com.php25.common.flux.IdLongReq;
 import com.php25.common.redis.RedisService;
 import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
+import com.php25.usermicroservice.client.bo.HasRightAccessUrlBo;
 import com.php25.usermicroservice.client.rpc.AdminMenuRpc;
 import com.php25.usermicroservice.server.constant.RedisConstant;
-import com.php25.userservice.server.dto.AdminAuthorityDto;
-import com.php25.userservice.server.dto.AdminMenuButtonDto;
-import com.php25.userservice.server.dto.AdminRoleDto;
-import com.php25.userservice.server.dto.AdminUserDto;
-import com.php25.userservice.server.service.AdminAuthorityService;
-import com.php25.userservice.server.service.AdminMenuService;
-import com.php25.userservice.server.service.AdminRoleService;
-import com.php25.userservice.server.service.AdminUserService;
+import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
+import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.server.dto.AdminRoleDto;
+import com.php25.usermicroservice.server.dto.AdminUserDto;
+import com.php25.usermicroservice.server.service.AdminAuthorityService;
+import com.php25.usermicroservice.server.service.AdminMenuService;
+import com.php25.usermicroservice.server.service.AdminRoleService;
+import com.php25.usermicroservice.server.service.AdminUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,12 +82,10 @@ public class AdminMenuController implements AdminMenuRpc {
 
     @Override
     @PostMapping("/hasRightAccessUrl")
-    public Mono<Boolean> hasRightAccessUrl(String url, Long adminUserId) {
-        //参数校验
-        AssertUtil.hasText(url, "The 'url' parameter can't be empty");
-        AssertUtil.notNull(adminUserId, "The 'adminUserId' parameter can't be null");
-
-        return Mono.fromCallable(() -> {
+    public Mono<Boolean> hasRightAccessUrl(Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono) {
+        return hasRightAccessUrlBoMono.map(hasRightAccessUrlBo -> {
+            Long adminUserId = hasRightAccessUrlBo.getAdminUserId();
+            String url = hasRightAccessUrlBo.getUrl();
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(adminUserId);
             if (!adminUserDtoOptional.isPresent()) {
                 throw new IllegalArgumentException("can't find a record of AdminUser in database," +
@@ -159,13 +159,13 @@ public class AdminMenuController implements AdminMenuRpc {
 
     @Override
     @PostMapping("/findAllByAdminRoleId")
-    public Flux<AdminMenuButtonBo> findAllByAdminRoleId(Long roleId) {
+    public Flux<AdminMenuButtonBo> findAllByAdminRoleId(Mono<IdLongReq> roleIdMono) {
         //参数验证
-        AssertUtil.notNull(roleId, "roleId can't be null");
-        return Mono.fromCallable(() -> {
+        return roleIdMono.map(idLongReq -> {
+            Long roleId = idLongReq.getId();
             Optional<AdminRoleDto> adminRoleDtoOptional = adminRoleService.findOne(roleId);
             if (!adminRoleDtoOptional.isPresent()) {
-                throw new IllegalArgumentException(String.format("can't find a role record in database by roleId:%d", roleId));
+                throw Exceptions.throwServiceException(String.format("can't find a role record in database by roleId:%d", roleId));
             }
             AdminRoleDto adminRoleDto = adminRoleDtoOptional.get();
             Optional<List<AdminMenuButtonDto>> optionalAdminMenuButtonDtos = adminMenuService.findMenusEnabledByRole(adminRoleDto);

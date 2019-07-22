@@ -1,13 +1,10 @@
 package com.php25.mediamicroservice.server.controller;
 
-import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.ControllerException;
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
-import com.php25.common.flux.StringRes;
-import com.php25.mediamicroservice.client.bo.req.Base64ImageReq;
-import com.php25.mediamicroservice.client.bo.res.ImgBo;
-import com.php25.mediamicroservice.client.bo.res.ImgRes;
+import com.php25.mediamicroservice.client.bo.Base64ImageBo;
+import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.mediamicroservice.server.dto.ImgDto;
 import com.php25.mediamicroservice.server.service.ImageService;
@@ -41,28 +38,21 @@ public class ImageController implements ImageRpc {
 
     @Override
     @PostMapping("/save")
-    public Mono<StringRes> save(@Valid Mono<Base64ImageReq> base64ImageReqMono) {
+    public Mono<String> save(@Valid Mono<Base64ImageBo> base64ImageReqMono) {
         return base64ImageReqMono.map(base64ImageReq -> {
-            String content = imageService.save(base64ImageReq.getContent());
-            StringRes stringRes = new StringRes();
-            stringRes.setErrorCode(ApiErrorCode.ok.value);
-            stringRes.setReturnObject(content);
-            return stringRes;
+            return imageService.save(base64ImageReq.getContent());
         });
     }
 
     @Override
     @PostMapping("/findOne")
-    public Mono<ImgRes> findOne(@Valid Mono<IdStringReq> idStringReqMono) {
+    public Mono<ImgBo> findOne(@Valid Mono<IdStringReq> idStringReqMono) {
         return idStringReqMono.map(idStringReq -> {
             Optional<ImgDto> imgDtoOptional = imageService.findOne(idStringReq.getId());
             if (imgDtoOptional.isPresent()) {
                 ImgBo imgBo = new ImgBo();
                 BeanUtils.copyProperties(imgDtoOptional.get(), imgBo);
-                ImgRes imgRes = new ImgRes();
-                imgRes.setErrorCode(ApiErrorCode.ok.value);
-                imgRes.setReturnObject(imgBo);
-                return imgRes;
+                return imgBo;
             } else {
                 throw new ControllerException("无法通过" + String.format("无法通过%s找到对应的图片", idStringReqMono) + "找到对应的图片");
             }
@@ -71,20 +61,17 @@ public class ImageController implements ImageRpc {
 
     @Override
     @PostMapping("/findAll")
-    public Flux<ImgRes> findAll(@Valid Mono<IdsStringReq> idsStringReqMono) {
+    public Flux<ImgBo> findAll(@Valid Mono<IdsStringReq> idsStringReqMono) {
         return idsStringReqMono.map(idsStringReq -> {
             Optional<List<ImgDto>> optionalImgDtos = imageService.findAll(idsStringReq.getIds());
             if (optionalImgDtos.isPresent() && !optionalImgDtos.get().isEmpty()) {
                 return optionalImgDtos.get().stream().map(imgDto -> {
                     ImgBo imgBo = new ImgBo();
                     BeanUtils.copyProperties(imgDto, imgBo);
-                    ImgRes imgRes = new ImgRes();
-                    imgRes.setErrorCode(ApiErrorCode.ok.value);
-                    imgRes.setReturnObject(imgBo);
-                    return imgRes;
+                    return imgBo;
                 }).collect(Collectors.toList());
             } else {
-                return new ArrayList<ImgRes>();
+                return new ArrayList<ImgBo>();
             }
         }).flatMapMany(Flux::fromIterable);
     }

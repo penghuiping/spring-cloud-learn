@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.server.repository;
 
 import com.php25.common.jdbc.repository.BaseRepository;
-import com.php25.userservice.server.model.AdminUser;
+import com.php25.usermicroservice.server.model.AdminUser;
 
 import java.util.List;
 

@@ -1,9 +1,6 @@
 package com.php25.usermicroservice.server.service;
 
-import com.php25.common.core.service.BaseService;
-import com.php25.common.core.service.SoftDeletable;
-import com.php25.userservice.server.dto.AdminAuthorityDto;
-import com.php25.userservice.server.model.AdminAuthority;
+import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;

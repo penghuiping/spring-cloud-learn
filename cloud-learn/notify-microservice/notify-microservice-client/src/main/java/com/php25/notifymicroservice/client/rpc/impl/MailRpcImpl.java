@@ -1,6 +1,5 @@
 package com.php25.notifymicroservice.client.rpc.impl;
 
-import com.php25.common.flux.BooleanRes;
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
 import com.php25.notifymicroservice.client.constant.Constant;
@@ -25,18 +24,19 @@ public class MailRpcImpl implements MailRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<BooleanRes> sendSimpleMail(@Valid Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
+    public Mono<Boolean> sendSimpleMail(@Valid Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
                 .uri("/mail/sendSimpleMail")
                 .body(sendSimpleMailReqMono, SendSimpleMailReq.class)
-                .retrieve().bodyToMono(BooleanRes.class);
+                .retrieve()
+                .bodyToMono(Boolean.class);
     }
 
     @Override
-    public Mono<BooleanRes> sendAttachmentsMail(@Valid Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
+    public Mono<Boolean> sendAttachmentsMail(@Valid Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -44,7 +44,7 @@ public class MailRpcImpl implements MailRpc {
                 .uri("/mail/sendAttachmentsMail")
                 .body(sendAttachmentsMailReqMono, SendAttachmentsMailReq.class)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(Boolean.class);
     }
 
 

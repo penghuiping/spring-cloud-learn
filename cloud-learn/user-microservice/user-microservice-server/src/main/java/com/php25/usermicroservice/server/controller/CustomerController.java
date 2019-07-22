@@ -1,23 +1,30 @@
 package com.php25.usermicroservice.server.controller;
 
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.util.AssertUtil;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.flux.IdStringReq;
 import com.php25.usermicroservice.client.bo.CustomerBo;
+import com.php25.usermicroservice.client.bo.LoginBo;
+import com.php25.usermicroservice.client.bo.LoginByEmailBo;
+import com.php25.usermicroservice.client.bo.LoginByMobileBo;
+import com.php25.usermicroservice.client.bo.ResetPwdByEmailBo;
+import com.php25.usermicroservice.client.bo.ResetPwdByMobileBo;
+import com.php25.usermicroservice.client.bo.StringBo;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
-import com.php25.userservice.server.dto.CustomerDto;
-import com.php25.userservice.server.mq.GreetingsService;
-import com.php25.userservice.server.service.CustomerService;
-import com.php25.userservice.server.service.TokenJwtService;
+import com.php25.usermicroservice.server.dto.CustomerDto;
+import com.php25.usermicroservice.server.mq.GreetingsService;
+import com.php25.usermicroservice.server.service.CustomerService;
+import com.php25.usermicroservice.server.service.TokenJwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,15 +50,11 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/register")
-    public Mono<Boolean> register(@RequestBody CustomerBo customerBo) {
-        //数据校验
-        AssertUtil.notNull(customerBo, "customerDto不能为null");
-        AssertUtil.hasText(customerBo.getMobile(), "customerDto中mobile字段不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<Boolean> register(@Valid Mono<CustomerBo> customerBoMono) {
+        return customerBoMono.map(customerBo -> {
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
-                throw new IllegalArgumentException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
+                throw Exceptions.throwServiceException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
             }
 
             //判断username是否存在，如果不存在，自动补上
@@ -77,12 +80,10 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/loginByUsername")
-    public Mono<String> loginByUsername(String username, String password) {
-        //参数效验
-        AssertUtil.hasText(username, "username用户名不能为空");
-        AssertUtil.hasText(password, "password密码不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<String> loginByUsername(@Valid Mono<LoginBo> loginBoMono) {
+        return loginBoMono.map(loginBo -> {
+            String username = loginBo.getUsername();
+            String password = loginBo.getPassword();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByUsernameAndPassword(username, password);
             if (!optionalCustomerDto.isPresent()) {
                 return null;
@@ -93,12 +94,6 @@ public class CustomerController implements CustomerRpc {
             map.put("customer", customerDto);
             //生成jwt
             return tokenJwtService.getToken(customerDto.getId().toString(), map);
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });
@@ -106,14 +101,12 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/loginByMobile")
-    public Mono<String> loginByMobile(String mobile, String code) {
-        //参数效验
-        AssertUtil.hasText(mobile, "mobile手机号不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<String> loginByMobile(@Valid Mono<LoginByMobileBo> loginByMobileBoMono) {
+        return loginByMobileBoMono.map(loginByMobileBo -> {
+            String mobile = loginByMobileBo.getMobile();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByPhone(mobile);
             if (!optionalCustomerDto.isPresent()) {
-                return null;
+                throw Exceptions.throwServiceException("无法通过手机号:" + mobile + "找到相关数据");
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -122,12 +115,6 @@ public class CustomerController implements CustomerRpc {
             //生成jwt
             String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
             return jwt;
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });
@@ -135,15 +122,13 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/loginByEmail")
-    public Mono<String> loginByEmail(String email, String code) {
-        //参数效验
-        AssertUtil.hasText(email, "email邮箱不能为空");
-        AssertUtil.hasText(code, "code密码不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<String> loginByEmail(@Valid Mono<LoginByEmailBo> loginByEmailBoMono) {
+        return loginByEmailBoMono.map(loginByEmailBo -> {
+            String email = loginByEmailBo.getEmail();
+            String code = loginByEmailBo.getCode();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByEmailAndPassword(email, code);
             if (!optionalCustomerDto.isPresent()) {
-                return null;
+                throw Exceptions.throwServiceException("无法通过邮箱:" + email + "找到相关数据");
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -152,37 +137,18 @@ public class CustomerController implements CustomerRpc {
             //生成jwt
             String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
             return jwt;
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });
     }
 
-    @Override
-    @PostMapping("/sendSms")
-    public Mono<String> sendSms(String mobile) {
-        return null;
-    }
-
-    @Override
-    @PostMapping("/sendEmailCode")
-    public Mono<String> sendEmailCode(String email) {
-        return null;
-    }
 
     @Override
     @PostMapping("/resetPasswordByMobile")
-    public Mono<Boolean> resetPasswordByMobile(String mobile, String newPassword, String code) {
-        //参数效验
-        AssertUtil.hasText(mobile, "mobile手机号参数不能为空");
-        AssertUtil.hasText(newPassword, "newPassword重置成的新密码参数不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<Boolean> resetPasswordByMobile(@Valid Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono) {
+        return resetPwdByMobileBoMono.map(resetPwdByMobileBo -> {
+            String mobile = resetPwdByMobileBo.getMobile();
+            String newPassword = resetPwdByMobileBo.getNewPassword();
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(mobile);
             if (!customerDtoOptional.isPresent()) {
                 return false;
@@ -203,12 +169,10 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/resetPasswordByEmail")
-    public Mono<Boolean> resetPasswordByEmail(String email, String newPassword, String code) {
-        //参数效验
-        AssertUtil.hasText(email, "mobile手机号参数不能为空");
-        AssertUtil.hasText(newPassword, "newPassword重置成的新密码参数不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<Boolean> resetPasswordByEmail(@Valid Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono) {
+        return resetPwdByEmailBoMono.map(resetPwdByEmailBo -> {
+            String email = resetPwdByEmailBo.getEmail();
+            String newPassword = resetPwdByEmailBo.getNewPassword();
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByEmail(email);
             if (!customerDtoOptional.isPresent()) {
                 return false;
@@ -229,12 +193,10 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<CustomerBo> findOne(String jwt) {
-        AssertUtil.hasText(jwt, "jwt参数不能为空");
-
-        return Mono.fromCallable(() -> {
-            String customerIdStr = tokenJwtService.getKeyByToken(jwt);
-            Long customerId = new Long(customerIdStr);
+    public Mono<CustomerBo> findOne(@Valid Mono<IdStringReq> jwtMono) {
+        return jwtMono.map(idStringReq -> {
+            String customerIdStr = tokenJwtService.getKeyByToken(idStringReq.getId());
+            Long customerId = Long.valueOf(customerIdStr);
             Optional<CustomerDto> customerDtoOptional = customerService.findOne(customerId);
 
             if (!customerDtoOptional.isPresent()) {
@@ -244,12 +206,6 @@ public class CustomerController implements CustomerRpc {
             CustomerBo customerBo = new CustomerBo();
             BeanUtils.copyProperties(customerDto, customerBo);
             return customerBo;
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });
@@ -259,24 +215,18 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/validateJwt")
-    public Mono<Boolean> validateJwt(String jwt) {
-        AssertUtil.hasText(jwt, "jwt参数不能为空");
-        return Mono.fromCallable(() -> {
-            return tokenJwtService.verifyToken(jwt);
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
-        });
+    public Mono<Boolean> validateJwt(@Valid Mono<IdStringReq> jwtMono) {
+        return jwtMono
+                .map(idStringReq -> tokenJwtService.verifyToken(idStringReq.getId()))
+                .doOnError(throwable -> {
+                    log.error("出错啦", throwable);
+                });
     }
 
     @Override
     @PostMapping("/update")
-    public Mono<Boolean> update(@RequestBody CustomerBo customerBo) {
-        //参数验证
-        AssertUtil.notNull(customerBo, "customerBo不能为null");
-        AssertUtil.notNull(customerBo.getId(), "customerBo.id不能为null");
-        AssertUtil.hasText(customerBo.getMobile(), "customerBo.mobile不能为空");
-
-        return Mono.fromCallable(() -> {
+    public Mono<Boolean> update(@Valid Mono<CustomerBo> customerBoMono) {
+        return customerBoMono.map(customerBo -> {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(customerBo, customerDto);
             Optional<CustomerDto> customerDtoOptional = customerService.save(customerDto);
@@ -292,9 +242,9 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/findCustomerByMobile")
-    public Mono<CustomerBo> findCustomerByMobile(String mobile) {
-        AssertUtil.hasText(mobile, "mobile parameter can't be empty");
-        return Mono.fromCallable(() -> {
+    public Mono<CustomerBo> findCustomerByMobile(@Valid Mono<StringBo> mobileMono) {
+        return mobileMono.map(stringBo -> {
+            String mobile = stringBo.getContent();
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(mobile);
             if (customerDtoOptional.isPresent()) {
                 CustomerDto customerDto = customerDtoOptional.get();
@@ -317,14 +267,13 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/logout")
-    public Mono<Boolean> logout(String jwt) {
-        AssertUtil.hasText(jwt, "jwt parameter can't be empty");
-        return Mono.fromCallable(() -> {
-            if (!tokenJwtService.verifyToken(jwt)) {
+    public Mono<Boolean> logout(@Valid Mono<IdStringReq> jwtMono) {
+        return jwtMono.map(idStringReq -> {
+            if (!tokenJwtService.verifyToken(idStringReq.getId())) {
                 log.info("jwt不合法,登出失败");
                 return false;
             }
-            return tokenJwtService.cleanToken(jwt);
+            return tokenJwtService.cleanToken(idStringReq.getId());
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });
@@ -336,12 +285,6 @@ public class CustomerController implements CustomerRpc {
         return Mono.fromCallable(() -> {
             greetingsService.sendGreeting();
             return null;
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
         }).doOnError(throwable -> {
             log.error("出错啦", throwable);
         });

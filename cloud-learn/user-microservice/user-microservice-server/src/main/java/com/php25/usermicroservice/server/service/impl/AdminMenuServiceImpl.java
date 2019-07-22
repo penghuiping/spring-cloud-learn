@@ -2,19 +2,18 @@ package com.php25.usermicroservice.server.service.impl;
 
 import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
-import com.php25.userservice.server.dto.AdminMenuButtonDto;
-import com.php25.userservice.server.dto.AdminRoleDto;
-import com.php25.userservice.server.model.AdminMenuButton;
-import com.php25.userservice.server.model.AdminRole;
-import com.php25.userservice.server.repository.AdminMenuButtonRepository;
-import com.php25.userservice.server.service.AdminMenuService;
+import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.server.dto.AdminRoleDto;
+import com.php25.usermicroservice.server.model.AdminMenuButton;
+import com.php25.usermicroservice.server.model.AdminRole;
+import com.php25.usermicroservice.server.repository.AdminMenuButtonRepository;
+import com.php25.usermicroservice.server.service.AdminMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
@@ -47,7 +46,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<AdminMenuButtonDto> findOne(Long id) {
-        Assert.notNull(id, "id不能为null");
         var adminMenuButton = adminMenuButtonRepository.findById(id).orElse(null);
         if (adminMenuButton == null) {
             return Optional.empty();
@@ -64,7 +62,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<AdminMenuButtonDto> save(AdminMenuButtonDto menu) {
-        Assert.notNull(menu, "adminMenuButtonDto不能为null");
         AdminMenuButton result = null;
         if (null != menu.getId() && menu.getId() > 0) {
             //编辑
@@ -110,8 +107,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByParentAndRole(AdminMenuButtonDto parent, AdminRoleDto adminRoleDto) {
-        Assert.notNull(parent, "parent不能为null");
-        Assert.notNull(adminRoleDto, "adminRoleDto不能为null");
         var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
         var adminRole = new AdminRole();
@@ -122,7 +117,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByRole(AdminRoleDto adminRoleDto) {
-        Assert.notNull(adminRoleDto, "adminRoleDto不能为null");
         var adminRole = new AdminRole();
         BeanUtils.copyProperties(adminRoleDto, adminRole);
         var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByRole(adminRole);
@@ -140,7 +134,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusByParent(AdminMenuButtonDto parent) {
-        Assert.notNull(parent, "parent不能为null");
         var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
         var adminMenuButtons = adminMenuButtonRepository.findMenusByParent(adminMenuButton_);
@@ -150,7 +143,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusByRole(AdminRoleDto role) {
-        Assert.notNull(role, "role不能为null");
         var adminRole = new AdminRole();
         BeanUtils.copyProperties(role, adminRole);
         var adminMenuButtons = adminMenuButtonRepository.findMenusByRole(adminRole);
@@ -170,7 +162,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public Optional<List<AdminMenuButtonDto>> findMenusEnabledByParent(AdminMenuButtonDto parent) {
-        Assert.notNull(parent, "parent不能为null");
         var adminMenuButton_ = new AdminMenuButton();
         BeanUtils.copyProperties(parent, adminMenuButton_);
         var adminMenuButtons = adminMenuButtonRepository.findMenusEnabledByParent(adminMenuButton_);
@@ -193,7 +184,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public void softDelete(AdminMenuButtonDto obj) {
-        Assert.notNull(obj, "obj不能为null");
         baseService.softDelete(obj);
         if (!obj.getIsLeaf()) {
             var adminMenuButton = new AdminMenuButton();
@@ -210,7 +200,6 @@ public class AdminMenuServiceImpl implements AdminMenuService {
 
     @Override
     public void softDelete(List<AdminMenuButtonDto> objs) {
-        Assert.notNull(objs, "dtos不能为null");
         for (AdminMenuButtonDto obj : objs) {
             softDelete(obj);
         }

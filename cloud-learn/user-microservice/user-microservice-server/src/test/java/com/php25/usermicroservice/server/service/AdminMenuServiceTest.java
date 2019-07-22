@@ -2,9 +2,8 @@ package com.php25.usermicroservice.server.service;
 
 import com.php25.common.core.util.JsonUtil;
 import com.php25.usermicroservice.server.CommonAutoConfigure;
-import com.php25.userservice.server.dto.AdminMenuButtonDto;
-import com.php25.userservice.server.dto.AdminRoleDto;
-import com.php25.userservice.server.service.AdminMenuService;
+import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.server.dto.AdminRoleDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;

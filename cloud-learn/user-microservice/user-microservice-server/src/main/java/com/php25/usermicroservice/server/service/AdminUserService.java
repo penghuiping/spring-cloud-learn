@@ -3,7 +3,7 @@ package com.php25.usermicroservice.server.service;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.ModelToDtoTransferable;
 import com.php25.common.core.specification.SearchParamBuilder;
-import com.php25.userservice.server.dto.AdminUserDto;
+import com.php25.usermicroservice.server.dto.AdminUserDto;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.domain.Sort;
 

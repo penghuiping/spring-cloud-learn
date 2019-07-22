@@ -2,8 +2,7 @@ package com.php25.usermicroservice.server.service;
 
 import com.php25.common.core.util.JsonUtil;
 import com.php25.usermicroservice.server.CommonAutoConfigure;
-import com.php25.userservice.server.dto.AdminUserDto;
-import com.php25.userservice.server.service.AdminUserService;
+import com.php25.usermicroservice.server.dto.AdminUserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;

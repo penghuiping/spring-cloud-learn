@@ -2,10 +2,10 @@ package com.php25.usermicroservice.server.repository.impl;
 
 import com.php25.common.jdbc.Db;
 import com.php25.common.jdbc.repository.BaseRepositoryImpl;
-import com.php25.userservice.server.model.AdminMenuButton;
-import com.php25.userservice.server.model.AdminRole;
-import com.php25.userservice.server.model.RoleMenu;
-import com.php25.userservice.server.repository.AdminMenuButtonRepository;
+import com.php25.usermicroservice.server.model.AdminMenuButton;
+import com.php25.usermicroservice.server.model.AdminRole;
+import com.php25.usermicroservice.server.model.RoleMenu;
+import com.php25.usermicroservice.server.repository.AdminMenuButtonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

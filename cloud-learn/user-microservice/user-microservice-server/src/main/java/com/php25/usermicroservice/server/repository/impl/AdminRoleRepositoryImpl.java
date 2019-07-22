@@ -1,8 +1,8 @@
 package com.php25.usermicroservice.server.repository.impl;
 
 import com.php25.common.jdbc.repository.BaseRepositoryImpl;
-import com.php25.userservice.server.model.AdminRole;
-import com.php25.userservice.server.repository.AdminRoleRepository;
+import com.php25.usermicroservice.server.model.AdminRole;
+import com.php25.usermicroservice.server.repository.AdminRoleRepository;
 import org.springframework.stereotype.Repository;
 
 /**

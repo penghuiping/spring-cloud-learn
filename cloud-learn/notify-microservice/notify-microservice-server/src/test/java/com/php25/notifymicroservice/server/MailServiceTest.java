@@ -1,8 +1,8 @@
 package com.php25.notifymicroservice.server;
 
 import com.google.common.collect.Lists;
-import com.php25.notifyservice.server.service.MailService;
-import com.php25.notifyservice.server.service.dto.PairDto;
+import com.php25.notifymicroservice.client.bo.Pair;
+import com.php25.notifymicroservice.server.service.MailService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class MailServiceTest {
 
     @Test
     public void sendAttachmentsMail() throws Exception {
-        PairDto<String, File> pairDto = new PairDto<>();
+        Pair<String, File> pairDto = new Pair<>();
         pairDto.setKey("图片");
         pairDto.setValue(new File("/Users/penghuiping/Desktop/1.png"));
         mailService.sendAttachmentsMail("575813261@qq.com", "测试", "这是一个测试", Lists.newArrayList(pairDto));
@@ -44,7 +44,7 @@ public class MailServiceTest {
 
     @Test
     public void sendTemplateMail() throws Exception {
-        PairDto<String, File> pairDto = new PairDto<>();
+        Pair<String, File> pairDto = new Pair<>();
         pairDto.setKey("图片");
         pairDto.setValue(new File("/Users/penghuiping/Desktop/1.png"));
 

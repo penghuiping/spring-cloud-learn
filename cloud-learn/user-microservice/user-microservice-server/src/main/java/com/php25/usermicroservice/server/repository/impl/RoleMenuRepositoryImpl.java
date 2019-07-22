@@ -2,8 +2,8 @@ package com.php25.usermicroservice.server.repository.impl;
 
 import com.php25.common.jdbc.Db;
 import com.php25.common.jdbc.repository.BaseRepositoryImpl;
-import com.php25.userservice.server.model.RoleMenu;
-import com.php25.userservice.server.repository.RoleMenuRepository;
+import com.php25.usermicroservice.server.model.RoleMenu;
+import com.php25.usermicroservice.server.repository.RoleMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

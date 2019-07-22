@@ -2,9 +2,8 @@ package com.php25.mediamicroservice.client.rpc.impl;
 
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
-import com.php25.common.flux.StringRes;
-import com.php25.mediamicroservice.client.bo.req.Base64ImageReq;
-import com.php25.mediamicroservice.client.bo.res.ImgRes;
+import com.php25.mediamicroservice.client.bo.Base64ImageBo;
+import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.constant.Constant;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +25,20 @@ public class ImageRpcImpl implements ImageRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<StringRes> save(Mono<Base64ImageReq> base64ImageReqMono) {
+    public Mono<String> save(Mono<Base64ImageBo> base64ImageReqMono) {
         return WebClient.builder()
                 .baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
                 .uri("/img/save")
-                .body(base64ImageReqMono, Base64ImageReq.class)
+                .body(base64ImageReqMono, Base64ImageBo.class)
                 .retrieve()
-                .bodyToMono(StringRes.class);
+                .bodyToMono(String.class);
     }
 
     @Override
-    public Mono<ImgRes> findOne(Mono<IdStringReq> idStringReqMono) {
+    public Mono<ImgBo> findOne(Mono<IdStringReq> idStringReqMono) {
         return WebClient.builder()
                 .baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
@@ -48,11 +47,11 @@ public class ImageRpcImpl implements ImageRpc {
                 .uri("/img/findOne")
                 .body(idStringReqMono, IdStringReq.class)
                 .retrieve()
-                .bodyToMono(ImgRes.class);
+                .bodyToMono(ImgBo.class);
     }
 
     @Override
-    public Flux<ImgRes> findAll(Mono<IdsStringReq> idsStringReqMono) {
+    public Flux<ImgBo> findAll(Mono<IdsStringReq> idsStringReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -60,6 +59,6 @@ public class ImageRpcImpl implements ImageRpc {
                 .uri("/img/findAll")
                 .body(idsStringReqMono, IdsStringReq.class)
                 .retrieve()
-                .bodyToFlux(ImgRes.class);
+                .bodyToFlux(ImgBo.class);
     }
 }

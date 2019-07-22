@@ -1,13 +1,13 @@
 package com.php25.usermicroservice.client.rpc;
 
-import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.flux.IdLongReq;
+import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminUserBo;
+import com.php25.usermicroservice.client.bo.ChangePasswordBo;
+import com.php25.usermicroservice.client.bo.LoginBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
-import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 /**
  * 此方法用于后台用户操作
@@ -21,60 +21,57 @@ public interface AdminUserRpc {
     /**
      * 后台用户登入
      *
-     * @param username 后台用户名
-     * @param password 后台密码
+     * @param loginBoMono 后台用户登入
      * @return 后台管理用户信息
      */
-    Mono<AdminUserBo> login(String username, String password);
+    Mono<AdminUserBo> login(Mono<LoginBo> loginBoMono);
 
     /**
      * 重置用户密码
      *
-     * @param adminUserIds 需要重置用户的id
+     * @param idsLongReqMono 需要重置用户的id
      * @return true:重置成功，false:重置失败
      */
-    Mono<Boolean> resetPassword(List<Long> adminUserIds);
+    Mono<Boolean> resetPassword(Mono<IdsLongReq> idsLongReqMono);
 
     /**
      * 修改某个后台用户密码
      *
-     * @param adminUserId    后台管理用户id
-     * @param originPassword 原来的密码
-     * @param newPassword    新密码
+     * @param changePasswordBoMono
      * @return true:修改密码成功,false:修改密码失败
      */
-    Mono<Boolean> changePassword(Long adminUserId, String originPassword, String newPassword);
+    Mono<Boolean> changePassword(Mono<ChangePasswordBo> changePasswordBoMono);
 
     /**
      * 根据用户id获取详情
      *
-     * @param id 后台管理用户id
+     * @param idLongReqMono 后台管理用户id
      * @return 后台管理用户详情信息
      */
-    Mono<AdminUserBo> findOne(Long id);
+    Mono<AdminUserBo> findOne(Mono<IdLongReq> idLongReqMono);
 
     /**
      * 新增或者更新后台管理用户
      *
-     * @param adminUserDto 后台管理用户
+     * @param adminUserBoMono 后台管理用户
      * @return 新增或者更新后的用户信息
      */
-    Mono<AdminUserBo> save(AdminUserBo adminUserDto);
+    Mono<AdminUserBo> save(Mono<AdminUserBo> adminUserBoMono);
 
 
     /**
      * 软删除用户id
      *
-     * @param ids 需要删除的后台管理用户id
+     * @param idsLongReqMono 需要删除的后台管理用户id
      * @return Boolean true:软删除成功,false:软删除失败
      */
-    Mono<Boolean> softDelete(List<Long> ids);
+    Mono<Boolean> softDelete(Mono<IdsLongReq> idsLongReqMono);
 
     /**
      * 分页查询
      *
      * @return 返回后台管理用户分页列表
      */
-    Flux<AdminUserBo> query(SearchBo searchBo);
+    Flux<AdminUserBo> query(Mono<SearchBo> searchBoMono);
 
 }

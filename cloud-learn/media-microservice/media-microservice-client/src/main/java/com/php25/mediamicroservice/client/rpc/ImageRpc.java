@@ -2,9 +2,8 @@ package com.php25.mediamicroservice.client.rpc;
 
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
-import com.php25.common.flux.StringRes;
-import com.php25.mediamicroservice.client.bo.req.Base64ImageReq;
-import com.php25.mediamicroservice.client.bo.res.ImgRes;
+import com.php25.mediamicroservice.client.bo.Base64ImageBo;
+import com.php25.mediamicroservice.client.bo.ImgBo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,16 +17,16 @@ public interface ImageRpc {
     /**
      * 保存base64Image图片，并返回保存的文件名
      */
-    public Mono<StringRes> save(Mono<Base64ImageReq> base64ImageReqMono);
+    public Mono<String> save(Mono<Base64ImageBo> base64ImageReqMono);
 
     /**
      * 通过图片id查询图片信息
      */
-    public Mono<ImgRes> findOne(Mono<IdStringReq> idStringReqMono);
+    public Mono<ImgBo> findOne(Mono<IdStringReq> idStringReqMono);
 
 
     /**
      * 批量查询图片信息
      */
-    public Flux<ImgRes> findAll(Mono<IdsStringReq> idsStringReqMono);
+    public Flux<ImgBo> findAll(Mono<IdsStringReq> idsStringReqMono);
 }

@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.server.service;
 
-import com.php25.userservice.server.dto.AdminMenuButtonDto;
-import com.php25.userservice.server.dto.AdminRoleDto;
+import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.server.dto.AdminRoleDto;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;

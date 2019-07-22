@@ -66,12 +66,12 @@
             <artifactId>media-microservice-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.php25.service.mediaservice</groupId>
-            <artifactId>mediaservice</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
         </dependency>
     </dependencies>
 

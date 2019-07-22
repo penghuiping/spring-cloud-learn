@@ -5,13 +5,12 @@ import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
 import com.php25.common.redis.RedisService;
-import com.php25.userservice.server.service.TokenService;
+import com.php25.usermicroservice.server.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +53,6 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      */
     @Override
     public Map<String, String> generateToken(T obj) {
-        Assert.notNull(obj, "obj不能为null");
         if (obj instanceof String || obj instanceof Long) {
             //生成token
             String token = "t" + idGeneratorService.getModelPrimaryKey();
@@ -93,7 +91,6 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      */
     @Override
     public Map<String, String> getToken(String refreshToken) {
-        Assert.hasLength(refreshToken, "refreshToken不能为空");
         String obj = redisService.get(refreshToken, String.class);
 
         if (null == obj) {
@@ -143,8 +140,6 @@ public class TokenServiceImpl<T> implements TokenService<T> {
      */
     @Override
     public Boolean checkTokenValidation(String token, Class<T> cls) {
-        Assert.hasLength(token, "token不能为空");
-        Assert.notNull(cls, "cls不能为null");
         if (!StringUtil.isBlank(token) && token.length() == 33 && token.startsWith("t")) {
             T temp = redisService.get(token, cls);
             return null != temp;
@@ -178,14 +173,11 @@ public class TokenServiceImpl<T> implements TokenService<T> {
 
     @Override
     public T getObjByToken(String token, Class<T> cls) {
-        Assert.hasLength(token, "token不能为空");
-        Assert.notNull(cls, "cls不能为null");
         return redisService.get(token, cls);
     }
 
     @Override
     public Boolean cleanToken(T obj) {
-        Assert.notNull(obj, "obj不能为null");
         if (obj instanceof String || obj instanceof Long) {
             String key = obj + "";
             String value = redisService.get(key, String.class);

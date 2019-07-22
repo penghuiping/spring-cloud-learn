@@ -9,15 +9,15 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.jdbc.service.BaseServiceImpl;
-import com.php25.userservice.server.dto.AdminRoleDto;
-import com.php25.userservice.server.dto.AdminUserDto;
-import com.php25.userservice.server.model.AdminRole;
-import com.php25.userservice.server.model.AdminUser;
-import com.php25.userservice.server.model.UserRole;
-import com.php25.userservice.server.repository.AdminRoleRepository;
-import com.php25.userservice.server.repository.AdminUserRepository;
-import com.php25.userservice.server.repository.UserRoleRepository;
-import com.php25.userservice.server.service.AdminUserService;
+import com.php25.usermicroservice.server.dto.AdminRoleDto;
+import com.php25.usermicroservice.server.dto.AdminUserDto;
+import com.php25.usermicroservice.server.model.AdminRole;
+import com.php25.usermicroservice.server.model.AdminUser;
+import com.php25.usermicroservice.server.model.UserRole;
+import com.php25.usermicroservice.server.repository.AdminRoleRepository;
+import com.php25.usermicroservice.server.repository.AdminUserRepository;
+import com.php25.usermicroservice.server.repository.UserRoleRepository;
+import com.php25.usermicroservice.server.service.AdminUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
         var adminUserDto = new AdminUserDto();
         BeanUtils.copyProperties(adminUser, adminUserDto, "roles");
-        if(null == adminUser.getRoles()) {
+        if (null == adminUser.getRoles()) {
             adminUser.setRoles(Lists.newArrayList());
         }
         var adminRoleDtos = adminUser.getRoles().stream().map(role -> {

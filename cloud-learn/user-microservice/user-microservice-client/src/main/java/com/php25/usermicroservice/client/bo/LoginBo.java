@@ -1,4 +1,4 @@
-package com.php25.mediamicroservice.client.bo.req;
+package com.php25.usermicroservice.client.bo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,13 +7,16 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * @author: penghuiping
- * @date: 2019/7/19 14:13
+ * @date: 2019/7/22 13:52
  * @description:
  */
-@Getter
 @Setter
-public class Base64ImageReq {
+@Getter
+public class LoginBo {
 
     @NotBlank
-    String content;
+    String username;
+
+    @NotBlank
+    String password;
 }

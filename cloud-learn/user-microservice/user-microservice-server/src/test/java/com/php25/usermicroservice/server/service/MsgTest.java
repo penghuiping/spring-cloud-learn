@@ -3,7 +3,6 @@ package com.php25.usermicroservice.server.service;
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
-import com.php25.usermicroservice.client.bo.AdminUserBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
 import com.php25.usermicroservice.client.bo.SearchBoParam;
 import org.junit.Test;
@@ -13,7 +12,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 /**

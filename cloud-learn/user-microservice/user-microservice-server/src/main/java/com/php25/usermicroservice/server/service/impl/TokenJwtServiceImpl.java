@@ -5,7 +5,7 @@ import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.redis.RedisService;
-import com.php25.userservice.server.service.TokenJwtService;
+import com.php25.usermicroservice.server.service.TokenJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

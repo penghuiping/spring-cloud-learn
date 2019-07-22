@@ -1,6 +1,5 @@
 package com.php25.notifymicroservice.client.rpc.impl;
 
-import com.php25.common.flux.BooleanRes;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.constant.Constant;
@@ -27,24 +26,28 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<BooleanRes> sendSMS(@Valid Mono<SendSMSReq> sendSMSReqMono) {
+    public Mono<Boolean> sendSMS(Mono<SendSMSReq> sendSMSReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
-                .uri("/mobileMsg/sendSMS").body(sendSMSReqMono, SendSMSReq.class)
-                .retrieve().bodyToMono(BooleanRes.class);
+                .uri("/mobileMsg/sendSMS")
+                .body(sendSMSReqMono, SendSMSReq.class)
+                .retrieve()
+                .bodyToMono(Boolean.class);
 
 
     }
 
     @Override
-    public Mono<BooleanRes> validateSMS(@Valid Mono<ValidateSMSReq> validateSMSReqMono) {
+    public Mono<Boolean> validateSMS(Mono<ValidateSMSReq> validateSMSReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
-                .uri("/mobileMsg/validateSMS").body(validateSMSReqMono, ValidateSMSReq.class)
-                .retrieve().bodyToMono(BooleanRes.class);
+                .uri("/mobileMsg/validateSMS")
+                .body(validateSMSReqMono, ValidateSMSReq.class)
+                .retrieve()
+                .bodyToMono(Boolean.class);
     }
 }

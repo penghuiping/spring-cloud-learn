@@ -1,6 +1,7 @@
-package com.php25.mediamicroservice.client.bo.res;
+package com.php25.mediamicroservice.client.bo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -9,7 +10,8 @@ import java.util.Date;
  * @date: 2019/1/4 11:15
  * @description:
  */
-@Data
+@Getter
+@Setter
 public class ImgBo {
 
     private String id;
