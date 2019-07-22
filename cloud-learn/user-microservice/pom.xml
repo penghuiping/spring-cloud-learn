@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.php25</groupId>
+        <artifactId>cloud-learn</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.php25.user-microservice</groupId>
+    <artifactId>user-microservice</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <modules>
+        <module>user-microservice-client</module>
+        <module>user-microservice-server</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
+</project>
