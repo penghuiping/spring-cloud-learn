@@ -1,6 +1,6 @@
 package com.php25.notifymicroservice.server.service.impl;
 
-import com.php25.common.core.exception.ServiceException;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.notifymicroservice.client.bo.Pair;
 import com.php25.notifymicroservice.server.service.MailService;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class MailServiceImpl implements MailService {
             }
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            throw new ServiceException("发送邮件失败！", e);
+            throw Exceptions.throwIllegalStateException("发送邮件失败！", e);
         }
     }
 
@@ -86,7 +86,7 @@ public class MailServiceImpl implements MailService {
             }
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            throw new ServiceException("发送邮件失败！", e);
+            throw Exceptions.throwIllegalStateException("发送邮件失败！", e);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.php25.usermicroservice.server.service.impl;
 
-import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
 import com.php25.usermicroservice.server.dto.AdminRoleDto;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Primary
-@Transactional(rollbackFor = ServiceException.class)
+@Transactional(rollbackFor = Exception.class)
 public class AdminMenuServiceImpl implements AdminMenuService {
     private AdminMenuButtonRepository adminMenuButtonRepository;
 

@@ -54,7 +54,7 @@ public class AdminUserController implements AdminUserRpc {
         return loginBoMono.map(loginBo -> {
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
             if (!adminUserDtoOptional.isPresent()) {
-                throw Exceptions.throwServiceException("无法通过username:" + loginBo.getUsername() + ",password:" + loginBo.getPassword() + "找到用户信息");
+                throw Exceptions.throwIllegalStateException("无法通过username:" + loginBo.getUsername() + ",password:" + loginBo.getPassword() + "找到用户信息");
             } else {
                 AdminUserBo adminUserBo = new AdminUserBo();
                 BeanUtils.copyProperties(adminUserDtoOptional.get(), adminUserBo);
@@ -88,12 +88,12 @@ public class AdminUserController implements AdminUserRpc {
         return changePasswordBoMono.map(changePasswordBo -> {
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(changePasswordBo.getAdminUserId());
             if (!adminUserDtoOptional.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
             }
 
             AdminUserDto adminUserDto = adminUserDtoOptional.get();
             if (!adminUserDto.getPassword().equals(changePasswordBo.getOriginPassword())) {
-                throw Exceptions.throwServiceException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
+                throw Exceptions.throwIllegalStateException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
             }
             adminUserDto.setPassword(changePasswordBo.getNewPassword());
             Optional<AdminUserDto> adminUserDtoOptional1 = adminUserService.save(adminUserDto);
@@ -121,7 +121,7 @@ public class AdminUserController implements AdminUserRpc {
                 BeanUtils.copyProperties(adminUserDto, adminUserBo);
                 return adminUserBo;
             } else {
-                throw Exceptions.throwServiceException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
+                throw Exceptions.throwIllegalStateException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
             }
         }).map(adminUserBo -> {
             AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
@@ -142,7 +142,7 @@ public class AdminUserController implements AdminUserRpc {
                 adminUserBo.setId(adminUserDtoOptional.get().getId());
                 return adminUserBo;
             } else {
-                throw Exceptions.throwServiceException("保存用户信息失败:" + JsonUtil.toJson(adminUserBo));
+                throw Exceptions.throwIllegalStateException("保存用户信息失败:" + JsonUtil.toJson(adminUserBo));
             }
         }).map(adminUserBo -> {
             AdminUserBoRes adminUserBoRes = new AdminUserBoRes();

@@ -1,6 +1,6 @@
 package com.php25.notifymicroservice.server.controller;
 
-import com.php25.common.core.exception.ServiceException;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.notifymicroservice.client.bo.Pair;
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
@@ -56,7 +56,7 @@ public class MailController implements MailRpc {
                     pairDto.setValue(path.toFile());
                     return pairDto;
                 } catch (IOException e) {
-                    throw new ServiceException("存储邮箱附件失败", e);
+                    throw Exceptions.throwIllegalStateException("存储邮箱附件失败", e);
                 }
             }).collect(Collectors.toList());
             mailService.sendAttachmentsMail(params.getSendTo(), params.getTitle(), params.getContent(), pairs);

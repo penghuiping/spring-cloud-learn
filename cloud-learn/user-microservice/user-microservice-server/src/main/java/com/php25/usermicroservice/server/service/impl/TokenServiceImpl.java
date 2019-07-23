@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.service.impl;
 
-import com.php25.common.core.exception.ServiceException;
+import com.php25.common.core.exception.IllegalStateException;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
@@ -189,7 +189,7 @@ public class TokenServiceImpl<T> implements TokenService<T> {
             }
             return true;
         } else {
-            throw new ServiceException("obj只能是String或者Long类型");
+            throw new IllegalStateException("obj只能是String或者Long类型");
         }
     }
 

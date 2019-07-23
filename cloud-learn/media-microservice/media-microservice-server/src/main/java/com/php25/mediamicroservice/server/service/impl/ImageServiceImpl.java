@@ -1,7 +1,7 @@
 package com.php25.mediamicroservice.server.service.impl;
 
 import com.j256.simplemagic.ContentInfoUtil;
-import com.php25.common.core.exception.ServiceException;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.mediamicroservice.server.dto.ImgDto;
@@ -60,7 +60,7 @@ public class ImageServiceImpl implements ImageService, InitializingBean {
                 Files.write(path1, arr);
             }
         } catch (IOException e) {
-            throw new ServiceException("写入文件出错", e);
+            throw Exceptions.throwIllegalStateException("写入文件出错", e);
         }
         return name;
     }

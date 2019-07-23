@@ -174,7 +174,7 @@ public class AdminMenuController implements AdminMenuRpc {
             Long roleId = idLongReq.getId();
             Optional<AdminRoleDto> adminRoleDtoOptional = adminRoleService.findOne(roleId);
             if (!adminRoleDtoOptional.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("can't find a role record in database by roleId:%d", roleId));
+                throw Exceptions.throwIllegalStateException(String.format("can't find a role record in database by roleId:%d", roleId));
             }
             AdminRoleDto adminRoleDto = adminRoleDtoOptional.get();
             Optional<List<AdminMenuButtonDto>> optionalAdminMenuButtonDtos = adminMenuService.findMenusEnabledByRole(adminRoleDto);

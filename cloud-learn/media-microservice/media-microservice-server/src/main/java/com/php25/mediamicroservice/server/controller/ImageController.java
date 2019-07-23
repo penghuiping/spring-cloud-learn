@@ -1,7 +1,7 @@
 package com.php25.mediamicroservice.server.controller;
 
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.flux.ApiErrorCode;
-import com.php25.common.flux.ControllerException;
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
@@ -54,7 +54,7 @@ public class ImageController implements ImageRpc {
                 BeanUtils.copyProperties(imgDtoOptional.get(), imgBo);
                 return imgBo;
             } else {
-                throw new ControllerException(String.format("无法通过%s找到对应的图片", idStringReqMono));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过%s找到对应的图片", idStringReqMono));
             }
         }).map(imgBo -> {
             ImgBoRes imgBoRes = new ImgBoRes();

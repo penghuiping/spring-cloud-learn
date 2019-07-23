@@ -58,7 +58,7 @@ public class CustomerController implements CustomerRpc {
         return customerBoMono.map(customerBo -> {
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
+                throw Exceptions.throwIllegalStateException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
             }
 
             //判断username是否存在，如果不存在，自动补上
@@ -93,7 +93,7 @@ public class CustomerController implements CustomerRpc {
             String password = loginBo.getPassword();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByUsernameAndPassword(username, password);
             if (!optionalCustomerDto.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -116,7 +116,7 @@ public class CustomerController implements CustomerRpc {
             String mobile = loginByMobileBo.getMobile();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByPhone(mobile);
             if (!optionalCustomerDto.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("无法通过手机号:%s找到相关数据", mobile));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过手机号:%s找到相关数据", mobile));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -141,7 +141,7 @@ public class CustomerController implements CustomerRpc {
             String code = loginByEmailBo.getCode();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByEmailAndPassword(email, code);
             if (!optionalCustomerDto.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("无法通过邮箱:%s找到相关数据", email));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过邮箱:%s找到相关数据", email));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -222,7 +222,7 @@ public class CustomerController implements CustomerRpc {
             Optional<CustomerDto> customerDtoOptional = customerService.findOne(customerId);
 
             if (!customerDtoOptional.isPresent()) {
-                throw Exceptions.throwServiceException(String.format("无法通过customerId:%s找到对应的客户信息", customerId));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过customerId:%s找到对应的客户信息", customerId));
             }
             CustomerDto customerDto = customerDtoOptional.get();
             CustomerBo customerBo = new CustomerBo();
@@ -281,7 +281,7 @@ public class CustomerController implements CustomerRpc {
                 BeanUtils.copyProperties(customerDto, customerBo);
                 return customerBo;
             } else {
-                throw Exceptions.throwServiceException(String.format("无法通过mobile:%s找到对应的客户信息", mobile));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过mobile:%s找到对应的客户信息", mobile));
             }
         }).map(customerBo -> {
             CustomerBoRes customerBoRes = new CustomerBoRes();

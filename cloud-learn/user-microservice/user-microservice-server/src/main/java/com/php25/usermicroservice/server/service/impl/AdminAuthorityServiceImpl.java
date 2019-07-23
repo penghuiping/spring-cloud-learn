@@ -1,6 +1,5 @@
 package com.php25.usermicroservice.server.service.impl;
 
-import com.php25.common.core.exception.ServiceException;
 import com.php25.common.jdbc.service.BaseServiceImpl;
 import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
 import com.php25.usermicroservice.server.model.AdminAuthority;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Primary
-@Transactional(rollbackFor = ServiceException.class)
+@Transactional(rollbackFor = Exception.class)
 public class AdminAuthorityServiceImpl implements AdminAuthorityService {
 
     private AdminAuthorityRepository adminAuthorityRepository;

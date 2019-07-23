@@ -2,7 +2,6 @@ package com.php25.usermicroservice.server.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.exception.ServiceException;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.service.ModelToDtoTransferable;
 import com.php25.common.core.specification.Operator;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Primary
-@Transactional(rollbackFor = ServiceException.class)
+@Transactional(rollbackFor = Exception.class)
 public class AdminUserServiceImpl implements AdminUserService {
 
     private AdminUserRepository adminUserRepository;

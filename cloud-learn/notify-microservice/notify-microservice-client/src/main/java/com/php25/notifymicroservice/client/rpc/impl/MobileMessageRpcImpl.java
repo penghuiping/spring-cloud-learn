@@ -1,7 +1,5 @@
 package com.php25.notifymicroservice.client.rpc.impl;
 
-import com.php25.common.core.exception.Exceptions;
-import com.php25.common.flux.ApiErrorCode;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
@@ -35,15 +33,7 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
                 .uri("/mobileMsg/sendSMS")
                 .body(sendSMSReqMono, SendSMSReq.class)
                 .retrieve()
-                .bodyToMono(BooleanRes.class).map(booleanRes -> {
-                    if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
-                        throw Exceptions.throwServiceException(booleanRes.getMessage());
-                    } else {
-                        return booleanRes;
-                    }
-                });
-
-
+                .bodyToMono(BooleanRes.class);
     }
 
     @Override

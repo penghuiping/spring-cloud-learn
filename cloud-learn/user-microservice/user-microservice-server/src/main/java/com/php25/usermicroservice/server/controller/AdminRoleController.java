@@ -83,7 +83,7 @@ public class AdminRoleController implements AdminRoleRpc {
                 adminRoleBo.setId(adminRoleDtoOptional.get().getId());
                 return adminRoleBo;
             } else {
-                throw Exceptions.throwServiceException("保存角色失败:" + JsonUtil.toJson(adminRoleBo));
+                throw Exceptions.throwIllegalStateException("保存角色失败:" + JsonUtil.toJson(adminRoleBo));
             }
         }).map(adminRoleBo -> {
            AdminRoleBoRes adminRoleBoRes = new AdminRoleBoRes();

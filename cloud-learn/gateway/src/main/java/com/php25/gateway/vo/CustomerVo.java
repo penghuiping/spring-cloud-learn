@@ -1,4 +1,4 @@
-package com.php25.gateway.vo.resp;
+package com.php25.gateway.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class CustomerResp implements Serializable {
+public class CustomerVo implements Serializable {
 
     private String id;
 
