@@ -114,6 +114,6 @@ public interface CustomerRpc {
     Mono<BooleanRes> logout(@Valid Mono<IdStringReq> jwtMono);
 
 
-    Mono<Object> testMessage();
+//    Mono<Object> testMessage();
 
 }

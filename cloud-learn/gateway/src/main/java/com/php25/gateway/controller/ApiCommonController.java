@@ -1,7 +1,6 @@
 package com.php25.gateway.controller;
 
 
-import com.php25.common.core.exception.BusinessException;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author penghuiping
@@ -80,7 +80,7 @@ public class ApiCommonController extends JSONController {
             loginByMobileBo.setCode(params.getMsgCode());
             loginByMobileBo.setMobile(params.getMobile());
             return loginByMobileBo;
-        }).flatMap(loginByMobileBo -> customerRpc.loginByMobile(Mono.just(loginByMobileBo)).map(jwtRes -> {
+        }).flatMap(loginByMobileBo -> customerRpc.loginByMobile(Mono.just(loginByMobileBo)).flatMap(jwtRes -> {
             if (jwtRes.getErrorCode() != ApiErrorCode.ok.value) {
                 log.info("无法找到相应的手机号对应的用户记录,手机号为{}", loginByMobileBo.getMobile());
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_NOT_EXIST_ERROR);
@@ -88,34 +88,45 @@ public class ApiCommonController extends JSONController {
                 String jwt = jwtRes.getReturnObject();
                 IdStringReq idStringReq = new IdStringReq();
                 idStringReq.setId(jwt);
-                return idStringReq;
+                return Mono.just(idStringReq);
             }
-        }).flatMap(idStringReq -> customerRpc.findOne(Mono.just(idStringReq)).flatMap(customerBoRes -> {
-            if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                CustomerVo customerVo = new CustomerVo();
-                CustomerBo customerBo = customerBoRes.getReturnObject();
-                BeanUtils.copyProperties(customerBo, customerVo);
-                IdStringReq idStringReq1 = new IdStringReq();
-                idStringReq1.setId(customerBo.getImageId());
-                customerVo.setToken(idStringReq.getId());
-                return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-                    if(imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                        customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-                    }
-                    return succeed(customerVo);
-                });
-            } else {
-                throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
-            }
-        }))).onErrorResume(throwable -> {
-            if (throwable instanceof BusinessException) {
-                var businessException = (BusinessException) throwable;
-                return Mono.just(failed(businessException.getBusinessErrorStatus()));
-            } else {
-                throw Exceptions.throwIllegalStateException("出错啦", throwable);
-            }
-        });
+        }).flatMap(idStringReq -> {
+            return customerRpc.findOne(Mono.just(idStringReq));
+//            var jsonResponse =  customerRes.flatMap(customerBoRes -> {
+//                if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+//                    CustomerVo customerVo = new CustomerVo();
+//                    CustomerBo customerBo = customerBoRes.getReturnObject();
+//                    BeanUtils.copyProperties(customerBo, customerVo);
+//                    IdStringReq idStringReq1 = new IdStringReq();
+//                    idStringReq1.setId(customerBo.getImageId());
+//                    customerVo.setToken(idStringReq.getId());
+//                    return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
+//                        if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+//                            customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
+//                        }
+//                        return succeed(customerVo);
+//                    });
+//                } else {
+//                    throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+//                }
+//            });
+
+        }).flatMap(customerBoRes -> {
+            log.info(customerBoRes.getErrorCode()+"");
+            return Mono.just(succeed(customerBoRes.getReturnObject()));
+        }).doOnError(throwable -> {
+            log.error("出错啦",throwable);
+        }));
     }
+//}).onErrorResume(throwable->{
+//        if(throwable instanceof BusinessException){
+//        var businessException=(BusinessException)throwable;
+//        return Mono.just(failed(businessException.getBusinessErrorStatus()));
+//        }else{
+//        throw Exceptions.throwIllegalStateException("出错啦",throwable);
+//        }
+//        }));
+//        }
 
 
 //    @PostMapping(value = "/common/loginByUsername.do")

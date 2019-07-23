@@ -1,5 +1,6 @@
 package com.php25.usermicroservice.client.rpc.impl;
 
+import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.IdStringReq;
 import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.bo.LoginBo;
@@ -13,6 +14,7 @@ import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
 import com.php25.usermicroservice.client.bo.res.StringRes;
 import com.php25.usermicroservice.client.constant.Constant;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import reactor.core.publisher.Mono;
  * @date: 2019/7/15 19:40
  * @description:
  */
+@Slf4j
 @Component
 public class CustomerRpcImpl implements CustomerRpc {
 
@@ -63,7 +66,10 @@ public class CustomerRpcImpl implements CustomerRpc {
                 .uri("/customer/loginByMobile")
                 .body(loginByMobileBoMono, LoginByMobileBo.class)
                 .retrieve()
-                .bodyToMono(StringRes.class);
+                .bodyToMono(StringRes.class).map(stringRes -> {
+                    log.info(JsonUtil.toJson(stringRes));
+                    return stringRes;
+                });
     }
 
     @Override
@@ -112,7 +118,9 @@ public class CustomerRpcImpl implements CustomerRpc {
                 .uri("/customer/findOne")
                 .body(jwtMono, IdStringReq.class)
                 .retrieve()
-                .bodyToMono(CustomerBoRes.class);
+                .bodyToMono(CustomerBoRes.class).doOnNext(customerBoRes -> {
+                    log.info(JsonUtil.toJson(customerBoRes));
+                });
     }
 
     @Override
@@ -164,14 +172,14 @@ public class CustomerRpcImpl implements CustomerRpc {
                 .bodyToMono(BooleanRes.class);
     }
 
-    @Override
-    public Mono<Object> testMessage() {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
-                .post()
-                .uri("/customer/testMessage")
-                .retrieve()
-                .bodyToMono(Object.class);
-    }
+//    @Override
+//    public Mono<Object> testMessage() {
+//        return WebClient.builder().baseUrl(Constant.BASE_URL)
+//                .filter(lbFunction)
+//                .build()
+//                .post()
+//                .uri("/customer/testMessage")
+//                .retrieve()
+//                .bodyToMono(Object.class);
+//    }
 }

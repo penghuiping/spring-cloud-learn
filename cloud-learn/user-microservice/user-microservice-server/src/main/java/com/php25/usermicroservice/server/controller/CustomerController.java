@@ -17,7 +17,6 @@ import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
 import com.php25.usermicroservice.client.bo.res.StringRes;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import com.php25.usermicroservice.server.dto.CustomerDto;
-import com.php25.usermicroservice.server.mq.GreetingsService;
 import com.php25.usermicroservice.server.service.CustomerService;
 import com.php25.usermicroservice.server.service.TokenJwtService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +42,7 @@ import java.util.Optional;
 @RequestMapping("/customer")
 public class CustomerController implements CustomerRpc {
 
-    @Autowired
-    GreetingsService greetingsService;
+
     @Autowired
     private CustomerService customerService;
     @Autowired
@@ -123,8 +121,7 @@ public class CustomerController implements CustomerRpc {
             Map<String, Object> map = new HashMap<>();
             map.put("customer", customerDto);
             //生成jwt
-            String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
-            return jwt;
+            return tokenJwtService.getToken(customerDto.getId().toString(), map);
         }).map(jwt -> {
             StringRes stringRes = new StringRes();
             stringRes.setErrorCode(ApiErrorCode.ok.value);
@@ -309,13 +306,13 @@ public class CustomerController implements CustomerRpc {
 
     }
 
-    @Override
-    public Mono<Object> testMessage() {
-        return Mono.fromCallable(() -> {
-            greetingsService.sendGreeting();
-            return null;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
-        });
-    }
+//    @Override
+//    public Mono<Object> testMessage() {
+//        return Mono.fromCallable(() -> {
+//            greetingsService.sendGreeting();
+//            return null;
+//        }).doOnError(throwable -> {
+//            log.error("出错啦", throwable);
+//        });
+//    }
 }
