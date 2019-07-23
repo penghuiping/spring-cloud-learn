@@ -3,10 +3,13 @@ package com.php25.usermicroservice.server.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.redis.RedisService;
 import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
 import com.php25.usermicroservice.client.bo.HasRightAccessUrlBo;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.rpc.AdminMenuRpc;
 import com.php25.usermicroservice.server.constant.RedisConstant;
 import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
@@ -21,9 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -60,7 +63,7 @@ public class AdminMenuController implements AdminMenuRpc {
 
     @Override
     @PostMapping("/findAllMenuTree")
-    public Flux<AdminMenuButtonBo> findAllMenuTree() {
+    public Mono<AdminMenuButtonBoListRes> findAllMenuTree() {
         return Mono.fromCallable(() -> {
             Optional<List<AdminMenuButtonDto>> optionalAdminMenuButtonDtos = adminMenuService.findRootMenusEnabled();
             if (optionalAdminMenuButtonDtos.isPresent() && !optionalAdminMenuButtonDtos.get().isEmpty()) {
@@ -73,8 +76,11 @@ public class AdminMenuController implements AdminMenuRpc {
             } else {
                 return new ArrayList<AdminMenuButtonBo>();
             }
-        }).flatMapMany(Flux::fromIterable).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminMenuButtonBos -> {
+            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
+            adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
+            return adminMenuButtonBoListRes;
         });
 
 
@@ -82,7 +88,7 @@ public class AdminMenuController implements AdminMenuRpc {
 
     @Override
     @PostMapping("/hasRightAccessUrl")
-    public Mono<Boolean> hasRightAccessUrl(Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono) {
+    public Mono<BooleanRes> hasRightAccessUrl(@RequestBody Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono) {
         return hasRightAccessUrlBoMono.map(hasRightAccessUrlBo -> {
             Long adminUserId = hasRightAccessUrlBo.getAdminUserId();
             String url = hasRightAccessUrlBo.getUrl();
@@ -152,14 +158,17 @@ public class AdminMenuController implements AdminMenuRpc {
             } else {
                 return false;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/findAllByAdminRoleId")
-    public Flux<AdminMenuButtonBo> findAllByAdminRoleId(Mono<IdLongReq> roleIdMono) {
+    public Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(@RequestBody Mono<IdLongReq> roleIdMono) {
         //参数验证
         return roleIdMono.map(idLongReq -> {
             Long roleId = idLongReq.getId();
@@ -178,10 +187,11 @@ public class AdminMenuController implements AdminMenuRpc {
             } else {
                 return new ArrayList<AdminMenuButtonBo>();
             }
-        }).flatMapMany(Flux::fromIterable).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminMenuButtonBos -> {
+            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
+            adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
+            return adminMenuButtonBoListRes;
         });
-
-
     }
 }

@@ -1,7 +1,10 @@
 package com.php25.notifymicroservice.client.rpc.impl;
 
+import com.php25.common.core.exception.Exceptions;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
+import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import com.php25.notifymicroservice.client.constant.Constant;
 import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +13,6 @@ import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchan
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import javax.validation.Valid;
 
 /**
  * @author: penghuiping
@@ -26,7 +27,7 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<Boolean> sendSMS(Mono<SendSMSReq> sendSMSReqMono) {
+    public Mono<BooleanRes> sendSMS(Mono<SendSMSReq> sendSMSReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -34,7 +35,13 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
                 .uri("/mobileMsg/sendSMS")
                 .body(sendSMSReqMono, SendSMSReq.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class).map(booleanRes -> {
+                    if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
+                        throw Exceptions.throwServiceException(booleanRes.getMessage());
+                    } else {
+                        return booleanRes;
+                    }
+                });
 
 
     }

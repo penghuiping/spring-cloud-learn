@@ -1,15 +1,15 @@
 package com.php25.usermicroservice.client.rpc.impl;
 
 import com.php25.common.flux.IdLongReq;
-import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
 import com.php25.usermicroservice.client.bo.HasRightAccessUrlBo;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.constant.Constant;
 import com.php25.usermicroservice.client.rpc.AdminMenuRpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -24,18 +24,18 @@ public class AdminMenuRpcImpl implements AdminMenuRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Flux<AdminMenuButtonBo> findAllMenuTree() {
+    public Mono<AdminMenuButtonBoListRes> findAllMenuTree() {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .get()
                 .uri("/adminMenu/findAllMenuTree")
                 .retrieve()
-                .bodyToFlux(AdminMenuButtonBo.class);
+                .bodyToMono(AdminMenuButtonBoListRes.class);
     }
 
     @Override
-    public Mono<Boolean> hasRightAccessUrl(Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono) {
+    public Mono<BooleanRes> hasRightAccessUrl(Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -43,11 +43,11 @@ public class AdminMenuRpcImpl implements AdminMenuRpc {
                 .uri("/adminMenu/hasRightAccessUrl")
                 .body(hasRightAccessUrlBoMono, HasRightAccessUrlBo.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class);
     }
 
     @Override
-    public Flux<AdminMenuButtonBo> findAllByAdminRoleId(Mono<IdLongReq> idLongReqMono) {
+    public Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(Mono<IdLongReq> idLongReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -55,6 +55,6 @@ public class AdminMenuRpcImpl implements AdminMenuRpc {
                 .uri("/adminMenu/findAllByAdminRoleId")
                 .body(idLongReqMono, IdLongReq.class)
                 .retrieve()
-                .bodyToFlux(AdminMenuButtonBo.class);
+                .bodyToMono(AdminMenuButtonBoListRes.class);
     }
 }

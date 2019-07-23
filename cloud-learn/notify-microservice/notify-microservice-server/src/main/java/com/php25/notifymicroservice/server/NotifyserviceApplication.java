@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @Date: 2018/7/18 16:43
  * @Description:
  */
-@ComponentScan(value = {"com.php25.notifymicroservice", "com.php25.notifyservice"})
+@ComponentScan(value = {"com.php25.notifymicroservice.server", "com.php25.common.flux"})
 @SpringBootApplication
 @EnableTransactionManagement
 public class NotifyserviceApplication {

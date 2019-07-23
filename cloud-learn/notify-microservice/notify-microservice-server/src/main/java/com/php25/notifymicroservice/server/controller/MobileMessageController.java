@@ -1,14 +1,16 @@
 package com.php25.notifymicroservice.server.controller;
 
-import com.php25.common.core.exception.Exceptions;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
+import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
 import com.php25.notifymicroservice.server.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -34,14 +36,16 @@ public class MobileMessageController implements MobileMessageRpc {
      */
     @Override
     @PostMapping("/sendSMS")
-    public Mono<Boolean> sendSMS(@Valid Mono<SendSMSReq> sendSMSReqMono) {
+    public Mono<BooleanRes> sendSMS(@RequestBody Mono<SendSMSReq> sendSMSReqMono) {
         return sendSMSReqMono.map(params -> {
             String mobile = params.getMobile();
             log.info("手机号为:{}", mobile);
-            int i = 1/0;
             return mobileMessageService.sendSMS(mobile);
-        }).doOnError(throwable -> {
-           log.error("出错啦!",throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
@@ -50,13 +54,11 @@ public class MobileMessageController implements MobileMessageRpc {
      */
     @Override
     @PostMapping("/validateSMS")
-    public Mono<Boolean> validateSMS(@Valid Mono<ValidateSMSReq> validateSMSReqMono) {
+    public Mono<Boolean> validateSMS(@RequestBody Mono<ValidateSMSReq> validateSMSReqMono) {
         return validateSMSReqMono.map(params -> {
             String mobile = params.getMobile();
             String code = params.getMsgCode();
             return mobileMessageService.validateSMS(mobile, code);
-        }).doOnError(throwable -> {
-            log.error("出错啦!",throwable);
         });
     }
 }

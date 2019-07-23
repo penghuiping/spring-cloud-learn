@@ -3,24 +3,16 @@ package com.php25.gateway.controller;
 
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.JSONController;
 import com.php25.common.flux.JSONResponse;
 import com.php25.common.redis.RedisService;
-import com.php25.gateway.constant.BusinessError;
 import com.php25.gateway.vo.req.GetMsgCodeReq;
-import com.php25.gateway.vo.req.LoginByMobileReq;
-import com.php25.gateway.vo.req.LoginByUsernameReq;
-import com.php25.gateway.vo.req.RegisterReq;
-import com.php25.gateway.vo.resp.CustomerResp;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.rpc.MailRpc;
 import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
-import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.Date;
 
 /**
  * @author penghuiping
@@ -65,8 +56,8 @@ public class ApiCommonController extends JSONController {
             log.info(JsonUtil.toPrettyJson(params));
             var sendSmsReq = new SendSMSReq();
             //sendSmsReq.setMobile(params.getMobile());
-            return mobileMessageRpc.sendSMS(sendSmsReq)
-                    .map(mobile2 -> (succeed(true)));
+            return mobileMessageRpc.sendSMS(Mono.just(sendSmsReq))
+                    .map(booleanRes -> succeed(booleanRes.getReturnObject()));
         });
     }
 

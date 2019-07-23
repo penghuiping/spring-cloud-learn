@@ -4,19 +4,19 @@ import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
 import com.php25.notifymicroservice.client.constant.Constant;
 import com.php25.notifymicroservice.client.rpc.MailRpc;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 /**
  * @author: penghuiping
  * @date: 2019/7/16 17:46
  * @description:
  */
+@Slf4j
 @Component
 public class MailRpcImpl implements MailRpc {
 
@@ -24,7 +24,7 @@ public class MailRpcImpl implements MailRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<Boolean> sendSimpleMail(@Valid Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
+    public Mono<Boolean> sendSimpleMail(Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -36,7 +36,7 @@ public class MailRpcImpl implements MailRpc {
     }
 
     @Override
-    public Mono<Boolean> sendAttachmentsMail(@Valid Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
+    public Mono<Boolean> sendAttachmentsMail(Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()

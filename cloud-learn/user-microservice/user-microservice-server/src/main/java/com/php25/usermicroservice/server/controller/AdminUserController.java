@@ -2,16 +2,19 @@ package com.php25.usermicroservice.server.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.exception.ServiceException;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminUserBo;
 import com.php25.usermicroservice.client.bo.ChangePasswordBo;
 import com.php25.usermicroservice.client.bo.LoginBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
+import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
+import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.rpc.AdminUserRpc;
 import com.php25.usermicroservice.server.dto.AdminUserDto;
 import com.php25.usermicroservice.server.service.AdminUserService;
@@ -21,9 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -47,7 +50,7 @@ public class AdminUserController implements AdminUserRpc {
 
     @Override
     @PostMapping("/login")
-    public Mono<AdminUserBo> login(@Valid Mono<LoginBo> loginBoMono) {
+    public Mono<AdminUserBoRes> login(@RequestBody Mono<LoginBo> loginBoMono) {
         return loginBoMono.map(loginBo -> {
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
             if (!adminUserDtoOptional.isPresent()) {
@@ -57,36 +60,41 @@ public class AdminUserController implements AdminUserRpc {
                 BeanUtils.copyProperties(adminUserDtoOptional.get(), adminUserBo);
                 return adminUserBo;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminUserBo -> {
+            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
+            adminUserBoRes.setReturnObject(adminUserBo);
+            return adminUserBoRes;
         });
     }
 
     @Override
     @PostMapping("/resetPassword")
-    public Mono<Boolean> resetPassword(@Valid Mono<IdsLongReq> idsLongReqMono) {
+    public Mono<BooleanRes> resetPassword(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         //初始化密码为123456
         return idsLongReqMono.map(idsLongReq ->
                 adminUserService.updatePassword("123456", idsLongReq.getIds()))
-                .doOnError(throwable -> {
-                    log.error("出错啦", throwable);
+                .map(aBoolean -> {
+                    BooleanRes booleanRes = new BooleanRes();
+                    booleanRes.setErrorCode(ApiErrorCode.ok.value);
+                    booleanRes.setReturnObject(aBoolean);
+                    return booleanRes;
                 });
     }
 
     @Override
     @PostMapping("/changePassword")
-    public Mono<Boolean> changePassword(@Valid Mono<ChangePasswordBo> changePasswordBoMono) {
+    public Mono<BooleanRes> changePassword(@RequestBody Mono<ChangePasswordBo> changePasswordBoMono) {
         return changePasswordBoMono.map(changePasswordBo -> {
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(changePasswordBo.getAdminUserId());
             if (!adminUserDtoOptional.isPresent()) {
-                throw new ServiceException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
+                throw Exceptions.throwServiceException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
             }
 
             AdminUserDto adminUserDto = adminUserDtoOptional.get();
             if (!adminUserDto.getPassword().equals(changePasswordBo.getOriginPassword())) {
-                throw new ServiceException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
+                throw Exceptions.throwServiceException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
             }
-
             adminUserDto.setPassword(changePasswordBo.getNewPassword());
             Optional<AdminUserDto> adminUserDtoOptional1 = adminUserService.save(adminUserDto);
             if (adminUserDtoOptional1.isPresent()) {
@@ -94,14 +102,17 @@ public class AdminUserController implements AdminUserRpc {
             } else {
                 return false;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping(value = "/findOne", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Mono<AdminUserBo> findOne(@Valid Mono<IdLongReq> idLongReqMono) {
+    public Mono<AdminUserBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
         return idLongReqMono.map(idLongReq -> {
             Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(idLongReq.getId());
             if (adminUserDtoOptional.isPresent()) {
@@ -112,14 +123,17 @@ public class AdminUserController implements AdminUserRpc {
             } else {
                 throw Exceptions.throwServiceException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminUserBo -> {
+            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
+            adminUserBoRes.setReturnObject(adminUserBo);
+            return adminUserBoRes;
         });
     }
 
     @Override
     @PostMapping("/save")
-    public Mono<AdminUserBo> save(@Valid Mono<AdminUserBo> adminUserBoMono) {
+    public Mono<AdminUserBoRes> save(@RequestBody Mono<AdminUserBo> adminUserBoMono) {
         return adminUserBoMono.map(adminUserBo -> {
             AdminUserDto adminUserDto = new AdminUserDto();
             BeanUtils.copyProperties(adminUserBo, adminUserDto);
@@ -130,15 +144,18 @@ public class AdminUserController implements AdminUserRpc {
             } else {
                 throw Exceptions.throwServiceException("保存用户信息失败:" + JsonUtil.toJson(adminUserBo));
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminUserBo -> {
+            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
+            adminUserBoRes.setReturnObject(adminUserBo);
+            return adminUserBoRes;
         });
 
     }
 
     @Override
     @PostMapping("/softDelete")
-    public Mono<Boolean> softDelete(Mono<IdsLongReq> idsLongReqMono) {
+    public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         return idsLongReqMono.map(idsLongReq -> {
             Optional<List<AdminUserDto>> optionalAdminUserDtos = adminUserService.findAll(idsLongReq.getIds());
             if (optionalAdminUserDtos.isPresent() && !optionalAdminUserDtos.get().isEmpty()) {
@@ -147,14 +164,17 @@ public class AdminUserController implements AdminUserRpc {
             } else {
                 return false;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/query")
-    public Flux<AdminUserBo> query(@Valid Mono<SearchBo> searchBoMono) {
+    public Mono<AdminUserBoListRes> query(@RequestBody Mono<SearchBo> searchBoMono) {
         return searchBoMono.map(searchBo -> {
             var searchParams = searchBo.getSearchParams().stream()
                     .map(searchBoParam -> SearchParam.of(searchBoParam.getFieldName(), searchBoParam.getOperator(), searchBoParam.getValue())).collect(Collectors.toList());
@@ -171,8 +191,11 @@ public class AdminUserController implements AdminUserRpc {
             } else {
                 return new ArrayList<AdminUserBo>();
             }
-        }).flatMapMany(Flux::fromIterable).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(adminUserBos -> {
+            AdminUserBoListRes adminUserBoListRes = new AdminUserBoListRes();
+            adminUserBoListRes.setErrorCode(ApiErrorCode.ok.value);
+            adminUserBoListRes.setReturnObject(adminUserBos);
+            return adminUserBoListRes;
         });
     }
 

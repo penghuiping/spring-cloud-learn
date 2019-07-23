@@ -1,11 +1,12 @@
 package com.php25.usermicroservice.client.rpc;
 
 import com.php25.common.flux.IdLongReq;
-import com.php25.common.flux.IdsLongReq;
-import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
 import com.php25.usermicroservice.client.bo.HasRightAccessUrlBo;
-import reactor.core.publisher.Flux;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 /**
  * 菜单与按钮操作类
@@ -21,7 +22,7 @@ public interface AdminMenuRpc {
      *
      * @return 返回本系统中所有的菜单按钮
      */
-    Flux<AdminMenuButtonBo> findAllMenuTree();
+    Mono<AdminMenuButtonBoListRes> findAllMenuTree();
 
 
     /**
@@ -30,7 +31,7 @@ public interface AdminMenuRpc {
      * @param hasRightAccessUrlBoMono
      * @return true:有权限访问,false:无权限访问
      */
-    Mono<Boolean> hasRightAccessUrl(Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono);
+    Mono<BooleanRes> hasRightAccessUrl(@Valid Mono<HasRightAccessUrlBo> hasRightAccessUrlBoMono);
 
 
     /**
@@ -39,6 +40,6 @@ public interface AdminMenuRpc {
      * @param idLongReqMono 角色id
      * @return AdminMenuButtonRes 菜单与按钮
      */
-    Flux<AdminMenuButtonBo> findAllByAdminRoleId(Mono<IdLongReq> idLongReqMono);
+    Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(@Valid Mono<IdLongReq> idLongReqMono);
 
 }

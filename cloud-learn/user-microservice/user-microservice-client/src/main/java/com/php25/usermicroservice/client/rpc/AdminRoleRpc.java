@@ -3,8 +3,12 @@ package com.php25.usermicroservice.client.rpc;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
-import reactor.core.publisher.Flux;
+import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
+import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 /**
  * 后台角色操作
@@ -21,7 +25,7 @@ public interface AdminRoleRpc {
      * @param searchBoMono 搜索参数创建器
      * @return
      */
-    Flux<AdminRoleBo> query(Mono<SearchBo> searchBoMono);
+    Mono<AdminRoleBoListRes> query(@Valid Mono<SearchBo> searchBoMono);
 
     /**
      * 新增或者更新后台管理角色
@@ -29,7 +33,7 @@ public interface AdminRoleRpc {
      * @param adminRoleBoMono 后台管理角色
      * @return 新增或者更新后的管理角色
      */
-    Mono<AdminRoleBo> save(Mono<AdminRoleBo> adminRoleBoMono);
+    Mono<AdminRoleBoRes> save(@Valid Mono<AdminRoleBo> adminRoleBoMono);
 
     /**
      * 软删除后台管理角色id
@@ -37,7 +41,7 @@ public interface AdminRoleRpc {
      * @param idsLongReqMono 需要删除的后台管理角色id
      * @return true:软删除成,false:软删除失败
      */
-    Mono<Boolean> softDelete(Mono<IdsLongReq> idsLongReqMono);
+    Mono<BooleanRes> softDelete(@Valid Mono<IdsLongReq> idsLongReqMono);
 
 
 }

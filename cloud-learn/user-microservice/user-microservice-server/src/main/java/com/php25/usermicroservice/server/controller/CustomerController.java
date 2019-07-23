@@ -3,6 +3,7 @@ package com.php25.usermicroservice.server.controller;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdStringReq;
 import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.bo.LoginBo;
@@ -11,6 +12,9 @@ import com.php25.usermicroservice.client.bo.LoginByMobileBo;
 import com.php25.usermicroservice.client.bo.ResetPwdByEmailBo;
 import com.php25.usermicroservice.client.bo.ResetPwdByMobileBo;
 import com.php25.usermicroservice.client.bo.StringBo;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
+import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
+import com.php25.usermicroservice.client.bo.res.StringRes;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import com.php25.usermicroservice.server.dto.CustomerDto;
 import com.php25.usermicroservice.server.mq.GreetingsService;
@@ -20,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +54,7 @@ public class CustomerController implements CustomerRpc {
 
     @Override
     @PostMapping("/register")
-    public Mono<Boolean> register(@Valid Mono<CustomerBo> customerBoMono) {
+    public Mono<BooleanRes> register(@RequestBody Mono<CustomerBo> customerBoMono) {
         return customerBoMono.map(customerBo -> {
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
@@ -73,20 +77,23 @@ public class CustomerController implements CustomerRpc {
             } else {
                 return false;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/loginByUsername")
-    public Mono<String> loginByUsername(@Valid Mono<LoginBo> loginBoMono) {
+    public Mono<StringRes> loginByUsername(@RequestBody Mono<LoginBo> loginBoMono) {
         return loginBoMono.map(loginBo -> {
             String username = loginBo.getUsername();
             String password = loginBo.getPassword();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByUsernameAndPassword(username, password);
             if (!optionalCustomerDto.isPresent()) {
-                return null;
+                throw Exceptions.throwServiceException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -94,19 +101,22 @@ public class CustomerController implements CustomerRpc {
             map.put("customer", customerDto);
             //生成jwt
             return tokenJwtService.getToken(customerDto.getId().toString(), map);
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(jwt -> {
+            StringRes stringRes = new StringRes();
+            stringRes.setErrorCode(ApiErrorCode.ok.value);
+            stringRes.setReturnObject(jwt);
+            return stringRes;
         });
     }
 
     @Override
     @PostMapping("/loginByMobile")
-    public Mono<String> loginByMobile(@Valid Mono<LoginByMobileBo> loginByMobileBoMono) {
+    public Mono<StringRes> loginByMobile(@RequestBody Mono<LoginByMobileBo> loginByMobileBoMono) {
         return loginByMobileBoMono.map(loginByMobileBo -> {
             String mobile = loginByMobileBo.getMobile();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByPhone(mobile);
             if (!optionalCustomerDto.isPresent()) {
-                throw Exceptions.throwServiceException("无法通过手机号:" + mobile + "找到相关数据");
+                throw Exceptions.throwServiceException(String.format("无法通过手机号:%s找到相关数据", mobile));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -115,20 +125,23 @@ public class CustomerController implements CustomerRpc {
             //生成jwt
             String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
             return jwt;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(jwt -> {
+            StringRes stringRes = new StringRes();
+            stringRes.setErrorCode(ApiErrorCode.ok.value);
+            stringRes.setReturnObject(jwt);
+            return stringRes;
         });
     }
 
     @Override
     @PostMapping("/loginByEmail")
-    public Mono<String> loginByEmail(@Valid Mono<LoginByEmailBo> loginByEmailBoMono) {
+    public Mono<StringRes> loginByEmail(@RequestBody Mono<LoginByEmailBo> loginByEmailBoMono) {
         return loginByEmailBoMono.map(loginByEmailBo -> {
             String email = loginByEmailBo.getEmail();
             String code = loginByEmailBo.getCode();
             Optional<CustomerDto> optionalCustomerDto = customerService.findOneByEmailAndPassword(email, code);
             if (!optionalCustomerDto.isPresent()) {
-                throw Exceptions.throwServiceException("无法通过邮箱:" + email + "找到相关数据");
+                throw Exceptions.throwServiceException(String.format("无法通过邮箱:%s找到相关数据", email));
             }
 
             CustomerDto customerDto = optionalCustomerDto.get();
@@ -137,15 +150,18 @@ public class CustomerController implements CustomerRpc {
             //生成jwt
             String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
             return jwt;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(jwt -> {
+            StringRes stringRes = new StringRes();
+            stringRes.setErrorCode(ApiErrorCode.ok.value);
+            stringRes.setReturnObject(jwt);
+            return stringRes;
         });
     }
 
 
     @Override
     @PostMapping("/resetPasswordByMobile")
-    public Mono<Boolean> resetPasswordByMobile(@Valid Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono) {
+    public Mono<BooleanRes> resetPasswordByMobile(@RequestBody Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono) {
         return resetPwdByMobileBoMono.map(resetPwdByMobileBo -> {
             String mobile = resetPwdByMobileBo.getMobile();
             String newPassword = resetPwdByMobileBo.getNewPassword();
@@ -162,14 +178,17 @@ public class CustomerController implements CustomerRpc {
                 return false;
             }
             return true;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/resetPasswordByEmail")
-    public Mono<Boolean> resetPasswordByEmail(@Valid Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono) {
+    public Mono<BooleanRes> resetPasswordByEmail(@RequestBody Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono) {
         return resetPwdByEmailBoMono.map(resetPwdByEmailBo -> {
             String email = resetPwdByEmailBo.getEmail();
             String newPassword = resetPwdByEmailBo.getNewPassword();
@@ -186,46 +205,53 @@ public class CustomerController implements CustomerRpc {
                 return false;
             }
             return true;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/findOne")
-    public Mono<CustomerBo> findOne(@Valid Mono<IdStringReq> jwtMono) {
+    public Mono<CustomerBoRes> findOne(@RequestBody Mono<IdStringReq> jwtMono) {
         return jwtMono.map(idStringReq -> {
             String customerIdStr = tokenJwtService.getKeyByToken(idStringReq.getId());
             Long customerId = Long.valueOf(customerIdStr);
             Optional<CustomerDto> customerDtoOptional = customerService.findOne(customerId);
 
             if (!customerDtoOptional.isPresent()) {
-                return null;
+                throw Exceptions.throwServiceException(String.format("无法通过customerId:%s找到对应的客户信息", customerId));
             }
             CustomerDto customerDto = customerDtoOptional.get();
             CustomerBo customerBo = new CustomerBo();
             BeanUtils.copyProperties(customerDto, customerBo);
             return customerBo;
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(customerBo -> {
+            CustomerBoRes customerBoRes = new CustomerBoRes();
+            customerBoRes.setErrorCode(ApiErrorCode.ok.value);
+            customerBoRes.setReturnObject(customerBo);
+            return customerBoRes;
         });
-
-
     }
 
     @Override
     @PostMapping("/validateJwt")
-    public Mono<Boolean> validateJwt(@Valid Mono<IdStringReq> jwtMono) {
+    public Mono<BooleanRes> validateJwt(@RequestBody Mono<IdStringReq> jwtMono) {
         return jwtMono
                 .map(idStringReq -> tokenJwtService.verifyToken(idStringReq.getId()))
-                .doOnError(throwable -> {
-                    log.error("出错啦", throwable);
+                .map(aBoolean -> {
+                    BooleanRes booleanRes = new BooleanRes();
+                    booleanRes.setErrorCode(ApiErrorCode.ok.value);
+                    booleanRes.setReturnObject(aBoolean);
+                    return booleanRes;
                 });
     }
 
     @Override
     @PostMapping("/update")
-    public Mono<Boolean> update(@Valid Mono<CustomerBo> customerBoMono) {
+    public Mono<BooleanRes> update(@RequestBody Mono<CustomerBo> customerBoMono) {
         return customerBoMono.map(customerBo -> {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(customerBo, customerDto);
@@ -235,14 +261,17 @@ public class CustomerController implements CustomerRpc {
             } else {
                 return true;
             }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping("/findCustomerByMobile")
-    public Mono<CustomerBo> findCustomerByMobile(@Valid Mono<StringBo> mobileMono) {
+    public Mono<CustomerBoRes> findCustomerByMobile(@RequestBody Mono<StringBo> mobileMono) {
         return mobileMono.map(stringBo -> {
             String mobile = stringBo.getContent();
             Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(mobile);
@@ -252,30 +281,30 @@ public class CustomerController implements CustomerRpc {
                 BeanUtils.copyProperties(customerDto, customerBo);
                 return customerBo;
             } else {
-                return null;
+                throw Exceptions.throwServiceException(String.format("无法通过mobile:%s找到对应的客户信息", mobile));
             }
-        }).flatMap(s -> {
-            if (null == s) {
-                return Mono.empty();
-            } else {
-                return Mono.just(s);
-            }
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(customerBo -> {
+            CustomerBoRes customerBoRes = new CustomerBoRes();
+            customerBoRes.setErrorCode(ApiErrorCode.ok.value);
+            customerBoRes.setReturnObject(customerBo);
+            return customerBoRes;
         });
     }
 
     @Override
     @PostMapping("/logout")
-    public Mono<Boolean> logout(@Valid Mono<IdStringReq> jwtMono) {
+    public Mono<BooleanRes> logout(@RequestBody Mono<IdStringReq> jwtMono) {
         return jwtMono.map(idStringReq -> {
             if (!tokenJwtService.verifyToken(idStringReq.getId())) {
                 log.info("jwt不合法,登出失败");
                 return false;
             }
             return tokenJwtService.cleanToken(idStringReq.getId());
-        }).doOnError(throwable -> {
-            log.error("出错啦", throwable);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
 
     }

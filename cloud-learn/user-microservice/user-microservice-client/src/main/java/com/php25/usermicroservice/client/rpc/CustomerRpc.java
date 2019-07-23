@@ -8,7 +8,12 @@ import com.php25.usermicroservice.client.bo.LoginByMobileBo;
 import com.php25.usermicroservice.client.bo.ResetPwdByEmailBo;
 import com.php25.usermicroservice.client.bo.ResetPwdByMobileBo;
 import com.php25.usermicroservice.client.bo.StringBo;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
+import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
+import com.php25.usermicroservice.client.bo.res.StringRes;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 /**
  * 前台用户操作
@@ -25,7 +30,7 @@ public interface CustomerRpc {
      * @param customerBoMono 客户信息
      * @return true:注册成功，false:注册失败
      */
-    Mono<Boolean> register(Mono<CustomerBo> customerBoMono);
+    Mono<BooleanRes> register(@Valid Mono<CustomerBo> customerBoMono);
 
     /**
      * 根据用户名与密码进行登入
@@ -33,7 +38,7 @@ public interface CustomerRpc {
      * @param loginBoMono 用户名与密码
      * @return jwt字符串
      */
-    Mono<String> loginByUsername(Mono<LoginBo> loginBoMono);
+    Mono<StringRes> loginByUsername(@Valid Mono<LoginBo> loginBoMono);
 
 
     /**
@@ -42,7 +47,7 @@ public interface CustomerRpc {
      * @param loginByMobileBoMono 手机号,验证码
      * @return jwt字符串
      */
-    Mono<String> loginByMobile(Mono<LoginByMobileBo> loginByMobileBoMono);
+    Mono<StringRes> loginByMobile(@Valid Mono<LoginByMobileBo> loginByMobileBoMono);
 
 
     /**
@@ -51,21 +56,21 @@ public interface CustomerRpc {
      * @param loginByEmailBoMono 邮箱,验证码
      * @return jwt字符串
      */
-    Mono<String> loginByEmail(Mono<LoginByEmailBo> loginByEmailBoMono);
+    Mono<StringRes> loginByEmail(@Valid Mono<LoginByEmailBo> loginByEmailBoMono);
 
     /**
      * 根据手机号重置密码
      *
      * @return true:重置成功,false:重置失败
      */
-    Mono<Boolean> resetPasswordByMobile(Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono);
+    Mono<BooleanRes> resetPasswordByMobile(@Valid Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono);
 
     /**
      * 根据邮箱重置密码
      *
      * @return true:重置成功;false:重置失败
      */
-    Mono<Boolean> resetPasswordByEmail(Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono);
+    Mono<BooleanRes> resetPasswordByEmail(@Valid Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono);
 
     /**
      * 根据jwt获取前台用户详情
@@ -73,7 +78,7 @@ public interface CustomerRpc {
      * @param jwtMono 通过登入接口获取的jwt令牌
      * @return 前台用户信息
      */
-    Mono<CustomerBo> findOne(Mono<IdStringReq> jwtMono);
+    Mono<CustomerBoRes> findOne(@Valid Mono<IdStringReq> jwtMono);
 
     /**
      * 验证jwt令牌是否合法
@@ -81,7 +86,7 @@ public interface CustomerRpc {
      * @param jwtMono 登入接口获取的jwt令牌
      * @return true:合法，false:不合法
      */
-    Mono<Boolean> validateJwt(Mono<IdStringReq> jwtMono);
+    Mono<BooleanRes> validateJwt(@Valid Mono<IdStringReq> jwtMono);
 
 
     /**
@@ -90,7 +95,7 @@ public interface CustomerRpc {
      * @param customerBoMono 前台用户信息
      * @return true:修改用户信息成功，false:修改用户信息失败
      */
-    Mono<Boolean> update(Mono<CustomerBo> customerBoMono);
+    Mono<BooleanRes> update(@Valid Mono<CustomerBo> customerBoMono);
 
     /**
      * 通过手机号查询前台客户信息
@@ -98,7 +103,7 @@ public interface CustomerRpc {
      * @param mobileMono 手机号
      * @return 返回前台客户信息
      */
-    Mono<CustomerBo> findCustomerByMobile(Mono<StringBo> mobileMono);
+    Mono<CustomerBoRes> findCustomerByMobile(@Valid Mono<StringBo> mobileMono);
 
     /**
      * 登出
@@ -106,7 +111,7 @@ public interface CustomerRpc {
      * @param jwtMono jwt令牌
      * @return true:登出成功,false:登出失败
      */
-    Mono<Boolean> logout(Mono<IdStringReq> jwtMono);
+    Mono<BooleanRes> logout(@Valid Mono<IdStringReq> jwtMono);
 
 
     Mono<Object> testMessage();

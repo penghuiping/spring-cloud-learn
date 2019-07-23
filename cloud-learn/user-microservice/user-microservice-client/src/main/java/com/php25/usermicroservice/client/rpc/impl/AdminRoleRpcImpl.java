@@ -3,13 +3,15 @@ package com.php25.usermicroservice.client.rpc.impl;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
+import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
+import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.constant.Constant;
 import com.php25.usermicroservice.client.rpc.AdminRoleRpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -24,7 +26,7 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Flux<AdminRoleBo> query(Mono<SearchBo> searchBoMono) {
+    public Mono<AdminRoleBoListRes> query(Mono<SearchBo> searchBoMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -32,12 +34,12 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
                 .uri("/adminRole/query")
                 .body(searchBoMono, SearchBo.class)
                 .retrieve()
-                .bodyToFlux(AdminRoleBo.class);
+                .bodyToMono(AdminRoleBoListRes.class);
     }
 
 
     @Override
-    public Mono<AdminRoleBo> save(Mono<AdminRoleBo> adminRoleBoMono) {
+    public Mono<AdminRoleBoRes> save(Mono<AdminRoleBo> adminRoleBoMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -45,12 +47,12 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
                 .uri("/adminRole/save")
                 .body(adminRoleBoMono, AdminRoleBo.class)
                 .retrieve()
-                .bodyToMono(AdminRoleBo.class);
+                .bodyToMono(AdminRoleBoRes.class);
     }
 
 
     @Override
-    public Mono<Boolean> softDelete(Mono<IdsLongReq> idsLongReqMono) {
+    public Mono<BooleanRes> softDelete(Mono<IdsLongReq> idsLongReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -58,6 +60,6 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
                 .uri("/adminRole/softDelete")
                 .body(idsLongReqMono, IdsLongReq.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class);
     }
 }
