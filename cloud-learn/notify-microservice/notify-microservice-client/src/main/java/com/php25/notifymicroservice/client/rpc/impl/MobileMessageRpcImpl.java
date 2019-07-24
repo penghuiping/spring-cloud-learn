@@ -37,7 +37,7 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
     }
 
     @Override
-    public Mono<Boolean> validateSMS(Mono<ValidateSMSReq> validateSMSReqMono) {
+    public Mono<BooleanRes> validateSMS(Mono<ValidateSMSReq> validateSMSReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -45,6 +45,6 @@ public class MobileMessageRpcImpl implements MobileMessageRpc {
                 .uri("/mobileMsg/validateSMS")
                 .body(validateSMSReqMono, ValidateSMSReq.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class);
     }
 }

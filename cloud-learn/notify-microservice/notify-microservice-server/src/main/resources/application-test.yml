@@ -7,7 +7,7 @@ app:
     port: ${db_port}
     username: ${db_username}
     password: ${db_password}
-    name: ${db_name}
+    name: ${db_notifyservice_name}
   slave-db0:
     ip: ${db_slave0_ip}
     port: ${db_slave0_port}

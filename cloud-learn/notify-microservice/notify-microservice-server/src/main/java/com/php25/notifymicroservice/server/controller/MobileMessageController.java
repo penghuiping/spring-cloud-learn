@@ -54,11 +54,16 @@ public class MobileMessageController implements MobileMessageRpc {
      */
     @Override
     @PostMapping("/validateSMS")
-    public Mono<Boolean> validateSMS(@RequestBody Mono<ValidateSMSReq> validateSMSReqMono) {
+    public Mono<BooleanRes> validateSMS(@RequestBody Mono<ValidateSMSReq> validateSMSReqMono) {
         return validateSMSReqMono.map(params -> {
             String mobile = params.getMobile();
             String code = params.getMsgCode();
             return mobileMessageService.validateSMS(mobile, code);
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 }

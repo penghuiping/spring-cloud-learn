@@ -4,6 +4,7 @@ package com.php25.gateway.controller;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.core.util.RandomUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.JSONController;
@@ -13,24 +14,29 @@ import com.php25.gateway.constant.BusinessError;
 import com.php25.gateway.vo.CustomerVo;
 import com.php25.gateway.vo.req.GetMsgCodeReq;
 import com.php25.gateway.vo.req.LoginByMobileReq;
+import com.php25.gateway.vo.req.LoginByUsernameReq;
+import com.php25.gateway.vo.req.RegisterReq;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
+import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.rpc.MailRpc;
 import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
 import com.php25.usermicroservice.client.bo.CustomerBo;
+import com.php25.usermicroservice.client.bo.LoginBo;
 import com.php25.usermicroservice.client.bo.LoginByMobileBo;
+import com.php25.usermicroservice.client.bo.StringBo;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.concurrent.ExecutionException;
+import java.time.LocalDateTime;
 
 /**
  * @author penghuiping
@@ -61,7 +67,7 @@ public class ApiCommonController extends JSONController {
 
 
     @PostMapping("/common/getMsgCode.do")
-    public Mono<JSONResponse> getMsgCode(@Valid @RequestBody Mono<GetMsgCodeReq> getMsgCodeVoMono) {
+    public Mono<JSONResponse> getMsgCode(@Valid Mono<GetMsgCodeReq> getMsgCodeVoMono) {
         return getMsgCodeVoMono.flatMap(params -> {
             log.info("获取短信验证码。。。。");
             log.info(JsonUtil.toPrettyJson(params));
@@ -74,14 +80,14 @@ public class ApiCommonController extends JSONController {
 
 
     @PostMapping(value = "/common/loginByMobile.do")
-    public Mono<JSONResponse> loginByMobile(@Valid @RequestBody Mono<LoginByMobileReq> loginByMobileReqMono) {
+    public Mono<JSONResponse> loginByMobile(@Valid Mono<LoginByMobileReq> loginByMobileReqMono) {
         return loginByMobileReqMono.map(params -> {
             LoginByMobileBo loginByMobileBo = new LoginByMobileBo();
             loginByMobileBo.setCode(params.getMsgCode());
             loginByMobileBo.setMobile(params.getMobile());
             return loginByMobileBo;
         }).flatMap(loginByMobileBo -> customerRpc.loginByMobile(Mono.just(loginByMobileBo)).flatMap(jwtRes -> {
-            if (jwtRes.getErrorCode() != ApiErrorCode.ok.value) {
+            if (jwtRes.getErrorCode() == ApiErrorCode.ok.value) {
                 log.info("无法找到相应的手机号对应的用户记录,手机号为{}", loginByMobileBo.getMobile());
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_NOT_EXIST_ERROR);
             } else {
@@ -91,135 +97,140 @@ public class ApiCommonController extends JSONController {
                 return Mono.just(idStringReq);
             }
         }).flatMap(idStringReq -> {
-            return customerRpc.findOne(Mono.just(idStringReq));
-//            var jsonResponse =  customerRes.flatMap(customerBoRes -> {
-//                if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-//                    CustomerVo customerVo = new CustomerVo();
-//                    CustomerBo customerBo = customerBoRes.getReturnObject();
-//                    BeanUtils.copyProperties(customerBo, customerVo);
-//                    IdStringReq idStringReq1 = new IdStringReq();
-//                    idStringReq1.setId(customerBo.getImageId());
-//                    customerVo.setToken(idStringReq.getId());
-//                    return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-//                        if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-//                            customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-//                        }
-//                        return succeed(customerVo);
-//                    });
-//                } else {
-//                    throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
-//                }
-//            });
-
-        }).flatMap(customerBoRes -> {
-            log.info(customerBoRes.getErrorCode()+"");
-            return Mono.just(succeed(customerBoRes.getReturnObject()));
-        }).doOnError(throwable -> {
-            log.error("出错啦",throwable);
+            var customerBoResMono = customerRpc.findOne(Mono.just(idStringReq));
+            return customerBoResMono.flatMap(customerBoRes -> {
+                if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                    CustomerVo customerVo = new CustomerVo();
+                    CustomerBo customerBo = customerBoRes.getReturnObject();
+                    log.info("用户信息为:{}", JsonUtil.toJson(customerBo));
+                    BeanUtils.copyProperties(customerBo, customerVo);
+                    IdStringReq idStringReq1 = new IdStringReq();
+                    idStringReq1.setId(customerBo.getImageId());
+                    customerVo.setToken(idStringReq.getId());
+                    return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
+                        if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                            customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
+                        }
+                        return succeed(customerVo);
+                    });
+                } else {
+                    throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+                }
+            });
         }));
     }
-//}).onErrorResume(throwable->{
-//        if(throwable instanceof BusinessException){
-//        var businessException=(BusinessException)throwable;
-//        return Mono.just(failed(businessException.getBusinessErrorStatus()));
-//        }else{
-//        throw Exceptions.throwIllegalStateException("出错啦",throwable);
-//        }
-//        }));
-//        }
 
 
-//    @PostMapping(value = "/common/loginByUsername.do")
-//    public Mono<JSONResponse> loginByUsername(@Valid Mono<LoginByUsernameReq> loginByUsernameReqMono) {
-//        return loginByUsernameReqMono.flatMap(params -> {
-//            //获取参数
-//            String username = params.getUsername();
-//            String password = params.getPassword();
-//            String kaptchaCode = params.getKaptchaCode();
-//
-//            //验证图形验证码
-//            if (!redisService.exists("kaptcha" + kaptchaCode)) {
-//                return Mono.just(failed(BusinessError.KAPTCHA_ERROR));
-//            }
-//
-//            LoginBo loginBo = new LoginBo();
-//            loginBo.setPassword(password);
-//            loginBo.setUsername(username);
-//
-//
-//            return customerRpc.loginByUsername(Mono.just(loginBo)).flatMap(jwtRes -> {
-//                if (ApiErrorCode.ok.value != jwtRes.getErrorCode()) {
-//                    return Mono.just(failed(BusinessError.USERNAME_PASSWORD_ERROR));
-//                } else {
-//                    String jwt = jwtRes.getReturnObject();
-//                    IdStringReq idStringReq = new IdStringReq();
-//                    idStringReq.setId(jwt);
-//                    return customerRpc.findOne(Mono.just(idStringReq))
-//                            .flatMap(customerBoRes -> {
-//                                if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
-//                                    return Mono.just(failed(BusinessError.COMMON_ERROR));
-//                                } else {
-//                                    //获取头像
-//                                    IdStringReq idStringReq1 = new IdStringReq();
-//                                    idStringReq1.setId(customerBoRes.getReturnObject().getImageId());
-//                                    return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-//                                        CustomerVo customerVo = new CustomerVo();
-//                                        BeanUtils.copyProperties(customerBoRes.getReturnObject(), customerVo);
-//                                        customerVo.setToken(jwt);
-//                                        if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-//                                            customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-//                                        }
-//                                        return succeed(customerVo);
-//                                    });
-//                                }
-//                            });
-//                }
-//            });
-//        });
-//    }
-//
-//
-//    @PostMapping(value = "/common/register.do")
-//    public Mono<JSONResponse> register(@Valid Mono<RegisterReq> registerReqMono) {
-//        return registerReqMono.flatMap(registerReq -> {
-//            String mobile = registerReq.getMobile();
-//            String msgCode = registerReq.getMsgCode();
-//
-//            ValidateSMSReq validateSMSReq = new ValidateSMSReq();
-//            validateSMSReq.setMobile(mobile);
-//            validateSMSReq.setMsgCode(msgCode);
-//
-//            //效验短信验证码
-//            return mobileMessageRpc.validateSMS(Mono.just(validateSMSReq)).flatMap(aBoolean -> {
-//                if (!aBoolean) {
-//                    return Mono.just(failed(BusinessError.MOBILE_CODE_ERROR));
-//                } else {
-//                    StringBo stringBo = new StringBo();
-//                    stringBo.setContent(mobile);
-//                    return customerRpc.findCustomerByMobile(Mono.just(stringBo)).flatMap(customerBoRes -> {
-//                        //判断此手机是否可以注册
-//                        if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
-//                            log.info("{},此手机号在系统中已经存在", mobile);
-//                            return Mono.just(failed(BusinessError.MOBILE_ALREADY_EXIST_ERROR));
-//                        } else {
-//                            CustomerBo customerBo1 = new CustomerBo();
-//                            customerBo1.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
-//                            customerBo1.setCreateTime(LocalDateTime.now());
-//                            customerBo1.setEnable(1);
-//                            String username = registerReq.getUsername();
-//                            String password = registerReq.getPassword();
-//                            customerBo1.setUsername(username);
-//                            customerBo1.setPassword(password);
-//                            //注册
-//                            return customerRpc.register(Mono.just(customerBo1)).map(this::succeed);
-//                        }
-//                    });
-//                }
-//            });
-//        });
-//    }
-//
-//
+    @PostMapping(value = "/common/loginByUsername.do")
+    public Mono<JSONResponse> loginByUsername(@Valid Mono<LoginByUsernameReq> loginByUsernameReqMono) {
+        return loginByUsernameReqMono
+                .map(params -> {
+                    //获取参数
+                    String username = params.getUsername();
+                    String password = params.getPassword();
+                    String kaptchaCode = params.getKaptchaCode();
+
+                    //验证图形验证码
+                    if (!redisService.exists("kaptcha" + kaptchaCode)) {
+                        throw Exceptions.throwBusinessException(BusinessError.KAPTCHA_ERROR);
+                    } else {
+                        redisService.remove("kaptcha" + kaptchaCode);
+                    }
+
+                    LoginBo loginBo = new LoginBo();
+                    loginBo.setPassword(password);
+                    loginBo.setUsername(username);
+                    return loginBo;
+                    //登入认证
+                }).flatMap(loginBo -> customerRpc.loginByUsername(Mono.just(loginBo)).flatMap(jwtRes -> {
+                    if (ApiErrorCode.ok.value != jwtRes.getErrorCode()) {
+                        throw Exceptions.throwBusinessException(BusinessError.USERNAME_PASSWORD_ERROR);
+                    } else {
+                        //根据jwt查询用户信息
+                        String jwt = jwtRes.getReturnObject();
+                        IdStringReq idStringReq = new IdStringReq();
+                        idStringReq.setId(jwt);
+                        return customerRpc.findOne(Mono.just(idStringReq));
+                    }
+                }).flatMap(customerBoRes -> {
+                    if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
+                        throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+                    } else {
+                        //获取头像
+                        IdStringReq idStringReq1 = new IdStringReq();
+                        idStringReq1.setId(customerBoRes.getReturnObject().getImageId());
+                        return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
+                            CustomerVo customerVo = new CustomerVo();
+                            BeanUtils.copyProperties(customerBoRes.getReturnObject(), customerVo);
+                            customerVo.setToken(customerBoRes.getReturnObject().getJwt());
+                            if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                                customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
+                            }
+                            return succeed(customerVo);
+                        });
+                    }
+                }));
+    }
+
+
+    @PostMapping(value = "/common/register.do")
+    public Mono<JSONResponse> register(@Valid Mono<RegisterReq> registerReqMono) {
+
+        //效验短信验证码
+        var customerBoResMono = registerReqMono.map(registerReq -> {
+            String mobile = registerReq.getMobile();
+            String msgCode = registerReq.getMsgCode();
+            ValidateSMSReq validateSMSReq1 = new ValidateSMSReq();
+            validateSMSReq1.setMobile(mobile);
+            validateSMSReq1.setMsgCode(msgCode);
+            return validateSMSReq1;
+        }).flatMap(validateSMSReq -> {
+            //效验短信验证码
+            return mobileMessageRpc.validateSMS(Mono.just(validateSMSReq)).map(booleanRes -> {
+                if (booleanRes.getErrorCode() != ApiErrorCode.ok.value || !booleanRes.getReturnObject()) {
+                    throw Exceptions.throwBusinessException(BusinessError.MOBILE_CODE_ERROR);
+                } else {
+                    return validateSMSReq;
+                }
+            });
+        }).flatMap(validateSMSReq -> {
+            //根据手机号查询用户信息
+            String mobile = validateSMSReq.getMobile();
+            StringBo stringBo = new StringBo();
+            stringBo.setContent(mobile);
+            return customerRpc.findCustomerByMobile(Mono.just(stringBo));
+        });
+
+
+        return customerBoResMono.zipWith(registerReqMono, (customerBoRes, registerReq) -> {
+            //判断此手机是否可以注册
+            if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                log.info("{},此手机号在系统中已经存在", registerReq.getMobile());
+                throw Exceptions.throwBusinessException(BusinessError.MOBILE_ALREADY_EXIST_ERROR);
+            } else {
+                CustomerBo customerBo1 = new CustomerBo();
+                customerBo1.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                customerBo1.setCreateTime(LocalDateTime.now());
+                customerBo1.setEnable(1);
+                String username = registerReq.getUsername();
+                String password = registerReq.getPassword();
+                customerBo1.setUsername(username);
+                customerBo1.setPassword(password);
+                //注册
+                return customerRpc.register(Mono.just(customerBo1));
+            }
+        }).flatMap(booleanResMono -> booleanResMono.map(booleanRes -> {
+            if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
+                throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+            } else {
+                return succeed(booleanRes.getReturnObject());
+            }
+        }));
+
+
+    }
+
+
 //    @GetMapping(value = "/common/SSOLogout.do")
 //    public Mono<JSONResponse> logout(@NotBlank @RequestHeader(name = "jwt") String jwt) {
 //        IdStringReq idStringReq = new IdStringReq();
@@ -232,8 +243,9 @@ public class ApiCommonController extends JSONController {
 //            }
 //        });
 //    }
-//
-//    @GetMapping(value = "/common/showCustomerInfo.do")
+
+
+    //    @GetMapping(value = "/common/showCustomerInfo.do")
 //    public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) {
 //        IdStringReq idStringReq = new IdStringReq();
 //        idStringReq.setId(jwt);
@@ -260,12 +272,14 @@ public class ApiCommonController extends JSONController {
 //    }
 //
 //
-//    @GetMapping("/common/kaptchaRender.do")
-//    public Mono<String> kaptchaRender() {
-//        String kaptcha = RandomUtil.getRandom(6) + "";
-//        redisService.set("kaptcha" + kaptcha, 1);
-//        return ResponseEntity.ok(kaptcha);
-//    }
+    @GetMapping(value = "/common/kaptchaRender.do")
+    public Mono<JSONResponse> kaptchaRender() {
+        return Mono.fromCallable(() -> {
+            String kaptcha = RandomUtil.getRandomNumbers(6) + "";
+            redisService.set("kaptcha" + kaptcha, 1);
+            return succeed(kaptcha);
+        });
+    }
 //
 //
 //    @PostMapping("/common/changePersonInfo.do")

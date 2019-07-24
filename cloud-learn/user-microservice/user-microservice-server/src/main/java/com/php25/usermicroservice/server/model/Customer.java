@@ -1,20 +1,18 @@
 package com.php25.usermicroservice.server.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 用户类
  * Created by penghuiping on 16/9/2.
  */
 @Data
-@Entity
-@Table(name = "userservice_customer")
+@Table("userservice_customer")
 public class Customer {
     /**
      * 主键id
@@ -55,20 +53,20 @@ public class Customer {
     /**
      * 头像
      */
-    @Column(name = "image_id")
+    @Column(value = "image_id")
     private String imageId;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
-    private Date createTime;
+    @Column(value = "create_time")
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
-    private Date updateTime;
+    @Column(value = "update_time")
+    private LocalDateTime updateTime;
 
     /**
      * 是否有效 0:无效 1:有效 2:软删除

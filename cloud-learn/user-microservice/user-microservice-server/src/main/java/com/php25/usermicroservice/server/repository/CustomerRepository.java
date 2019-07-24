@@ -1,66 +1,26 @@
 package com.php25.usermicroservice.server.repository;
 
-import com.php25.common.jdbc.repository.BaseRepository;
 import com.php25.usermicroservice.server.model.Customer;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author penghuiping
  * @date 2016-09-02
  */
-public interface CustomerRepository extends BaseRepository<Customer, Long> {
+@Repository
+public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
-    /**
-     * 根据用户名与密码查询前台用户
-     *
-     * @param name     用户名
-     * @param password 密码
-     * @return 前台用户信息
-     */
-    Customer findByUsernameAndPassword(String name, String password);
+    @Query("select * from userservice_customer where username=:username and password=:password")
+    Optional<Customer> findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
-    /**
-     * 根据手机与密码查询前台用户信息
-     *
-     * @param phone    手机
-     * @param password 密码
-     * @return 前台用户信息
-     */
-    Customer findOneByMobileAndPassword(String phone, String password);
+    @Query("select * from userservice_customer where mobile=:mobile")
+    Optional<Customer> findByMobile(@Param("mobile") String mobile);
 
-    /**
-     * 根据邮箱与密码查询前台用户信息
-     *
-     * @param email    邮箱
-     * @param password 密码
-     * @return 前台用户信息
-     */
-    Customer findOneByEmailAndPassword(String email, String password);
-
-    /**
-     * 根据手机查询前台用户信息
-     *
-     * @param mobile 手机
-     * @return 前台用户信息
-     */
-    Customer findOneByMobile(String mobile);
-
-    /**
-     * 根据用户名进行模糊查询
-     *
-     * @param name 用户名
-     * @return 匹配到的前台用户列表信息
-     */
-    List<Customer> findByUsername(String name);
-
-    /**
-     * 根据邮箱查询前台用户信息
-     *
-     * @param email 邮箱
-     * @return 前台用户信息
-     */
-    Customer findByEmail(String email);
-
-
+    @Query("select * from userservice_customer where email=:email")
+    Optional<Customer> findByEmail(@Param("email") String email);
 }

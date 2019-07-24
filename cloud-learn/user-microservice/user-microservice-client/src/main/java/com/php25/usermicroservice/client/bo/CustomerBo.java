@@ -77,4 +77,6 @@ public class CustomerBo implements Serializable {
 
 
     private Integer enable;
+
+    private String jwt;
 }

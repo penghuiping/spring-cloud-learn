@@ -7,7 +7,7 @@ app:
     port: ${db_port}
     username: ${db_username}
     password: ${db_password}
-    name: ${db_name}
+    name: ${db_notifyservice_name}
   rabbitmq:
     ip: ${rabbitmq_ip}
     port: ${rabbitmq_port}

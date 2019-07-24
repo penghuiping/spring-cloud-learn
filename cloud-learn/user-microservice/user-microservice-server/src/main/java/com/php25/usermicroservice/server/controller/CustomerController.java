@@ -16,8 +16,8 @@ import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
 import com.php25.usermicroservice.client.bo.res.StringRes;
 import com.php25.usermicroservice.client.rpc.CustomerRpc;
-import com.php25.usermicroservice.server.dto.CustomerDto;
-import com.php25.usermicroservice.server.service.CustomerService;
+import com.php25.usermicroservice.server.model.Customer;
+import com.php25.usermicroservice.server.repository.CustomerRepository;
 import com.php25.usermicroservice.server.service.TokenJwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,7 +44,7 @@ public class CustomerController implements CustomerRpc {
 
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
     @Autowired
     private IdGeneratorService idGeneratorService;
     @Autowired
@@ -54,7 +54,7 @@ public class CustomerController implements CustomerRpc {
     @PostMapping("/register")
     public Mono<BooleanRes> register(@RequestBody Mono<CustomerBo> customerBoMono) {
         return customerBoMono.map(customerBo -> {
-            Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(customerBo.getMobile());
+            Optional<Customer> customerDtoOptional = customerRepository.findByMobile(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
             }
@@ -67,10 +67,10 @@ public class CustomerController implements CustomerRpc {
             customerBo.setEnable(1);
             //生成前台用户主键
             customerBo.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
-            CustomerDto customerDto = new CustomerDto();
+            Customer customerDto = new Customer();
             BeanUtils.copyProperties(customerBo, customerDto);
-            Optional<CustomerDto> customerDtoOptional1 = customerService.save(customerDto);
-            if (customerDtoOptional1.isPresent()) {
+            Customer customerDtoOptional1 = customerRepository.save(customerDto);
+            if (customerDtoOptional1 != null) {
                 return true;
             } else {
                 return false;
@@ -89,12 +89,12 @@ public class CustomerController implements CustomerRpc {
         return loginBoMono.map(loginBo -> {
             String username = loginBo.getUsername();
             String password = loginBo.getPassword();
-            Optional<CustomerDto> optionalCustomerDto = customerService.findOneByUsernameAndPassword(username, password);
-            if (!optionalCustomerDto.isPresent()) {
+            Optional<Customer> optionalCustomer = customerRepository.findByUsernameAndPassword(username, password);
+            if (!optionalCustomer.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
             }
 
-            CustomerDto customerDto = optionalCustomerDto.get();
+            Customer customerDto = optionalCustomer.get();
             Map<String, Object> map = new HashMap<>();
             map.put("customer", customerDto);
             //生成jwt
@@ -112,12 +112,12 @@ public class CustomerController implements CustomerRpc {
     public Mono<StringRes> loginByMobile(@RequestBody Mono<LoginByMobileBo> loginByMobileBoMono) {
         return loginByMobileBoMono.map(loginByMobileBo -> {
             String mobile = loginByMobileBo.getMobile();
-            Optional<CustomerDto> optionalCustomerDto = customerService.findOneByPhone(mobile);
-            if (!optionalCustomerDto.isPresent()) {
+            Optional<Customer> optionalCustomer = customerRepository.findByMobile(mobile);
+            if (!optionalCustomer.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过手机号:%s找到相关数据", mobile));
             }
 
-            CustomerDto customerDto = optionalCustomerDto.get();
+            Customer customerDto = optionalCustomer.get();
             Map<String, Object> map = new HashMap<>();
             map.put("customer", customerDto);
             //生成jwt
@@ -135,13 +135,12 @@ public class CustomerController implements CustomerRpc {
     public Mono<StringRes> loginByEmail(@RequestBody Mono<LoginByEmailBo> loginByEmailBoMono) {
         return loginByEmailBoMono.map(loginByEmailBo -> {
             String email = loginByEmailBo.getEmail();
-            String code = loginByEmailBo.getCode();
-            Optional<CustomerDto> optionalCustomerDto = customerService.findOneByEmailAndPassword(email, code);
-            if (!optionalCustomerDto.isPresent()) {
+            Optional<Customer> optionalCustomer = customerRepository.findByEmail(email);
+            if (!optionalCustomer.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过邮箱:%s找到相关数据", email));
             }
 
-            CustomerDto customerDto = optionalCustomerDto.get();
+            Customer customerDto = optionalCustomer.get();
             Map<String, Object> map = new HashMap<>();
             map.put("customer", customerDto);
             //生成jwt
@@ -162,16 +161,16 @@ public class CustomerController implements CustomerRpc {
         return resetPwdByMobileBoMono.map(resetPwdByMobileBo -> {
             String mobile = resetPwdByMobileBo.getMobile();
             String newPassword = resetPwdByMobileBo.getNewPassword();
-            Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(mobile);
+            Optional<Customer> customerDtoOptional = customerRepository.findByMobile(mobile);
             if (!customerDtoOptional.isPresent()) {
                 return false;
             }
 
             //重置密码
-            CustomerDto customerDto = customerDtoOptional.get();
+            Customer customerDto = customerDtoOptional.get();
             customerDto.setPassword(newPassword);
-            Optional<CustomerDto> newCustomerDtoOptional = customerService.save(customerDto);
-            if (!newCustomerDtoOptional.isPresent()) {
+            Customer newCustomerOptional = customerRepository.save(customerDto);
+            if (newCustomerOptional != null) {
                 return false;
             }
             return true;
@@ -189,16 +188,16 @@ public class CustomerController implements CustomerRpc {
         return resetPwdByEmailBoMono.map(resetPwdByEmailBo -> {
             String email = resetPwdByEmailBo.getEmail();
             String newPassword = resetPwdByEmailBo.getNewPassword();
-            Optional<CustomerDto> customerDtoOptional = customerService.findOneByEmail(email);
+            Optional<Customer> customerDtoOptional = customerRepository.findByEmail(email);
             if (!customerDtoOptional.isPresent()) {
                 return false;
             }
 
             //重置密码
-            CustomerDto customerDto = customerDtoOptional.get();
+            Customer customerDto = customerDtoOptional.get();
             customerDto.setPassword(newPassword);
-            Optional<CustomerDto> newCustomerDtoOptional = customerService.save(customerDto);
-            if (!newCustomerDtoOptional.isPresent()) {
+            Customer newCustomerOptional = customerRepository.save(customerDto);
+            if (newCustomerOptional != null) {
                 return false;
             }
             return true;
@@ -216,14 +215,15 @@ public class CustomerController implements CustomerRpc {
         return jwtMono.map(idStringReq -> {
             String customerIdStr = tokenJwtService.getKeyByToken(idStringReq.getId());
             Long customerId = Long.valueOf(customerIdStr);
-            Optional<CustomerDto> customerDtoOptional = customerService.findOne(customerId);
+            Optional<Customer> customerDtoOptional = customerRepository.findById(customerId);
 
             if (!customerDtoOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过customerId:%s找到对应的客户信息", customerId));
             }
-            CustomerDto customerDto = customerDtoOptional.get();
+            Customer customerDto = customerDtoOptional.get();
             CustomerBo customerBo = new CustomerBo();
             BeanUtils.copyProperties(customerDto, customerBo);
+            customerBo.setJwt(idStringReq.getId());
             return customerBo;
         }).map(customerBo -> {
             CustomerBoRes customerBoRes = new CustomerBoRes();
@@ -250,10 +250,10 @@ public class CustomerController implements CustomerRpc {
     @PostMapping("/update")
     public Mono<BooleanRes> update(@RequestBody Mono<CustomerBo> customerBoMono) {
         return customerBoMono.map(customerBo -> {
-            CustomerDto customerDto = new CustomerDto();
+            Customer customerDto = new Customer();
             BeanUtils.copyProperties(customerBo, customerDto);
-            Optional<CustomerDto> customerDtoOptional = customerService.save(customerDto);
-            if (!customerDtoOptional.isPresent()) {
+            Customer customerDtoOptional = customerRepository.save(customerDto);
+            if (customerDtoOptional != null) {
                 return false;
             } else {
                 return true;
@@ -271,9 +271,9 @@ public class CustomerController implements CustomerRpc {
     public Mono<CustomerBoRes> findCustomerByMobile(@RequestBody Mono<StringBo> mobileMono) {
         return mobileMono.map(stringBo -> {
             String mobile = stringBo.getContent();
-            Optional<CustomerDto> customerDtoOptional = customerService.findOneByPhone(mobile);
+            Optional<Customer> customerDtoOptional = customerRepository.findByMobile(mobile);
             if (customerDtoOptional.isPresent()) {
-                CustomerDto customerDto = customerDtoOptional.get();
+                Customer customerDto = customerDtoOptional.get();
                 CustomerBo customerBo = new CustomerBo();
                 BeanUtils.copyProperties(customerDto, customerBo);
                 return customerBo;

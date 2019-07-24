@@ -7,7 +7,7 @@ app:
     port: ${db_port}
     username: ${db_username}
     password: ${db_password}
-    name: ${db_name}
+    name: ${db_userservice_name}
   rabbitmq:
     ip: ${rabbitmq_ip}
     port: ${rabbitmq_port}
@@ -37,6 +37,7 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
+    org.springframework.jdbc: debug
     org.hibernate: INFO
     com.php25: INFO
 spring:
@@ -63,22 +64,6 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     publicKey:
     decrypt: false
-  ########################################################
-  ### Java Persistence Api
-  ########################################################
-  jpa:
-    database: MYSQL
-    # Show or not log for each sql query
-    show-sql: true
-    format-sql: true
-    # Hibernate ddl auto (create, create-drop, update)
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
-        cache:
-          use_second_level_cache: false
   ########################################################
   ### JMS Rabbitmq
   ########################################################

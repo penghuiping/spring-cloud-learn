@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Maps;
 import com.php25.common.jdbc.Db;
 import com.php25.common.jdbc.DbType;
+import com.php25.usermicroservice.server.repository.CustomerRepository;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,6 +30,7 @@ import java.util.Properties;
 @Slf4j
 @Configuration
 @ConditionalOnExpression("'${server.type}'.contains('provider')")
+@EnableJdbcRepositories(basePackageClasses = CustomerRepository.class)
 public class DruidConfig {
 
     @Autowired

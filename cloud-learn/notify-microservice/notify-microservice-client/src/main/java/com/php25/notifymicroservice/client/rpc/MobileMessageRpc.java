@@ -22,5 +22,5 @@ public interface MobileMessageRpc {
     /**
      * 通过电话号码查询有效验证码数据
      */
-    Mono<Boolean> validateSMS(@Valid Mono<ValidateSMSReq> validateSMSReqMono);
+    Mono<BooleanRes> validateSMS(@Valid Mono<ValidateSMSReq> validateSMSReqMono);
 }

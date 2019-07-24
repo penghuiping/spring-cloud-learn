@@ -14,9 +14,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class LoginByMobileReq {
 
-    @NotBlank
+    @NotBlank(message = "手机号不能为空")
     private String mobile;
 
-    @NotBlank
+    @NotBlank(message = "验证码不能为空")
     private String msgCode;
 }

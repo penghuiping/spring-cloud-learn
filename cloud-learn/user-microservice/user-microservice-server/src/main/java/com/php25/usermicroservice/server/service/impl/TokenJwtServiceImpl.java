@@ -37,7 +37,7 @@ public class TokenJwtServiceImpl implements TokenJwtService {
     private static final String REDIS_JWT = "jwt:";
 
     @Value("${jwt_expire_time}")
-    private static Long REDIS_KEY_EXPIRE_TIME;
+    private Long REDIS_KEY_EXPIRE_TIME;
 
     @Autowired
     private IdGeneratorService idGeneratorService;
