@@ -1,23 +1,24 @@
 package com.php25.usermicroservice.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author: penghuiping
  * @date: 2018/10/17 13:22
  * @description: 权限表，用于后台拦截直接用户浏览器访问url
  */
-@Data
-@Entity
-@Table(name = "userservice_admin_authority")
+@Setter
+@Getter
+@Table("userservice_admin_authority")
 public class AdminAuthority {
     @Id
+    @javax.persistence.Id
     private Long id;
 
     /**
@@ -41,18 +42,12 @@ public class AdminAuthority {
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
-    private Date createTime;
+    @Column("create_time")
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
-    private Date updateTime;
-
-    /**
-     * 对应关联的菜单与按钮表id
-     */
-    @Column(name = "admin_menu_button_id")
-    private AdminMenuButton adminMenuButton;
+    @Column("update_time")
+    private LocalDateTime updateTime;
 }

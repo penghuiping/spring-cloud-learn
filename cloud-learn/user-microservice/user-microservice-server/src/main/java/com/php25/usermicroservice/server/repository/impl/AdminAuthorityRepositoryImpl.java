@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.server.repository.impl;
 
-import com.php25.common.jdbc.Db;
-import com.php25.common.jdbc.repository.BaseRepositoryImpl;
+import com.php25.common.db.Db;
+import com.php25.common.db.repository.BaseJpaRepositoryImpl;
 import com.php25.usermicroservice.server.model.AdminAuthority;
 import com.php25.usermicroservice.server.repository.AdminAuthorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.Optional;
  * @description:
  */
 @Repository
-public class AdminAuthorityRepositoryImpl extends BaseRepositoryImpl<AdminAuthority, Long> implements AdminAuthorityRepository {
+public class AdminAuthorityRepositoryImpl extends BaseJpaRepositoryImpl<AdminAuthority, Long> implements AdminAuthorityRepository {
 
     @Autowired
     private Db db;
 
     @Override
     public Optional<List<AdminAuthority>> findAllByAdminMenuButtonIds(List<Long> ids) {
-        List<AdminAuthority> adminAuthorities = db.cnd(AdminAuthority.class).whereIn("admin_menu_button_id", ids).select();
+        List<AdminAuthority> adminAuthorities = db.cndJpa(AdminAuthority.class).whereIn("admin_menu_button_id", ids).select();
         if (null != adminAuthorities && adminAuthorities.size() > 0) {
             return Optional.of(adminAuthorities);
         } else {

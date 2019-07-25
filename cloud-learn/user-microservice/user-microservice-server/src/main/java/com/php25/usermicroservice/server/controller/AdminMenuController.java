@@ -15,11 +15,12 @@ import com.php25.usermicroservice.server.constant.RedisConstant;
 import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
 import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
 import com.php25.usermicroservice.server.dto.AdminRoleDto;
-import com.php25.usermicroservice.server.dto.AdminUserDto;
+import com.php25.usermicroservice.server.model.AdminRoleRef;
+import com.php25.usermicroservice.server.model.AdminUser;
+import com.php25.usermicroservice.server.repository.AdminUserRepository;
 import com.php25.usermicroservice.server.service.AdminAuthorityService;
 import com.php25.usermicroservice.server.service.AdminMenuService;
 import com.php25.usermicroservice.server.service.AdminRoleService;
-import com.php25.usermicroservice.server.service.AdminUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class AdminMenuController implements AdminMenuRpc {
     private AdminAuthorityService adminAuthorityService;
 
     @Autowired
-    private AdminUserService adminUserService;
+    private AdminUserRepository adminUserRepository;
 
     @Autowired
     private AdminRoleService adminRoleService;
@@ -92,7 +93,7 @@ public class AdminMenuController implements AdminMenuRpc {
         return hasRightAccessUrlBoMono.map(hasRightAccessUrlBo -> {
             Long adminUserId = hasRightAccessUrlBo.getAdminUserId();
             String url = hasRightAccessUrlBo.getUrl();
-            Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(adminUserId);
+            Optional<AdminUser> adminUserDtoOptional = adminUserRepository.findById(adminUserId);
             if (!adminUserDtoOptional.isPresent()) {
                 throw new IllegalArgumentException("can't find a record of AdminUser in database," +
                         "please check the correctness of the 'adminUserId' parameter ");
@@ -114,11 +115,13 @@ public class AdminMenuController implements AdminMenuRpc {
             }
 
             //查询后台管理用户信息
-            AdminUserDto adminUserDto = adminUserDtoOptional.get();
-            List<AdminRoleDto> adminRoleDtos = adminUserDto.getRoles();
-            if (null == adminRoleDtos || adminRoleDtos.isEmpty()) {
+            AdminUser adminUser = adminUserDtoOptional.get();
+            List<AdminRoleRef> adminRoleRefs = adminUser.getRoles();
+            if (null == adminRoleRefs || adminRoleRefs.isEmpty()) {
                 throw new RuntimeException(String.format("The adminUser object whose id is %d doesn't has a role?This can't happen!", adminUserId));
             }
+
+            List<AdminRoleDto> adminRoleDtos = Lists.newArrayList();
 
             //接着查询后台管理用户对应的角色信息
             List<Long> adminRoleIds = adminRoleDtos.stream().map(adminRoleDto -> adminRoleDto.getId()).collect(Collectors.toList());

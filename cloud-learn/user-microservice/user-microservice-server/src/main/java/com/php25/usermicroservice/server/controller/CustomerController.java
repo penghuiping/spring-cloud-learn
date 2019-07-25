@@ -89,16 +89,15 @@ public class CustomerController implements CustomerRpc {
         return loginBoMono.map(loginBo -> {
             String username = loginBo.getUsername();
             String password = loginBo.getPassword();
-            Optional<Customer> optionalCustomer = customerRepository.findByUsernameAndPassword(username, password);
-            if (!optionalCustomer.isPresent()) {
+            Optional<Customer> customer = customerRepository.findByUsernameAndPassword(username, password);
+            if (!customer.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
             }
 
-            Customer customerDto = optionalCustomer.get();
             Map<String, Object> map = new HashMap<>();
-            map.put("customer", customerDto);
+            map.put("customer", customer.get());
             //生成jwt
-            return tokenJwtService.getToken(customerDto.getId().toString(), map);
+            return tokenJwtService.getToken(customer.get().getId().toString(), map);
         }).map(jwt -> {
             StringRes stringRes = new StringRes();
             stringRes.setErrorCode(ApiErrorCode.ok.value);

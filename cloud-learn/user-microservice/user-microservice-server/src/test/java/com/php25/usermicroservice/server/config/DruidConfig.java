@@ -2,8 +2,8 @@ package com.php25.usermicroservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Maps;
-import com.php25.common.jdbc.Db;
-import com.php25.common.jdbc.DbType;
+import com.php25.common.db.Db;
+import com.php25.common.db.DbType;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.repository;
 
-import com.php25.common.jdbc.repository.BaseRepository;
+import com.php25.common.db.repository.BaseRepository;
 import com.php25.usermicroservice.server.model.AdminMenuButton;
 import com.php25.usermicroservice.server.model.AdminRole;
 import org.springframework.data.repository.query.Param;

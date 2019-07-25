@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,7 +12,8 @@ import java.time.LocalDateTime;
  * 用户类
  * Created by penghuiping on 16/9/2.
  */
-@Data
+@Setter
+@Getter
 @Table("userservice_customer")
 public class Customer {
     /**

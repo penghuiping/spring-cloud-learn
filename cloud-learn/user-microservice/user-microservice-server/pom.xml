@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>jdbc</artifactId>
+            <artifactId>db</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>

@@ -4,7 +4,7 @@ import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.service.ModelToDtoTransferable;
 import com.php25.common.core.specification.SearchParamBuilder;
-import com.php25.common.jdbc.service.BaseServiceImpl;
+import com.php25.common.db.service.BaseServiceImpl;
 import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
 import com.php25.usermicroservice.server.dto.AdminRoleDto;
 import com.php25.usermicroservice.server.model.AdminMenuButton;

@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.server.repository.impl;
 
-import com.php25.common.jdbc.Db;
-import com.php25.common.jdbc.repository.BaseRepositoryImpl;
+import com.php25.common.db.Db;
+import com.php25.common.db.repository.BaseJpaRepositoryImpl;
 import com.php25.usermicroservice.server.model.UserRole;
 import com.php25.usermicroservice.server.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +16,20 @@ import java.util.Optional;
  * @description:
  */
 @Repository
-public class UserRoleRepositoryImpl extends BaseRepositoryImpl<UserRole, Long> implements UserRoleRepository {
+public class UserRoleRepositoryImpl extends BaseJpaRepositoryImpl<UserRole, Long> implements UserRoleRepository {
 
     @Autowired
     private Db db;
 
     @Override
     public Optional<UserRole> findOneByRoleIdAndUserId(Long roleId, Long userId) {
-        UserRole userRole = db.cnd(UserRole.class).whereEq("adminRole", roleId).andEq("adminUser", userId).single();
+        UserRole userRole = db.cndJpa(UserRole.class).whereEq("adminRole", roleId).andEq("adminUser", userId).single();
         return Optional.ofNullable(userRole);
     }
 
     @Override
     public Optional<List<UserRole>> findAllByUserId(Long userId) {
-        List<UserRole> userRoles = db.cnd(UserRole.class).whereEq("adminUser", userId).select();
+        List<UserRole> userRoles = db.cndJpa(UserRole.class).whereEq("adminUser", userId).select();
         return Optional.ofNullable(userRoles);
     }
 }

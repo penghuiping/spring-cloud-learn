@@ -1,11 +1,11 @@
 package com.php25.usermicroservice.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
 
@@ -13,15 +13,16 @@ import java.util.List;
  * 后台管理操作实体类
  * Created by penghuiping on 1/13/15.
  */
-@Data
-@Entity
-@Table(name = "userservice_role")
+@Setter
+@Getter
+@Table("userservice_role")
 public class AdminRole {
 
     /**
      * 主键id
      */
     @Id
+    @javax.persistence.Id
     private Long id;
 
     /**
@@ -33,7 +34,7 @@ public class AdminRole {
     /**
      * 角色名
      */
-    @Column(name = "role_name")
+    @Column("role_name")
     private String name;
 
     /**
@@ -45,13 +46,13 @@ public class AdminRole {
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
+    @Column("create_time")
     private Date createTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
+    @Column("update_time")
     private Date updateTime;
 
     /**
@@ -63,10 +64,10 @@ public class AdminRole {
     /**
      * 此角色对应的菜单与按钮集合
      */
-    private List<AdminMenuButton> adminMenuButtons;
+    private List<AdminMenuButtonRef> adminMenuButtons;
 
     /**
      * 此角色对应的权限集合
      */
-    private List<AdminAuthority> adminAuthorities;
+    private List<AdminAuthorityRef> adminAuthorities;
 }

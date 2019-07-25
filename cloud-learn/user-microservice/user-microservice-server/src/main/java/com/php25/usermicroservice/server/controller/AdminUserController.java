@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
@@ -8,6 +8,7 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
+import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.AdminUserBo;
 import com.php25.usermicroservice.client.bo.ChangePasswordBo;
 import com.php25.usermicroservice.client.bo.LoginBo;
@@ -16,11 +17,15 @@ import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.rpc.AdminUserRpc;
-import com.php25.usermicroservice.server.dto.AdminUserDto;
-import com.php25.usermicroservice.server.service.AdminUserService;
+import com.php25.usermicroservice.server.model.AdminRoleRef;
+import com.php25.usermicroservice.server.model.AdminUser;
+import com.php25.usermicroservice.server.repository.AdminRoleRepository;
+import com.php25.usermicroservice.server.repository.AdminUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,18 +49,34 @@ import java.util.stream.Collectors;
 public class AdminUserController implements AdminUserRpc {
 
     @Autowired
-    private AdminUserService adminUserService;
+    private AdminUserRepository adminUserRepository;
+
+    @Autowired
+    private AdminRoleRepository adminRoleRepository;
 
     @Override
     @PostMapping("/login")
     public Mono<AdminUserBoRes> login(@RequestBody Mono<LoginBo> loginBoMono) {
         return loginBoMono.map(loginBo -> {
-            Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
-            if (!adminUserDtoOptional.isPresent()) {
+            Optional<AdminUser> adminUserOptional = adminUserRepository.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
+            if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException("无法通过username:" + loginBo.getUsername() + ",password:" + loginBo.getPassword() + "找到用户信息");
             } else {
+                AdminUser adminUser = adminUserOptional.get();
                 AdminUserBo adminUserBo = new AdminUserBo();
-                BeanUtils.copyProperties(adminUserDtoOptional.get(), adminUserBo);
+                BeanUtils.copyProperties(adminUser, adminUserBo);
+
+                if (null != adminUser.getRoles() && adminUser.getRoles().size() > 0) {
+                    //加入角色信息
+                    var ids = adminUser.getRoles().stream().map(AdminRoleRef::getRoleId).collect(Collectors.toList());
+                    var adminRoles = adminRoleRepository.findAllById(ids);
+                    var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
+                        AdminRoleBo adminRoleBo = new AdminRoleBo();
+                        BeanUtils.copyProperties(adminRole, adminRoleBo);
+                        return adminRoleBo;
+                    }).collect(Collectors.toList());
+                    adminUserBo.setRoles(adminRoleBos);
+                }
                 return adminUserBo;
             }
         }).map(adminUserBo -> {
@@ -73,7 +92,7 @@ public class AdminUserController implements AdminUserRpc {
     public Mono<BooleanRes> resetPassword(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         //初始化密码为123456
         return idsLongReqMono.map(idsLongReq ->
-                adminUserService.updatePassword("123456", idsLongReq.getIds()))
+                adminUserRepository.updatePassword("123456", idsLongReq.getIds()))
                 .map(aBoolean -> {
                     BooleanRes booleanRes = new BooleanRes();
                     booleanRes.setErrorCode(ApiErrorCode.ok.value);
@@ -86,18 +105,18 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/changePassword")
     public Mono<BooleanRes> changePassword(@RequestBody Mono<ChangePasswordBo> changePasswordBoMono) {
         return changePasswordBoMono.map(changePasswordBo -> {
-            Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(changePasswordBo.getAdminUserId());
-            if (!adminUserDtoOptional.isPresent()) {
+            Optional<AdminUser> adminUserOptional = adminUserRepository.findById(changePasswordBo.getAdminUserId());
+            if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
             }
 
-            AdminUserDto adminUserDto = adminUserDtoOptional.get();
-            if (!adminUserDto.getPassword().equals(changePasswordBo.getOriginPassword())) {
+            AdminUser adminUser = adminUserOptional.get();
+            if (!adminUser.getPassword().equals(changePasswordBo.getOriginPassword())) {
                 throw Exceptions.throwIllegalStateException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
             }
-            adminUserDto.setPassword(changePasswordBo.getNewPassword());
-            Optional<AdminUserDto> adminUserDtoOptional1 = adminUserService.save(adminUserDto);
-            if (adminUserDtoOptional1.isPresent()) {
+            adminUser.setPassword(changePasswordBo.getNewPassword());
+            AdminUser adminUser1 = adminUserRepository.save(adminUser);
+            if (null != adminUser1) {
                 return true;
             } else {
                 return false;
@@ -114,11 +133,11 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping(value = "/findOne", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Mono<AdminUserBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
         return idLongReqMono.map(idLongReq -> {
-            Optional<AdminUserDto> adminUserDtoOptional = adminUserService.findOne(idLongReq.getId());
-            if (adminUserDtoOptional.isPresent()) {
-                AdminUserDto adminUserDto = adminUserDtoOptional.get();
+            Optional<AdminUser> adminUserOptional = adminUserRepository.findById(idLongReq.getId());
+            if (adminUserOptional.isPresent()) {
+                AdminUser adminUser = adminUserOptional.get();
                 AdminUserBo adminUserBo = new AdminUserBo();
-                BeanUtils.copyProperties(adminUserDto, adminUserBo);
+                BeanUtils.copyProperties(adminUser, adminUserBo);
                 return adminUserBo;
             } else {
                 throw Exceptions.throwIllegalStateException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
@@ -135,11 +154,11 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/save")
     public Mono<AdminUserBoRes> save(@RequestBody Mono<AdminUserBo> adminUserBoMono) {
         return adminUserBoMono.map(adminUserBo -> {
-            AdminUserDto adminUserDto = new AdminUserDto();
-            BeanUtils.copyProperties(adminUserBo, adminUserDto);
-            Optional<AdminUserDto> adminUserDtoOptional = adminUserService.save(adminUserDto);
-            if (adminUserDtoOptional.isPresent()) {
-                adminUserBo.setId(adminUserDtoOptional.get().getId());
+            AdminUser adminUser = new AdminUser();
+            BeanUtils.copyProperties(adminUserBo, adminUser);
+            AdminUser adminUser1 = adminUserRepository.save(adminUser);
+            if (null != adminUser1) {
+                adminUserBo.setId(adminUser1.getId());
                 return adminUserBo;
             } else {
                 throw Exceptions.throwIllegalStateException("保存用户信息失败:" + JsonUtil.toJson(adminUserBo));
@@ -157,9 +176,10 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/softDelete")
     public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         return idsLongReqMono.map(idsLongReq -> {
-            Optional<List<AdminUserDto>> optionalAdminUserDtos = adminUserService.findAll(idsLongReq.getIds());
-            if (optionalAdminUserDtos.isPresent() && !optionalAdminUserDtos.get().isEmpty()) {
-                adminUserService.softDelete(optionalAdminUserDtos.get());
+            Iterable<AdminUser> adminUsers = adminUserRepository.findAllById(idsLongReq.getIds());
+            var list = Lists.newArrayList(adminUsers).stream().map(AdminUser::getId).collect(Collectors.toList());
+            if (null != list && list.size() > 0) {
+                adminUserRepository.softDelete(list);
                 return true;
             } else {
                 return false;
@@ -179,11 +199,11 @@ public class AdminUserController implements AdminUserRpc {
             var searchParams = searchBo.getSearchParams().stream()
                     .map(searchBoParam -> SearchParam.of(searchBoParam.getFieldName(), searchBoParam.getOperator(), searchBoParam.getValue())).collect(Collectors.toList());
             var searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
-            var optionalAdminUserDtoDataGridPageDto =
-                    adminUserService.query(searchBo.getPageNum(), searchBo.getPageSize(), searchParamBuilder, BeanUtils::copyProperties, Sort.by(searchBo.getDirection(), searchBo.getProperty()));
-            if (optionalAdminUserDtoDataGridPageDto.isPresent()) {
-                DataGridPageDto<AdminUserDto> dtoDataGridPageDto = optionalAdminUserDtoDataGridPageDto.get();
-                return dtoDataGridPageDto.getData().stream().map(adminUserDto -> {
+            var sort = Sort.by(searchBo.getDirection(), searchBo.getProperty());
+            var page = PageRequest.of(searchBo.getPageNum(), searchBo.getPageSize(), sort);
+            Page<AdminUser> adminUserPage = adminUserRepository.findAll(searchParamBuilder, page);
+            if (null != adminUserPage && adminUserPage.getTotalElements() > 0) {
+                return adminUserPage.stream().map(adminUserDto -> {
                     AdminUserBo adminUserBo = new AdminUserBo();
                     BeanUtils.copyProperties(adminUserDto, adminUserBo);
                     return adminUserBo;

@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.service.impl;
 
-import com.php25.common.jdbc.service.BaseServiceImpl;
+import com.php25.common.db.service.BaseServiceImpl;
 import com.php25.usermicroservice.server.dto.AdminMenuButtonDto;
 import com.php25.usermicroservice.server.dto.AdminRoleDto;
 import com.php25.usermicroservice.server.model.AdminMenuButton;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,7 +72,7 @@ public class AdminMenuServiceImpl implements AdminMenuService {
                 BeanUtils.copyProperties(menu.getParent(), parent);
                 adminMenuButton.setParent(parent);
             }
-            adminMenuButton.setUpdateTime(new Date());
+            adminMenuButton.setUpdateTime(LocalDateTime.now());
             result = adminMenuButtonRepository.save(adminMenuButton);
         } else {
             //新增
@@ -82,8 +82,8 @@ public class AdminMenuServiceImpl implements AdminMenuService {
                 menu.setIsLeaf(false);
                 var adminMenuButton = new AdminMenuButton();
                 BeanUtils.copyProperties(menu, adminMenuButton);
-                adminMenuButton.setCreateTime(new Date());
-                adminMenuButton.setUpdateTime(new Date());
+                adminMenuButton.setCreateTime(LocalDateTime.now());
+                adminMenuButton.setUpdateTime(LocalDateTime.now());
                 result = adminMenuButtonRepository.save(adminMenuButton);
             } else {
                 var parent = adminMenuButtonRepository.findById(menu.getParentId()).orElse(null);
@@ -94,8 +94,8 @@ public class AdminMenuServiceImpl implements AdminMenuService {
                 var adminMenuButton = new AdminMenuButton();
                 BeanUtils.copyProperties(menu, adminMenuButton);
                 adminMenuButton.setParent(parent);
-                adminMenuButton.setCreateTime(new Date());
-                adminMenuButton.setUpdateTime(new Date());
+                adminMenuButton.setCreateTime(LocalDateTime.now());
+                adminMenuButton.setUpdateTime(LocalDateTime.now());
                 result = adminMenuButtonRepository.save(adminMenuButton);
             }
         }

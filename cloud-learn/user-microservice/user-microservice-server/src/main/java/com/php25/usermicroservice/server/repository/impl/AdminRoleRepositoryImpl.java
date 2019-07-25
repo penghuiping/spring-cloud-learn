@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.repository.impl;
 
-import com.php25.common.jdbc.repository.BaseRepositoryImpl;
+import com.php25.common.db.repository.BaseJpaRepositoryImpl;
 import com.php25.usermicroservice.server.model.AdminRole;
 import com.php25.usermicroservice.server.repository.AdminRoleRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @description:
  */
 @Repository
-public class AdminRoleRepositoryImpl extends BaseRepositoryImpl<AdminRole, Long> implements AdminRoleRepository {
+public class AdminRoleRepositoryImpl extends BaseJpaRepositoryImpl<AdminRole, Long> implements AdminRoleRepository {
 
 
 }

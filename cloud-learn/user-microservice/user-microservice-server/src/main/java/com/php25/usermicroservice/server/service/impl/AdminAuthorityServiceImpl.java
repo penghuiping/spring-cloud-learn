@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.server.service.impl;
 
-import com.php25.common.jdbc.service.BaseServiceImpl;
+import com.php25.common.db.service.BaseServiceImpl;
 import com.php25.usermicroservice.server.dto.AdminAuthorityDto;
 import com.php25.usermicroservice.server.model.AdminAuthority;
 import com.php25.usermicroservice.server.repository.AdminAuthorityRepository;

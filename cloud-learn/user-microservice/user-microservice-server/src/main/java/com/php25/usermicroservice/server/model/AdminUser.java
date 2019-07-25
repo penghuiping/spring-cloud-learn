@@ -1,21 +1,23 @@
 package com.php25.usermicroservice.server.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 后台管理用户实体类
  * Created by penghuiping on 11/30/14.
  */
-@Data
-@Entity
-@Table(name = "userservice_user")
+@Setter
+@Getter
+@Table("userservice_user")
 public class AdminUser {
     /**
      * 主键id
@@ -26,37 +28,37 @@ public class AdminUser {
     /**
      * 用户名
      */
-    @Column(name = "username")
+    @Column("username")
     private String username;
 
     /**
      * 昵称
      */
-    @Column(name = "nickname")
+    @Column("nickname")
     private String nickname;
 
     /**
      * 邮箱
      */
-    @Column(name = "email")
+    @Column("email")
     private String email;
 
     /**
      * 手机
      */
-    @Column(name = "mobile")
+    @Column("mobile")
     private String mobile;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
+    @Column("create_time")
     private Date createTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
+    @Column("update_time")
     private Date updateTime;
 
     /**
@@ -71,5 +73,8 @@ public class AdminUser {
     @Column
     private Integer enable;
 
-    private List<AdminRole> roles;
+    private List<AdminRoleRef> roles;
+
+
+
 }

@@ -1,26 +1,27 @@
 package com.php25.usermicroservice.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 后台管理菜单实体类
  * Created by penghuiping on 1/20/15.
  */
-@Data
-@Entity
-@Table(name = "userservice_menu")
+@Setter
+@Getter
+@Table("userservice_menu")
 public class AdminMenuButton {
     /**
      * 主键id
      */
     @Id
+    @javax.persistence.Id
     private Long id;
 
     /**
@@ -40,32 +41,32 @@ public class AdminMenuButton {
     /**
      * 父节点
      */
-    @Column(name = "parent")
+    @Column("parent")
     private AdminMenuButton parent;
 
     /**
      * 是否是叶子节点
      */
-    @Column(name = "is_leaf")
+    @Column("is_leaf")
     private Boolean isLeaf;
 
     /**
      * 用于排序
      */
-    @Column(name = "sort")
+    @Column("sort")
     private Integer sort;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
-    private Date createTime;
+    @Column("create_time")
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
-    private Date updateTime;
+    @Column("update_time")
+    private LocalDateTime updateTime;
 
     /**
      * 图标
@@ -76,7 +77,7 @@ public class AdminMenuButton {
     /**
      * 判断是否是菜单，不是就是按钮
      */
-    @Column(name = "is_menu")
+    @Column("is_menu")
     private Boolean isMenu;
 
     /**

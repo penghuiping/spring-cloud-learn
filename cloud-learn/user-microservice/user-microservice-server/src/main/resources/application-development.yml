@@ -46,7 +46,7 @@ spring:
   ########################################################
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
+    driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
     username: ${app.db.username}
     password: ${app.db.password}
