@@ -8,6 +8,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 后台管理菜单实体类
@@ -21,7 +22,6 @@ public class AdminMenuButton {
      * 主键id
      */
     @Id
-    @javax.persistence.Id
     private Long id;
 
     /**
@@ -36,7 +36,7 @@ public class AdminMenuButton {
     @Column
     private String url;
 
-    private List<AdminMenuButton> children;
+    private Set<AdminMenuButton> children;
 
     /**
      * 父节点

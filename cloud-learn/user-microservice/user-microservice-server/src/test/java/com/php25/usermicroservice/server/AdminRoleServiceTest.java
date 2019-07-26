@@ -1,6 +1,5 @@
-package com.php25.usermicroservice.server.service;
+package com.php25.usermicroservice.server;
 
-import com.php25.usermicroservice.server.CommonAutoConfigure;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,13 +7,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author: penghuiping
- * @date: 2018/9/5 10:40
+ * @date: 2018/10/12 10:04
  * @description:
  */
 @Slf4j
-@SpringBootTest(classes = {CommonAutoConfigure.class})
 @RunWith(SpringRunner.class)
-public class CustomerServiceTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class AdminRoleServiceTest {
 
 
 }

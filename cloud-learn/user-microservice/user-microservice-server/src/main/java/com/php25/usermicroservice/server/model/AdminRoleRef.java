@@ -17,6 +17,6 @@ import java.util.Objects;
 @Table("userservice_user_role")
 public class AdminRoleRef {
 
-    @Column("role_id")
+    @Column(value = "role_id")
     Long roleId;
 }

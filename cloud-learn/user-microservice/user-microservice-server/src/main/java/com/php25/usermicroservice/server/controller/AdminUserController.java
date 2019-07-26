@@ -17,6 +17,7 @@ import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.rpc.AdminUserRpc;
+import com.php25.usermicroservice.server.model.AdminRole;
 import com.php25.usermicroservice.server.model.AdminRoleRef;
 import com.php25.usermicroservice.server.model.AdminUser;
 import com.php25.usermicroservice.server.repository.AdminRoleRepository;
@@ -69,7 +70,7 @@ public class AdminUserController implements AdminUserRpc {
                 if (null != adminUser.getRoles() && adminUser.getRoles().size() > 0) {
                     //加入角色信息
                     var ids = adminUser.getRoles().stream().map(AdminRoleRef::getRoleId).collect(Collectors.toList());
-                    var adminRoles = adminRoleRepository.findAllById(ids);
+                    Iterable<AdminRole> adminRoles = adminRoleRepository.findAllById(ids);
                     var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
                         AdminRoleBo adminRoleBo = new AdminRoleBo();
                         BeanUtils.copyProperties(adminRole, adminRoleBo);

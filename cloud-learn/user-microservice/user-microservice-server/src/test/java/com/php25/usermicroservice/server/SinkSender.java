@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.service;
+package com.php25.usermicroservice.server;
 
 /**
  * @author: penghuiping

@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
  */
 @Getter
 @Setter
-@Table("userservice_admin_role_authority")
+@Table("userservice_role_authority")
 public class AdminAuthorityRef {
 
     @Column("authority_id")

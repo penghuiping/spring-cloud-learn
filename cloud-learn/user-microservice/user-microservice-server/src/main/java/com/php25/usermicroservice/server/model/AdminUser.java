@@ -1,14 +1,12 @@
 package com.php25.usermicroservice.server.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -53,13 +51,13 @@ public class AdminUser {
      * 创建时间
      */
     @Column("create_time")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
     @Column("update_time")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 密码
@@ -73,8 +71,8 @@ public class AdminUser {
     @Column
     private Integer enable;
 
-    private List<AdminRoleRef> roles;
-
+    @Column(value = "user_id")
+    private Set<AdminRoleRef> roles;
 
 
 }

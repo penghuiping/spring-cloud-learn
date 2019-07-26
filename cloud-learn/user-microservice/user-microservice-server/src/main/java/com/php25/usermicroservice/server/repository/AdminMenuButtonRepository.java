@@ -1,31 +1,59 @@
 package com.php25.usermicroservice.server.repository;
 
-import com.php25.common.db.repository.BaseRepository;
 import com.php25.usermicroservice.server.model.AdminMenuButton;
-import com.php25.usermicroservice.server.model.AdminRole;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author penghuiping
  * @date 2015-01-20
  */
-public interface AdminMenuButtonRepository extends BaseRepository<AdminMenuButton, Long> {
+public interface AdminMenuButtonRepository extends PagingAndSortingRepository<AdminMenuButton, Long> {
 
+    /**
+     * 查出所有的1级菜单
+     *
+     * @return
+     */
+    @Query("select * from userservice_menu a where a.parent is null and a.enable!=2 order by a.sort asc")
     List<AdminMenuButton> findRootMenus();
 
-    List<AdminMenuButton> findMenusByParent(@Param("parent") AdminMenuButton parent);
+    /**
+     * 查出所有的有效的1级菜单
+     *
+     * @return
+     */
+    @Query("select * from userservice_menu a where a.parent is null and a.enable=1 order by a.sort asc")
+    Optional<List<AdminMenuButton>> findRootMenusEnabled();
 
-    List<AdminMenuButton> findMenusByRole(@Param("role") AdminRole role);
 
-    List<AdminMenuButton> findRootMenusEnabled();
+    /**
+     * 根据父级菜单的id查询出子菜单的id
+     *
+     * @param parentId
+     * @return
+     */
+    @Query("select * from userservice_menu a where a.parent =:parent  and a.enable!=2")
+    List<AdminMenuButton> findMenusByParent(@Param("parent") Long parentId);
 
-    List<AdminMenuButton> findMenusEnabledByParent(@Param("parent") AdminMenuButton parent);
+    /**
+     * 根据父级菜单的id查询出有效的子菜单的id
+     *
+     * @param parentId
+     * @return
+     */
+    @Query("select * from userservice_menu a where a.parent =:parent  and a.enable=1")
+    List<AdminMenuButton> findMenusEnabledByParent(@Param("parent") Long parentId);
 
-    List<AdminMenuButton> findMenusEnabledByRole(@Param("role") AdminRole role);
-
-    List<AdminMenuButton> findMenusEnabledByParentAndRole(@Param("parent") AdminMenuButton parent, @Param("role") AdminRole role);
-
+    /**
+     * 查询出菜单与按钮表中sort字段最大的值
+     *
+     * @return
+     */
+    @Query("select max(a.sort) from userservice_menu a where  a.enable=1")
     Integer findMenusMaxSort();
 }

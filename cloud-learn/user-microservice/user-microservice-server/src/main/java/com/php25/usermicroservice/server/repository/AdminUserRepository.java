@@ -24,7 +24,7 @@ public interface AdminUserRepository extends PagingAndSortingRepository<AdminUse
      * @param password
      * @return
      */
-    @Query("select * from userservice_admin_user where username=:username and password=:password")
+    @Query("select * from userservice_user where username=:username and password=:password")
     Optional<AdminUser> findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
     /**
@@ -35,11 +35,11 @@ public interface AdminUserRepository extends PagingAndSortingRepository<AdminUse
      * @return true:更新成功，false:更新失败
      */
     @Modifying
-    @Query("update userservice_admin_user a set a.password=:password where a.id in (:ids)")
+    @Query("update userservice_user a set a.password=:password where a.id in (:ids)")
     Boolean updatePassword(@Param("password") String password, @Param("ids") List<Long> ids);
 
     @Modifying
-    @Query("update userservice_admin_user a set a.enable=2 where a.id in (:ids)")
+    @Query("update userservice_user a set a.enable=2 where a.id in (:ids)")
     Boolean softDelete(@Param("ids") List<Long> ids);
 
 }

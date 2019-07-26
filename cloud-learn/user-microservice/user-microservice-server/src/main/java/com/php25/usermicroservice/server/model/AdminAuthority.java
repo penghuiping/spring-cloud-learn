@@ -15,10 +15,9 @@ import java.time.LocalDateTime;
  */
 @Setter
 @Getter
-@Table("userservice_admin_authority")
+@Table("userservice_authority")
 public class AdminAuthority {
     @Id
-    @javax.persistence.Id
     private Long id;
 
     /**
