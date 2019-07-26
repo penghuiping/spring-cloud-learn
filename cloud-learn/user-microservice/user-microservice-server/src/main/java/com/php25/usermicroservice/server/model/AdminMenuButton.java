@@ -6,10 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
 /**
  * 后台管理菜单实体类
  * Created by penghuiping on 1/20/15.
@@ -31,18 +27,10 @@ public class AdminMenuButton {
     private String name;
 
     /**
-     * 菜单或者按钮对应的接口url
-     */
-    @Column
-    private String url;
-
-    private Set<AdminMenuButton> children;
-
-    /**
      * 父节点
      */
     @Column("parent")
-    private AdminMenuButton parent;
+    private Long parent;
 
     /**
      * 是否是叶子节点
@@ -55,24 +43,6 @@ public class AdminMenuButton {
      */
     @Column("sort")
     private Integer sort;
-
-    /**
-     * 创建时间
-     */
-    @Column("create_time")
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @Column("update_time")
-    private LocalDateTime updateTime;
-
-    /**
-     * 图标
-     */
-    @Column
-    private String icon;
 
     /**
      * 判断是否是菜单，不是就是按钮

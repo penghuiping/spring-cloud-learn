@@ -35,7 +35,7 @@ public interface AdminUserRepository extends PagingAndSortingRepository<AdminUse
      * @return true:更新成功，false:更新失败
      */
     @Modifying
-    @Query("update userservice_user a set a.password=:password where a.id in (:ids)")
+    @Query("update userservice_user a set a.password=:password , a.update_time=NOW() where a.id in (:ids)")
     Boolean updatePassword(@Param("password") String password, @Param("ids") List<Long> ids);
 
     @Modifying

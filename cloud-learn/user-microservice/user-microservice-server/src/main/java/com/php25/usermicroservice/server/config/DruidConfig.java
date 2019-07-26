@@ -2,8 +2,11 @@ package com.php25.usermicroservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Maps;
+import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
+import com.php25.usermicroservice.server.model.AdminRole;
+import com.php25.usermicroservice.server.model.AdminUser;
 import com.php25.usermicroservice.server.repository.AdminUserRepository;
 import com.php25.usermicroservice.server.repository.CustomerRepository;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
@@ -11,9 +14,11 @@ import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.mapping.event.BeforeSaveEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -187,5 +192,26 @@ public class DruidConfig {
     @Bean
     public Db db(JdbcTemplate jdbcTemplate) {
         return new Db(jdbcTemplate, DbType.MYSQL);
+    }
+
+    @Bean
+    public ApplicationListener<BeforeSaveEvent> timeStampingSaveTime(@Autowired IdGeneratorService idGeneratorService) {
+
+        return event -> {
+            Object entity = event.getEntity();
+            if (entity instanceof AdminUser) {
+                if (null == ((AdminUser) entity).getId()) {
+                    log.info("adminUser save...");
+                    AdminUser adminUser = (AdminUser) entity;
+                    //todo 优化 uid
+                    adminUser.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                }
+            } else if (entity instanceof AdminRole) {
+                if (null == ((AdminRole) entity).getId()) {
+                    AdminRole adminRole = (AdminRole) entity;
+                    adminRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                }
+            }
+        };
     }
 }

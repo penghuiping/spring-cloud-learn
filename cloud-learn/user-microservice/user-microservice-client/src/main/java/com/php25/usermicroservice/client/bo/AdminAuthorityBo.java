@@ -3,7 +3,6 @@ package com.php25.usermicroservice.client.bo;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -32,20 +31,6 @@ public class AdminAuthorityBo {
      */
     private String description;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
-
-    /**
-     * 对应关联的菜单与按钮表id
-     */
-    private AdminMenuButtonBo adminMenuButton;
 
     @Override
     public boolean equals(Object o) {

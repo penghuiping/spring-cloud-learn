@@ -1,5 +1,6 @@
 package com.php25.usermicroservice.client.rpc;
 
+import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
@@ -42,6 +43,15 @@ public interface AdminRoleRpc {
      * @return true:软删除成,false:软删除失败
      */
     Mono<BooleanRes> softDelete(@Valid Mono<IdsLongReq> idsLongReqMono);
+
+
+    /**
+     * 查询角色详情
+     *
+     * @param idLongReqMono
+     * @return
+     */
+    Mono<AdminRoleBoRes> findOne(@Valid Mono<IdLongReq> idLongReqMono);
 
 
 }

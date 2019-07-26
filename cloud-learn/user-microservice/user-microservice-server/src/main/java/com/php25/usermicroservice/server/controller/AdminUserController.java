@@ -36,7 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -139,6 +141,17 @@ public class AdminUserController implements AdminUserRpc {
                 AdminUser adminUser = adminUserOptional.get();
                 AdminUserBo adminUserBo = new AdminUserBo();
                 BeanUtils.copyProperties(adminUser, adminUserBo);
+
+                //加入角色信息
+                var ids = adminUser.getRoles().stream().map(AdminRoleRef::getRoleId).collect(Collectors.toList());
+                Iterable<AdminRole> adminRoles = adminRoleRepository.findAllById(ids);
+                var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
+                    AdminRoleBo adminRoleBo = new AdminRoleBo();
+                    BeanUtils.copyProperties(adminRole, adminRoleBo);
+                    return adminRoleBo;
+                }).collect(Collectors.toList());
+                adminUserBo.setRoles(adminRoleBos);
+
                 return adminUserBo;
             } else {
                 throw Exceptions.throwIllegalStateException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
@@ -157,6 +170,18 @@ public class AdminUserController implements AdminUserRpc {
         return adminUserBoMono.map(adminUserBo -> {
             AdminUser adminUser = new AdminUser();
             BeanUtils.copyProperties(adminUserBo, adminUser);
+            //是否有角色
+            List<AdminRoleBo> adminRoleBoList = adminUserBo.getRoles();
+            if (null != adminRoleBoList && !adminRoleBoList.isEmpty()) {
+                //处理角色
+                Set<AdminRoleRef> adminRoleRefs = adminRoleBoList.stream().map(adminRoleBo -> {
+                    AdminRoleRef adminRoleRef = new AdminRoleRef();
+                    adminRoleRef.setRoleId(adminRoleBo.getId());
+                    return adminRoleRef;
+                }).collect(Collectors.toSet());
+                adminUser.setRoles(adminRoleRefs);
+            }
+
             AdminUser adminUser1 = adminUserRepository.save(adminUser);
             if (null != adminUser1) {
                 adminUserBo.setId(adminUser1.getId());

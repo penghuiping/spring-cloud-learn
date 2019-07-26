@@ -18,11 +18,6 @@ public class AdminRoleBo implements Serializable {
 
     private String name;
 
-    /**
-     * 角色代码
-     */
-    private String code;
-
     private String description;
 
     private LocalDateTime createTime;
@@ -32,4 +27,6 @@ public class AdminRoleBo implements Serializable {
     private Integer enable;
 
     private List<AdminMenuButtonBo> menus;
+
+    private List<AdminAuthorityBo> authorities;
 }

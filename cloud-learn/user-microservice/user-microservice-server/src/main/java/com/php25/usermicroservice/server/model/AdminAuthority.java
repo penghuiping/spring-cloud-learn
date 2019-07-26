@@ -37,16 +37,4 @@ public class AdminAuthority {
      */
     @Column
     private String description;
-
-    /**
-     * 创建时间
-     */
-    @Column("create_time")
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @Column("update_time")
-    private LocalDateTime updateTime;
 }

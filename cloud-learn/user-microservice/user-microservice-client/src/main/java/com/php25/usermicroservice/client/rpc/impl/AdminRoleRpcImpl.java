@@ -1,5 +1,6 @@
 package com.php25.usermicroservice.client.rpc.impl;
 
+import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
@@ -13,6 +14,8 @@ import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchan
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 /**
  * @author: penghuiping
@@ -61,5 +64,17 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
                 .body(idsLongReqMono, IdsLongReq.class)
                 .retrieve()
                 .bodyToMono(BooleanRes.class);
+    }
+
+    @Override
+    public Mono<AdminRoleBoRes> findOne(@Valid Mono<IdLongReq> idLongReqMono) {
+        return WebClient.builder().baseUrl(Constant.BASE_URL)
+                .filter(lbFunction)
+                .build()
+                .post()
+                .uri("/adminRole/findOne")
+                .body(idLongReqMono, IdLongReq.class)
+                .retrieve()
+                .bodyToMono(AdminRoleBoRes.class);
     }
 }
