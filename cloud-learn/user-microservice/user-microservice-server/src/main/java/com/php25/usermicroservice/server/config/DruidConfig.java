@@ -5,10 +5,8 @@ import com.google.common.collect.Maps;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
-import com.php25.usermicroservice.server.model.AdminRole;
-import com.php25.usermicroservice.server.model.AdminUser;
-import com.php25.usermicroservice.server.repository.AdminUserRepository;
-import com.php25.usermicroservice.server.repository.CustomerRepository;
+import com.php25.usermicroservice.server.model.Role;
+import com.php25.usermicroservice.server.model.User;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
 import io.shardingjdbc.core.api.config.MasterSlaveRuleConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +35,7 @@ import java.util.Properties;
 @Slf4j
 @Configuration
 @ConditionalOnExpression("'${server.type}'.contains('provider')")
-@EnableJdbcRepositories(basePackageClasses = {
-        CustomerRepository.class,
-        AdminUserRepository.class
-})
+@EnableJdbcRepositories(basePackages = "com.php25.usermicroservice.server.repository")
 public class DruidConfig {
 
     @Autowired
@@ -199,16 +194,16 @@ public class DruidConfig {
 
         return event -> {
             Object entity = event.getEntity();
-            if (entity instanceof AdminUser) {
-                if (null == ((AdminUser) entity).getId()) {
+            if (entity instanceof User) {
+                if (null == ((User) entity).getId()) {
                     log.info("adminUser save...");
-                    AdminUser adminUser = (AdminUser) entity;
+                    User adminUser = (User) entity;
                     //todo 优化 uid
                     adminUser.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 }
-            } else if (entity instanceof AdminRole) {
-                if (null == ((AdminRole) entity).getId()) {
-                    AdminRole adminRole = (AdminRole) entity;
+            } else if (entity instanceof Role) {
+                if (null == ((Role) entity).getId()) {
+                    Role adminRole = (Role) entity;
                     adminRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 }
             }

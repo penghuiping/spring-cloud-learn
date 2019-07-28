@@ -30,7 +30,7 @@ public class AdminMenuButton {
      * 父节点
      */
     @Column("parent")
-    private Long parent;
+    private Long parentId;
 
     /**
      * 是否是叶子节点

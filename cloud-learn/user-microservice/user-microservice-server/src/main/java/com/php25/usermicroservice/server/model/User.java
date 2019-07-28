@@ -7,18 +7,16 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 /**
- * 后台管理操作实体类
- * Created by penghuiping on 1/13/15.
+ * 后台管理用户实体类
+ * Created by penghuiping on 11/30/14.
  */
 @Setter
 @Getter
-@Table("userservice_role")
-public class AdminRole {
-
+@Table("userservice_user")
+public class User {
     /**
      * 主键id
      */
@@ -26,16 +24,34 @@ public class AdminRole {
     private Long id;
 
     /**
-     * 角色名
+     * 用户名
      */
-    @Column("role_name")
-    private String name;
+    @Column("username")
+    private String username;
 
     /**
-     * 角色描述
+     * 昵称
+     */
+    @Column("nickname")
+    private String nickname;
+
+    /**
+     * 邮箱
+     */
+    @Column("email")
+    private String email;
+
+    /**
+     * 手机
+     */
+    @Column("mobile")
+    private String mobile;
+
+    /**
+     * 密码
      */
     @Column
-    private String description;
+    private String password;
 
     /**
      * 创建时间
@@ -49,21 +65,22 @@ public class AdminRole {
     @Column("update_time")
     private LocalDateTime updateTime;
 
+
+
     /**
-     * 是否有效 0:无效 1:有效 2:软删除
+     * 是否有效 0:无效,1:有效,2:软删除
      */
     @Column
     private Integer enable;
 
-    /**
-     * 此角色对应的菜单与按钮集合
-     */
-    @Column("role_id")
-    private Set<AdminMenuButtonRef> adminMenuButtons;
+    @Column(value = "user_id")
+    private Set<RoleRef> roles;
 
     /**
-     * 此角色对应的权限集合
+     * 头像
      */
-    @Column("role_id")
-    private Set<AdminAuthorityRef> adminAuthorities;
+    @Column(value = "image_id")
+    private String imageId;
+
+
 }

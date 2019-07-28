@@ -22,7 +22,7 @@ import javax.validation.Valid;
  * @date: 2019/1/2 13:06
  * @description:
  */
-public interface CustomerRpc {
+public interface CustomerService {
 
     /**
      * 注册

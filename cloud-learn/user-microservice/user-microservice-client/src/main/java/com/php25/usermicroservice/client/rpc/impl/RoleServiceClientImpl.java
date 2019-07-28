@@ -4,11 +4,12 @@ import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.constant.Constant;
-import com.php25.usermicroservice.client.rpc.AdminRoleRpc;
+import com.php25.usermicroservice.client.rpc.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
  * @description:
  */
 @Component
-public class AdminRoleRpcImpl implements AdminRoleRpc {
+public class RoleServiceClientImpl implements RoleService {
 
     @Autowired
     private LoadBalancerExchangeFilterFunction lbFunction;
@@ -76,5 +77,29 @@ public class AdminRoleRpcImpl implements AdminRoleRpc {
                 .body(idLongReqMono, IdLongReq.class)
                 .retrieve()
                 .bodyToMono(AdminRoleBoRes.class);
+    }
+
+    @Override
+    public Mono<AdminMenuButtonBoListRes> findAllMenuTree() {
+        return WebClient.builder().baseUrl(Constant.BASE_URL)
+                .filter(lbFunction)
+                .build()
+                .get()
+                .uri("/adminRole/findAllMenuTree")
+                .retrieve()
+                .bodyToMono(AdminMenuButtonBoListRes.class);
+    }
+
+
+    @Override
+    public Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(Mono<IdLongReq> idLongReqMono) {
+        return WebClient.builder().baseUrl(Constant.BASE_URL)
+                .filter(lbFunction)
+                .build()
+                .post()
+                .uri("/adminRole/findAllByAdminRoleId")
+                .body(idLongReqMono, IdLongReq.class)
+                .retrieve()
+                .bodyToMono(AdminMenuButtonBoListRes.class);
     }
 }

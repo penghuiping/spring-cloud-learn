@@ -4,14 +4,15 @@ import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.IdLongReq;
-import com.php25.usermicroservice.client.bo.AdminAuthorityBo;
+import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
 import com.php25.usermicroservice.client.bo.SearchBoParam;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
-import com.php25.usermicroservice.server.model.AdminAuthority;
+import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,11 +58,7 @@ public class AdminRoleServiceTest {
         adminMenuButtonBo1.setId(2L);
         AdminMenuButtonBo adminMenuButtonBo3 = new AdminMenuButtonBo();
         adminMenuButtonBo3.setId(3L);
-        adminRoleBo.setMenus(List.of(adminMenuButtonBo,adminMenuButtonBo1,adminMenuButtonBo3));
-
-        AdminAuthorityBo adminAuthorityBo = new AdminAuthorityBo();
-        adminAuthorityBo.setId(1L);
-        adminRoleBo.setAuthorities(List.of(adminAuthorityBo));
+        adminRoleBo.setMenus(List.of(adminMenuButtonBo, adminMenuButtonBo1, adminMenuButtonBo3));
 
 
         var result = webTestClient.post().uri("/adminRole/save")
@@ -115,6 +112,56 @@ public class AdminRoleServiceTest {
                 .expectBody(AdminRoleBoRes.class);
 
         log.info("/adminRole/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
+    }
+
+    @Test
+    public void softDelete() {
+        IdsLongReq idsLongReq = new IdsLongReq();
+        idsLongReq.setIds(List.of(207174297410600960L, 207180606402985984L));
+
+        var result = webTestClient.post().uri("/adminRole/softDelete")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .syncBody(idsLongReq)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(BooleanRes.class);
+
+        log.info("/adminRole/softDelete:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
+    }
+
+
+    @Test
+    public void findAllMenuTree() {
+
+        var result = webTestClient.post().uri("/adminRole/findAllMenuTree")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(AdminMenuButtonBoListRes.class);
+
+        log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
+    }
+
+
+    @Test
+    public void findAllByAdminRoleId() {
+        IdLongReq idLongReq = new IdLongReq();
+        idLongReq.setId(2L);
+
+        var result = webTestClient.post().uri("/adminRole/findAllByAdminRoleId")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .syncBody(idLongReq)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(AdminMenuButtonBoListRes.class);
+
+        log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
 

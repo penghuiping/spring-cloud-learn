@@ -25,7 +25,7 @@ import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.bo.LoginBo;
 import com.php25.usermicroservice.client.bo.LoginByMobileBo;
 import com.php25.usermicroservice.client.bo.StringBo;
-import com.php25.usermicroservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.rpc.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ import java.time.LocalDateTime;
 public class ApiCommonController extends JSONController {
 
     @Autowired
-    private CustomerRpc customerRpc;
+    private CustomerService customerRpc;
 
     @Autowired
     private MailRpc mailRpc;

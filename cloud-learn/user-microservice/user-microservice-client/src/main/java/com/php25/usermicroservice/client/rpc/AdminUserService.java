@@ -20,7 +20,7 @@ import javax.validation.Valid;
  * @date: 2018/12/28 14:13
  * @description:
  */
-public interface AdminUserRpc {
+public interface AdminUserService {
 
     /**
      * 后台用户登入

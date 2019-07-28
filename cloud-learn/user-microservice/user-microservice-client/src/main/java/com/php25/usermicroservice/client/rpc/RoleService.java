@@ -3,7 +3,9 @@ package com.php25.usermicroservice.client.rpc;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
+import com.php25.usermicroservice.client.bo.HasRightAccessUrlBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
@@ -18,7 +20,7 @@ import javax.validation.Valid;
  * @date: 2019/1/2 10:58
  * @description:
  */
-public interface AdminRoleRpc {
+public interface RoleService {
 
     /**
      * 后台角色分页查询
@@ -53,5 +55,19 @@ public interface AdminRoleRpc {
      */
     Mono<AdminRoleBoRes> findOne(@Valid Mono<IdLongReq> idLongReqMono);
 
+    /**
+     * 获取本系统中所有的菜单
+     *
+     * @return 返回本系统中所有的菜单按钮
+     */
+    Mono<AdminMenuButtonBoListRes> findAllMenuTree();
+
+    /**
+     * 根据角色id获取这个角色对应的所有菜单按钮
+     *
+     * @param idLongReqMono 角色id
+     * @return AdminMenuButtonRes 菜单与按钮
+     */
+    Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(@Valid Mono<IdLongReq> idLongReqMono);
 
 }

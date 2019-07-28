@@ -32,6 +32,14 @@ public interface AdminMenuButtonRepository extends PagingAndSortingRepository<Ad
 
 
     /**
+     * 查出所有有效的菜单
+     * @return
+     */
+    @Query("select * from userservice_menu a where a.enable=1 order by a.sort asc")
+    Optional<List<AdminMenuButton>> findAllEnable();
+
+
+    /**
      * 根据父级菜单的id查询出子菜单的id
      *
      * @param parentId

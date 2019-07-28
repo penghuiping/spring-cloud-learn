@@ -15,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table("userservice_user_role")
-public class AdminRoleRef {
+public class RoleRef {
 
     @Column(value = "role_id")
     Long roleId;

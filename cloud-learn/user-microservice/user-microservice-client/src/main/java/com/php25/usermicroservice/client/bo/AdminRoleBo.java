@@ -28,5 +28,4 @@ public class AdminRoleBo implements Serializable {
 
     private List<AdminMenuButtonBo> menus;
 
-    private List<AdminAuthorityBo> authorities;
 }

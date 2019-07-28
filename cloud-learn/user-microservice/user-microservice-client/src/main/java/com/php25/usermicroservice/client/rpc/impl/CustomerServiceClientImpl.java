@@ -13,7 +13,7 @@ import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
 import com.php25.usermicroservice.client.bo.res.StringRes;
 import com.php25.usermicroservice.client.constant.Constant;
-import com.php25.usermicroservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.rpc.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class CustomerRpcImpl implements CustomerRpc {
+public class CustomerServiceClientImpl implements CustomerService {
 
     @Autowired
     private LoadBalancerExchangeFilterFunction lbFunction;

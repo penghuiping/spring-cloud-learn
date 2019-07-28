@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.controller;
+package com.php25.usermicroservice.server.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
@@ -8,22 +8,21 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
-import com.php25.usermicroservice.client.bo.AdminAuthorityBo;
+import com.php25.common.redis.RedisService;
 import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.SearchBo;
+import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
-import com.php25.usermicroservice.client.rpc.AdminRoleRpc;
-import com.php25.usermicroservice.server.model.AdminAuthority;
-import com.php25.usermicroservice.server.model.AdminAuthorityRef;
+import com.php25.usermicroservice.client.rpc.RoleService;
 import com.php25.usermicroservice.server.model.AdminMenuButton;
 import com.php25.usermicroservice.server.model.AdminMenuButtonRef;
-import com.php25.usermicroservice.server.model.AdminRole;
-import com.php25.usermicroservice.server.repository.AdminAuthorityRepository;
+import com.php25.usermicroservice.server.model.Role;
 import com.php25.usermicroservice.server.repository.AdminMenuButtonRepository;
-import com.php25.usermicroservice.server.repository.AdminRoleRepository;
+import com.php25.usermicroservice.server.repository.RoleRepository;
+import com.php25.usermicroservice.server.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,16 +49,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/adminRole")
-public class AdminRoleController implements AdminRoleRpc {
+public class AdminRoleServiceImpl implements RoleService {
 
     @Autowired
-    private AdminRoleRepository adminRoleRepository;
+    private RoleRepository adminRoleRepository;
 
     @Autowired
     private AdminMenuButtonRepository adminMenuButtonRepository;
 
     @Autowired
-    private AdminAuthorityRepository adminAuthorityRepository;
+    private UserRepository adminUserRepository;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     @PostMapping("/query")
@@ -71,9 +72,9 @@ public class AdminRoleController implements AdminRoleRpc {
                     .collect(Collectors.toList());
             var searchParamBuilder = SearchParamBuilder.builder().append(params);
             Pageable pageable = PageRequest.of(searchBo.getPageNum(), searchBo.getPageSize(), searchBo.getDirection(), searchBo.getProperty());
-            Page<AdminRole> adminRolePage = adminRoleRepository.findAll(searchParamBuilder, pageable);
+            Page<Role> adminRolePage = adminRoleRepository.findAll(searchParamBuilder, pageable);
             if (null != adminRolePage && adminRolePage.getTotalElements() > 0) {
-                List<AdminRole> adminRoleList = adminRolePage.getContent();
+                List<Role> adminRoleList = adminRolePage.getContent();
                 if (null != adminRoleList && adminRoleList.size() > 0) {
                     return adminRoleList.stream().map(adminRoleDto -> {
                         AdminRoleBo adminRoleBo = new AdminRoleBo();
@@ -96,7 +97,7 @@ public class AdminRoleController implements AdminRoleRpc {
     public Mono<AdminRoleBoRes> save(@RequestBody Mono<AdminRoleBo> adminRoleBoMono) {
         log.info("....save");
         return adminRoleBoMono.map(adminRoleBo -> {
-            AdminRole adminRole = new AdminRole();
+            Role adminRole = new Role();
             BeanUtils.copyProperties(adminRoleBo, adminRole);
             //判断是否有menus
             List<AdminMenuButtonBo> adminMenuButtonBos = adminRoleBo.getMenus();
@@ -110,19 +111,7 @@ public class AdminRoleController implements AdminRoleRpc {
                 adminRole.setAdminMenuButtons(adminMenuButtons);
             }
 
-            //判断是否有authorities
-            List<AdminAuthorityBo> adminAuthorityBos = adminRoleBo.getAuthorities();
-            if (null != adminAuthorityBos && !adminAuthorityBos.isEmpty()) {
-                //有的话就保存
-                Set<AdminAuthorityRef> adminAuthorityRefs = adminAuthorityBos.stream().map(adminAuthorityBo -> {
-                    AdminAuthorityRef adminAuthorityRef = new AdminAuthorityRef();
-                    adminAuthorityRef.setAuthorityId(adminAuthorityBo.getId());
-                    return adminAuthorityRef;
-                }).collect(Collectors.toSet());
-                adminRole.setAdminAuthorities(adminAuthorityRefs);
-            }
-
-            AdminRole adminRole1 = adminRoleRepository.save(adminRole);
+            Role adminRole1 = adminRoleRepository.save(adminRole);
             if (null != adminRole1) {
                 adminRoleBo.setId(adminRole1.getId());
                 return adminRoleBo;
@@ -141,11 +130,11 @@ public class AdminRoleController implements AdminRoleRpc {
     @PostMapping("/findOne")
     public Mono<AdminRoleBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
         return idLongReqMono.map(idLongReq -> {
-            Optional<AdminRole> adminRoleOptional = adminRoleRepository.findById(idLongReq.getId());
+            Optional<Role> adminRoleOptional = adminRoleRepository.findById(idLongReq.getId());
             if (!adminRoleOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过id:%d找到对应的角色记录", idLongReq.getId()));
             } else {
-                AdminRole adminRole = adminRoleOptional.get();
+                Role adminRole = adminRoleOptional.get();
                 AdminRoleBo adminRoleBo = new AdminRoleBo();
                 BeanUtils.copyProperties(adminRole, adminRoleBo);
 
@@ -158,25 +147,9 @@ public class AdminRoleController implements AdminRoleRpc {
                     List<AdminMenuButtonBo> adminMenuButtonBos = Lists.newArrayList(adminMenuButtons).stream().map(adminMenuButton -> {
                         AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
                         BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
-                        adminMenuButtonBo.setParentId(adminMenuButton.getParent());
                         return adminMenuButtonBo;
                     }).collect(Collectors.toList());
                     adminRoleBo.setMenus(adminMenuButtonBos);
-                }
-
-                //处理权限
-                Set<AdminAuthorityRef> adminAuthorityRefs = adminRole.getAdminAuthorities();
-                if (null != adminAuthorityRefs && !adminAuthorityRefs.isEmpty()) {
-                    List<Long> authorityIds = adminAuthorityRefs.stream().map(AdminAuthorityRef::getAuthorityId)
-                            .collect(Collectors.toList());
-
-                    Iterable<AdminAuthority> adminAuthorities = adminAuthorityRepository.findAllById(authorityIds);
-                    List<AdminAuthorityBo> adminAuthorityBos = Lists.newArrayList(adminAuthorities).stream().map(adminAuthority -> {
-                        AdminAuthorityBo adminAuthorityBo = new AdminAuthorityBo();
-                        BeanUtils.copyProperties(adminAuthority, adminAuthorityBo);
-                        return adminAuthorityBo;
-                    }).collect(Collectors.toList());
-                    adminRoleBo.setAuthorities(adminAuthorityBos);
                 }
                 return adminRoleBo;
             }
@@ -192,10 +165,10 @@ public class AdminRoleController implements AdminRoleRpc {
     @PostMapping("/softDelete")
     public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         return idsLongReqMono.map(idsLongReq -> {
-            Iterable<AdminRole> adminRoles = adminRoleRepository.findAllById(idsLongReq.getIds());
-            List<AdminRole> adminRoleList = Lists.newArrayList(adminRoles);
+            Iterable<Role> adminRoles = adminRoleRepository.findAllById(idsLongReq.getIds());
+            List<Role> adminRoleList = Lists.newArrayList(adminRoles);
             if (null != adminRoleList && adminRoleList.size() > 0) {
-                List<Long> ids = adminRoleList.stream().map(AdminRole::getId).collect(Collectors.toList());
+                List<Long> ids = adminRoleList.stream().map(Role::getId).collect(Collectors.toList());
                 adminRoleRepository.softDelete(ids);
                 return true;
             } else {
@@ -206,6 +179,63 @@ public class AdminRoleController implements AdminRoleRpc {
             booleanRes.setReturnObject(aBoolean);
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
             return booleanRes;
+        });
+    }
+
+    @Override
+    @PostMapping("/findAllMenuTree")
+    public Mono<AdminMenuButtonBoListRes> findAllMenuTree() {
+        return Mono.fromCallable(() -> {
+            Optional<List<AdminMenuButton>> optionalAdminMenuButtons = adminMenuButtonRepository.findAllEnable();
+            if (optionalAdminMenuButtons.isPresent() && !optionalAdminMenuButtons.get().isEmpty()) {
+                List<AdminMenuButton> adminMenuButtons = optionalAdminMenuButtons.get();
+                return adminMenuButtons.stream().map(adminMenuButton -> {
+                    AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+                    BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
+                    return adminMenuButtonBo;
+                }).collect(Collectors.toList());
+            } else {
+                return new ArrayList<AdminMenuButtonBo>();
+            }
+        }).map(adminMenuButtonBos -> {
+            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
+            adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
+            return adminMenuButtonBoListRes;
+        });
+    }
+
+
+    @Override
+    @PostMapping("/findAllByAdminRoleId")
+    public Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(@RequestBody Mono<IdLongReq> roleIdMono) {
+        //参数验证
+        return roleIdMono.map(idLongReq -> {
+            Long roleId = idLongReq.getId();
+            Optional<Role> adminRoleOptional = adminRoleRepository.findById(roleId);
+            if (!adminRoleOptional.isPresent()) {
+                throw Exceptions.throwIllegalStateException(String.format("can't find a role record in database by roleId:%d", roleId));
+            }
+            Role adminRole = adminRoleOptional.get();
+
+            Set<AdminMenuButtonRef> list = adminRole.getAdminMenuButtons();
+
+            if (null != list && !list.isEmpty()) {
+                List<Long> adminMenuIds = list.stream().map(AdminMenuButtonRef::getMenuId).collect(Collectors.toList());
+                Iterable<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findAllById(adminMenuIds);
+                return Lists.newArrayList(adminMenuButtons).stream().map(adminMenuButton -> {
+                    AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+                    BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
+                    return adminMenuButtonBo;
+                }).collect(Collectors.toList());
+            } else {
+                return new ArrayList<AdminMenuButtonBo>();
+            }
+        }).map(adminMenuButtonBos -> {
+            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
+            adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
+            return adminMenuButtonBoListRes;
         });
     }
 }

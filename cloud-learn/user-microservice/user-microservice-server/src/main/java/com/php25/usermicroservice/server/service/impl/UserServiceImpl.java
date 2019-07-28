@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.controller;
+package com.php25.usermicroservice.server.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
@@ -8,6 +8,7 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
+import com.php25.common.flux.Requests;
 import com.php25.usermicroservice.client.bo.AdminRoleBo;
 import com.php25.usermicroservice.client.bo.AdminUserBo;
 import com.php25.usermicroservice.client.bo.ChangePasswordBo;
@@ -16,12 +17,12 @@ import com.php25.usermicroservice.client.bo.SearchBo;
 import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
-import com.php25.usermicroservice.client.rpc.AdminUserRpc;
-import com.php25.usermicroservice.server.model.AdminRole;
-import com.php25.usermicroservice.server.model.AdminRoleRef;
-import com.php25.usermicroservice.server.model.AdminUser;
-import com.php25.usermicroservice.server.repository.AdminRoleRepository;
-import com.php25.usermicroservice.server.repository.AdminUserRepository;
+import com.php25.usermicroservice.client.rpc.AdminUserService;
+import com.php25.usermicroservice.server.model.Role;
+import com.php25.usermicroservice.server.model.RoleRef;
+import com.php25.usermicroservice.server.model.User;
+import com.php25.usermicroservice.server.repository.RoleRepository;
+import com.php25.usermicroservice.server.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,30 +51,30 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/adminUser")
-public class AdminUserController implements AdminUserRpc {
+public class UserServiceImpl implements AdminUserService {
 
     @Autowired
-    private AdminUserRepository adminUserRepository;
+    private UserRepository adminUserRepository;
 
     @Autowired
-    private AdminRoleRepository adminRoleRepository;
+    private RoleRepository adminRoleRepository;
 
     @Override
     @PostMapping("/login")
     public Mono<AdminUserBoRes> login(@RequestBody Mono<LoginBo> loginBoMono) {
         return loginBoMono.map(loginBo -> {
-            Optional<AdminUser> adminUserOptional = adminUserRepository.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
+            Optional<User> adminUserOptional = adminUserRepository.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
             if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException("无法通过username:" + loginBo.getUsername() + ",password:" + loginBo.getPassword() + "找到用户信息");
             } else {
-                AdminUser adminUser = adminUserOptional.get();
+                User adminUser = adminUserOptional.get();
                 AdminUserBo adminUserBo = new AdminUserBo();
                 BeanUtils.copyProperties(adminUser, adminUserBo);
 
                 if (null != adminUser.getRoles() && adminUser.getRoles().size() > 0) {
                     //加入角色信息
-                    var ids = adminUser.getRoles().stream().map(AdminRoleRef::getRoleId).collect(Collectors.toList());
-                    Iterable<AdminRole> adminRoles = adminRoleRepository.findAllById(ids);
+                    var ids = adminUser.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+                    Iterable<Role> adminRoles = adminRoleRepository.findAllById(ids);
                     var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
                         AdminRoleBo adminRoleBo = new AdminRoleBo();
                         BeanUtils.copyProperties(adminRole, adminRoleBo);
@@ -108,17 +110,17 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/changePassword")
     public Mono<BooleanRes> changePassword(@RequestBody Mono<ChangePasswordBo> changePasswordBoMono) {
         return changePasswordBoMono.map(changePasswordBo -> {
-            Optional<AdminUser> adminUserOptional = adminUserRepository.findById(changePasswordBo.getAdminUserId());
+            Optional<User> adminUserOptional = adminUserRepository.findById(changePasswordBo.getAdminUserId());
             if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
             }
 
-            AdminUser adminUser = adminUserOptional.get();
+            User adminUser = adminUserOptional.get();
             if (!adminUser.getPassword().equals(changePasswordBo.getOriginPassword())) {
                 throw Exceptions.throwIllegalStateException(String.format("originPassword:%s与数据库的密码不一样", changePasswordBo.getOriginPassword()));
             }
             adminUser.setPassword(changePasswordBo.getNewPassword());
-            AdminUser adminUser1 = adminUserRepository.save(adminUser);
+            User adminUser1 = adminUserRepository.save(adminUser);
             if (null != adminUser1) {
                 return true;
             } else {
@@ -136,15 +138,15 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping(value = "/findOne", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Mono<AdminUserBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
         return idLongReqMono.map(idLongReq -> {
-            Optional<AdminUser> adminUserOptional = adminUserRepository.findById(idLongReq.getId());
+            Optional<User> adminUserOptional = adminUserRepository.findById(idLongReq.getId());
             if (adminUserOptional.isPresent()) {
-                AdminUser adminUser = adminUserOptional.get();
+                User adminUser = adminUserOptional.get();
                 AdminUserBo adminUserBo = new AdminUserBo();
                 BeanUtils.copyProperties(adminUser, adminUserBo);
 
                 //加入角色信息
-                var ids = adminUser.getRoles().stream().map(AdminRoleRef::getRoleId).collect(Collectors.toList());
-                Iterable<AdminRole> adminRoles = adminRoleRepository.findAllById(ids);
+                var ids = adminUser.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+                Iterable<Role> adminRoles = adminRoleRepository.findAllById(ids);
                 var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
                     AdminRoleBo adminRoleBo = new AdminRoleBo();
                     BeanUtils.copyProperties(adminRole, adminRoleBo);
@@ -168,21 +170,21 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/save")
     public Mono<AdminUserBoRes> save(@RequestBody Mono<AdminUserBo> adminUserBoMono) {
         return adminUserBoMono.map(adminUserBo -> {
-            AdminUser adminUser = new AdminUser();
+            User adminUser = new User();
             BeanUtils.copyProperties(adminUserBo, adminUser);
             //是否有角色
             List<AdminRoleBo> adminRoleBoList = adminUserBo.getRoles();
             if (null != adminRoleBoList && !adminRoleBoList.isEmpty()) {
                 //处理角色
-                Set<AdminRoleRef> adminRoleRefs = adminRoleBoList.stream().map(adminRoleBo -> {
-                    AdminRoleRef adminRoleRef = new AdminRoleRef();
+                Set<RoleRef> adminRoleRefs = adminRoleBoList.stream().map(adminRoleBo -> {
+                    RoleRef adminRoleRef = new RoleRef();
                     adminRoleRef.setRoleId(adminRoleBo.getId());
                     return adminRoleRef;
                 }).collect(Collectors.toSet());
                 adminUser.setRoles(adminRoleRefs);
             }
 
-            AdminUser adminUser1 = adminUserRepository.save(adminUser);
+            User adminUser1 = adminUserRepository.save(adminUser);
             if (null != adminUser1) {
                 adminUserBo.setId(adminUser1.getId());
                 return adminUserBo;
@@ -202,8 +204,8 @@ public class AdminUserController implements AdminUserRpc {
     @PostMapping("/softDelete")
     public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
         return idsLongReqMono.map(idsLongReq -> {
-            Iterable<AdminUser> adminUsers = adminUserRepository.findAllById(idsLongReq.getIds());
-            var list = Lists.newArrayList(adminUsers).stream().map(AdminUser::getId).collect(Collectors.toList());
+            Iterable<User> adminUsers = adminUserRepository.findAllById(idsLongReq.getIds());
+            var list = Lists.newArrayList(adminUsers).stream().map(User::getId).collect(Collectors.toList());
             if (null != list && list.size() > 0) {
                 adminUserRepository.softDelete(list);
                 return true;
@@ -221,13 +223,18 @@ public class AdminUserController implements AdminUserRpc {
     @Override
     @PostMapping("/query")
     public Mono<AdminUserBoListRes> query(@RequestBody Mono<SearchBo> searchBoMono) {
-        return searchBoMono.map(searchBo -> {
+        return Requests.flatMap(searchBoMono).map(searchBoJwtRequest -> {
+            SearchBo searchBo1 = searchBoJwtRequest.getParamObject();
+            Jwt jwt = searchBoJwtRequest.getJwt();
+            log.info("jwt:{}", jwt.getSubject());
+            return searchBo1;
+        }).map(searchBo -> {
             var searchParams = searchBo.getSearchParams().stream()
                     .map(searchBoParam -> SearchParam.of(searchBoParam.getFieldName(), searchBoParam.getOperator(), searchBoParam.getValue())).collect(Collectors.toList());
             var searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
             var sort = Sort.by(searchBo.getDirection(), searchBo.getProperty());
             var page = PageRequest.of(searchBo.getPageNum(), searchBo.getPageSize(), sort);
-            Page<AdminUser> adminUserPage = adminUserRepository.findAll(searchParamBuilder, page);
+            Page<User> adminUserPage = adminUserRepository.findAll(searchParamBuilder, page);
             if (null != adminUserPage && adminUserPage.getTotalElements() > 0) {
                 return adminUserPage.stream().map(adminUserDto -> {
                     AdminUserBo adminUserBo = new AdminUserBo();

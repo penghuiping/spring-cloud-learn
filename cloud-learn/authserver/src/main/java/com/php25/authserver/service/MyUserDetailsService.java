@@ -5,7 +5,7 @@ import com.php25.common.flux.ApiErrorCode;
 import com.php25.usermicroservice.client.bo.CustomerBo;
 import com.php25.usermicroservice.client.bo.StringBo;
 import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
-import com.php25.usermicroservice.client.rpc.CustomerRpc;
+import com.php25.usermicroservice.client.rpc.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    CustomerRpc customerRpc;
+    CustomerService customerRpc;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

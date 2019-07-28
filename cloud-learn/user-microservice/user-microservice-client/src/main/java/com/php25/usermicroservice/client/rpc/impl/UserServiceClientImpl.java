@@ -10,7 +10,7 @@ import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
 import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
 import com.php25.usermicroservice.client.bo.res.BooleanRes;
 import com.php25.usermicroservice.client.constant.Constant;
-import com.php25.usermicroservice.client.rpc.AdminUserRpc;
+import com.php25.usermicroservice.client.rpc.AdminUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
  * @description:
  */
 @Component
-public class AdminUserRpcImpl implements AdminUserRpc {
+public class UserServiceClientImpl implements AdminUserService {
 
     @Autowired
     private LoadBalancerExchangeFilterFunction lbFunction;

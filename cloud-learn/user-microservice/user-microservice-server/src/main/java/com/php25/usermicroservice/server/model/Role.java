@@ -5,17 +5,20 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
- * 用户类
- * Created by penghuiping on 16/9/2.
+ * 后台管理操作实体类
+ * Created by penghuiping on 1/13/15.
  */
 @Setter
 @Getter
-@Table("userservice_customer")
-public class Customer {
+@Table("userservice_role")
+public class Role implements GrantedAuthority {
+
     /**
      * 主键id
      */
@@ -23,51 +26,27 @@ public class Customer {
     private Long id;
 
     /**
-     * 用户名
+     * 角色名
      */
-    @Column
-    private String username;
+    @Column("role_name")
+    private String name;
 
     /**
-     * 昵称
+     * 角色描述
      */
     @Column
-    private String nickname;
-
-    /**
-     * 手机
-     */
-    @Column
-    private String mobile;
-
-    /**
-     * 密码
-     */
-    @Column
-    private String password;
-
-    /**
-     * 邮箱
-     */
-    @Column
-    private String email;
-
-    /**
-     * 头像
-     */
-    @Column(value = "image_id")
-    private String imageId;
+    private String description;
 
     /**
      * 创建时间
      */
-    @Column(value = "create_time")
+    @Column("create_time")
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @Column(value = "update_time")
+    @Column("update_time")
     private LocalDateTime updateTime;
 
     /**
@@ -75,4 +54,15 @@ public class Customer {
      */
     @Column
     private Integer enable;
+
+    /**
+     * 此角色对应的菜单与按钮集合
+     */
+    @Column("role_id")
+    private Set<AdminMenuButtonRef> adminMenuButtons;
+
+    @Override
+    public String getAuthority() {
+        return this.getName();
+    }
 }
