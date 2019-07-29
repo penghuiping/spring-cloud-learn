@@ -37,6 +37,7 @@ public class WebSecurityConfig {
         value = value.pathMatchers("/adminUser/*").hasAuthority("admin");
         value = value.pathMatchers("/adminRole/*").hasAuthority("admin");
         value = value.pathMatchers("/customer/*").hasAuthority("customer");
+        value = value.pathMatchers("/oauth2/*").hasAuthority("admin");
         return value.anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {

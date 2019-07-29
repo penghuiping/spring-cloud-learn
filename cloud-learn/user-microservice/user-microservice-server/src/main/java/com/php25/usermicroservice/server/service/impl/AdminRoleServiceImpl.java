@@ -9,14 +9,14 @@ import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
 import com.php25.common.redis.RedisService;
-import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
-import com.php25.usermicroservice.client.bo.AdminRoleBo;
-import com.php25.usermicroservice.client.bo.SearchBo;
-import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
-import com.php25.usermicroservice.client.bo.res.BooleanRes;
-import com.php25.usermicroservice.client.rpc.RoleService;
+import com.php25.usermicroservice.client.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.client.dto.AdminRoleDto;
+import com.php25.usermicroservice.client.dto.SearchDto;
+import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminRoleDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminRoleDtoRes;
+import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.usermicroservice.client.service.RoleService;
 import com.php25.usermicroservice.server.model.AdminMenuButton;
 import com.php25.usermicroservice.server.model.AdminMenuButtonRef;
 import com.php25.usermicroservice.server.model.Role;
@@ -65,8 +65,8 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/query")
-    public Mono<AdminRoleBoListRes> query(@RequestBody Mono<SearchBo> searchBoMono) {
-        return searchBoMono.map(searchBo -> {
+    public Mono<AdminRoleDtoListRes> query(@RequestBody SearchDto searchDto) {
+        return Mono.just(searchDto).map(searchBo -> {
             var params = searchBo.getSearchParams().stream()
                     .map(searchParam -> SearchParam.of(searchParam.getFieldName(), searchParam.getOperator(), searchParam.getValue()))
                     .collect(Collectors.toList());
@@ -77,15 +77,15 @@ public class AdminRoleServiceImpl implements RoleService {
                 List<Role> adminRoleList = adminRolePage.getContent();
                 if (null != adminRoleList && adminRoleList.size() > 0) {
                     return adminRoleList.stream().map(adminRoleDto -> {
-                        AdminRoleBo adminRoleBo = new AdminRoleBo();
+                        AdminRoleDto adminRoleBo = new AdminRoleDto();
                         BeanUtils.copyProperties(adminRoleDto, adminRoleBo);
                         return adminRoleBo;
                     }).collect(Collectors.toList());
                 }
             }
-            return new ArrayList<AdminRoleBo>();
+            return new ArrayList<AdminRoleDto>();
         }).map(adminRoleBos -> {
-            AdminRoleBoListRes adminRoleBoListRes = new AdminRoleBoListRes();
+            AdminRoleDtoListRes adminRoleBoListRes = new AdminRoleDtoListRes();
             adminRoleBoListRes.setErrorCode(ApiErrorCode.ok.value);
             adminRoleBoListRes.setReturnObject(adminRoleBos);
             return adminRoleBoListRes;
@@ -94,13 +94,13 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/save")
-    public Mono<AdminRoleBoRes> save(@RequestBody Mono<AdminRoleBo> adminRoleBoMono) {
+    public Mono<AdminRoleDtoRes> save(@RequestBody AdminRoleDto adminRoleDto) {
         log.info("....save");
-        return adminRoleBoMono.map(adminRoleBo -> {
+        return Mono.just(adminRoleDto).map(adminRoleBo -> {
             Role adminRole = new Role();
             BeanUtils.copyProperties(adminRoleBo, adminRole);
             //判断是否有menus
-            List<AdminMenuButtonBo> adminMenuButtonBos = adminRoleBo.getMenus();
+            List<AdminMenuButtonDto> adminMenuButtonBos = adminRoleBo.getMenus();
             if (null != adminMenuButtonBos && !adminMenuButtonBos.isEmpty()) {
                 //有的话就保存
                 Set<AdminMenuButtonRef> adminMenuButtons = adminMenuButtonBos.stream().map(adminMenuButtonBo -> {
@@ -119,7 +119,7 @@ public class AdminRoleServiceImpl implements RoleService {
                 throw Exceptions.throwIllegalStateException("保存角色失败:" + JsonUtil.toJson(adminRoleBo));
             }
         }).map(adminRoleBo -> {
-            AdminRoleBoRes adminRoleBoRes = new AdminRoleBoRes();
+            AdminRoleDtoRes adminRoleBoRes = new AdminRoleDtoRes();
             adminRoleBoRes.setErrorCode(ApiErrorCode.ok.value);
             adminRoleBoRes.setReturnObject(adminRoleBo);
             return adminRoleBoRes;
@@ -128,14 +128,14 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<AdminRoleBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
-        return idLongReqMono.map(idLongReq -> {
+    public Mono<AdminRoleDtoRes> findOne(@RequestBody IdLongReq idLongReq1) {
+        return Mono.just(idLongReq1).map(idLongReq -> {
             Optional<Role> adminRoleOptional = adminRoleRepository.findById(idLongReq.getId());
             if (!adminRoleOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过id:%d找到对应的角色记录", idLongReq.getId()));
             } else {
                 Role adminRole = adminRoleOptional.get();
-                AdminRoleBo adminRoleBo = new AdminRoleBo();
+                AdminRoleDto adminRoleBo = new AdminRoleDto();
                 BeanUtils.copyProperties(adminRole, adminRoleBo);
 
                 //处理菜单与按钮
@@ -144,8 +144,8 @@ public class AdminRoleServiceImpl implements RoleService {
                     List<Long> menuIds = adminMenuButtonRefs.stream().map(AdminMenuButtonRef::getMenuId)
                             .collect(Collectors.toList());
                     Iterable<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findAllById(menuIds);
-                    List<AdminMenuButtonBo> adminMenuButtonBos = Lists.newArrayList(adminMenuButtons).stream().map(adminMenuButton -> {
-                        AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+                    List<AdminMenuButtonDto> adminMenuButtonBos = Lists.newArrayList(adminMenuButtons).stream().map(adminMenuButton -> {
+                        AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
                         BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
                         return adminMenuButtonBo;
                     }).collect(Collectors.toList());
@@ -154,7 +154,7 @@ public class AdminRoleServiceImpl implements RoleService {
                 return adminRoleBo;
             }
         }).map(adminRoleBo -> {
-            AdminRoleBoRes adminRoleBoRes = new AdminRoleBoRes();
+            AdminRoleDtoRes adminRoleBoRes = new AdminRoleDtoRes();
             adminRoleBoRes.setErrorCode(ApiErrorCode.ok.value);
             adminRoleBoRes.setReturnObject(adminRoleBo);
             return adminRoleBoRes;
@@ -163,8 +163,8 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/softDelete")
-    public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
-        return idsLongReqMono.map(idsLongReq -> {
+    public Mono<BooleanRes> softDelete(@RequestBody IdsLongReq idsLongReq1) {
+        return Mono.just(idsLongReq1).map(idsLongReq -> {
             Iterable<Role> adminRoles = adminRoleRepository.findAllById(idsLongReq.getIds());
             List<Role> adminRoleList = Lists.newArrayList(adminRoles);
             if (null != adminRoleList && adminRoleList.size() > 0) {
@@ -184,21 +184,21 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/findAllMenuTree")
-    public Mono<AdminMenuButtonBoListRes> findAllMenuTree() {
+    public Mono<AdminMenuButtonDtoListRes> findAllMenuTree() {
         return Mono.fromCallable(() -> {
             Optional<List<AdminMenuButton>> optionalAdminMenuButtons = adminMenuButtonRepository.findAllEnable();
             if (optionalAdminMenuButtons.isPresent() && !optionalAdminMenuButtons.get().isEmpty()) {
                 List<AdminMenuButton> adminMenuButtons = optionalAdminMenuButtons.get();
                 return adminMenuButtons.stream().map(adminMenuButton -> {
-                    AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+                    AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
                     BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
                     return adminMenuButtonBo;
                 }).collect(Collectors.toList());
             } else {
-                return new ArrayList<AdminMenuButtonBo>();
+                return new ArrayList<AdminMenuButtonDto>();
             }
         }).map(adminMenuButtonBos -> {
-            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            AdminMenuButtonDtoListRes adminMenuButtonBoListRes = new AdminMenuButtonDtoListRes();
             adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
             adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
             return adminMenuButtonBoListRes;
@@ -208,9 +208,9 @@ public class AdminRoleServiceImpl implements RoleService {
 
     @Override
     @PostMapping("/findAllByAdminRoleId")
-    public Mono<AdminMenuButtonBoListRes> findAllByAdminRoleId(@RequestBody Mono<IdLongReq> roleIdMono) {
+    public Mono<AdminMenuButtonDtoListRes> findAllByAdminRoleId(@RequestBody IdLongReq idLongReq1) {
         //参数验证
-        return roleIdMono.map(idLongReq -> {
+        return Mono.just(idLongReq1).map(idLongReq -> {
             Long roleId = idLongReq.getId();
             Optional<Role> adminRoleOptional = adminRoleRepository.findById(roleId);
             if (!adminRoleOptional.isPresent()) {
@@ -224,15 +224,15 @@ public class AdminRoleServiceImpl implements RoleService {
                 List<Long> adminMenuIds = list.stream().map(AdminMenuButtonRef::getMenuId).collect(Collectors.toList());
                 Iterable<AdminMenuButton> adminMenuButtons = adminMenuButtonRepository.findAllById(adminMenuIds);
                 return Lists.newArrayList(adminMenuButtons).stream().map(adminMenuButton -> {
-                    AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+                    AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
                     BeanUtils.copyProperties(adminMenuButton, adminMenuButtonBo);
                     return adminMenuButtonBo;
                 }).collect(Collectors.toList());
             } else {
-                return new ArrayList<AdminMenuButtonBo>();
+                return new ArrayList<AdminMenuButtonDto>();
             }
         }).map(adminMenuButtonBos -> {
-            AdminMenuButtonBoListRes adminMenuButtonBoListRes = new AdminMenuButtonBoListRes();
+            AdminMenuButtonDtoListRes adminMenuButtonBoListRes = new AdminMenuButtonDtoListRes();
             adminMenuButtonBoListRes.setErrorCode(ApiErrorCode.ok.value);
             adminMenuButtonBoListRes.setReturnObject(adminMenuButtonBos);
             return adminMenuButtonBoListRes;

@@ -8,16 +8,15 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
-import com.php25.common.flux.Requests;
-import com.php25.usermicroservice.client.bo.AdminRoleBo;
-import com.php25.usermicroservice.client.bo.AdminUserBo;
-import com.php25.usermicroservice.client.bo.ChangePasswordBo;
-import com.php25.usermicroservice.client.bo.LoginBo;
-import com.php25.usermicroservice.client.bo.SearchBo;
-import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
-import com.php25.usermicroservice.client.bo.res.BooleanRes;
-import com.php25.usermicroservice.client.rpc.AdminUserService;
+import com.php25.usermicroservice.client.dto.AdminRoleDto;
+import com.php25.usermicroservice.client.dto.AdminUserDto;
+import com.php25.usermicroservice.client.dto.ChangePasswordDto;
+import com.php25.usermicroservice.client.dto.LoginDto;
+import com.php25.usermicroservice.client.dto.SearchDto;
+import com.php25.usermicroservice.client.dto.res.AdminUserDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminUserDtoRes;
+import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.usermicroservice.client.service.AdminUserService;
 import com.php25.usermicroservice.server.model.Role;
 import com.php25.usermicroservice.server.model.RoleRef;
 import com.php25.usermicroservice.server.model.User;
@@ -30,7 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,14 +59,14 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/login")
-    public Mono<AdminUserBoRes> login(@RequestBody Mono<LoginBo> loginBoMono) {
-        return loginBoMono.map(loginBo -> {
+    public Mono<AdminUserDtoRes> login(@RequestBody LoginDto loginDto) {
+        return Mono.just(loginDto).map(loginBo -> {
             Optional<User> adminUserOptional = adminUserRepository.findByUsernameAndPassword(loginBo.getUsername(), loginBo.getPassword());
             if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException("无法通过username:" + loginBo.getUsername() + ",password:" + loginBo.getPassword() + "找到用户信息");
             } else {
                 User adminUser = adminUserOptional.get();
-                AdminUserBo adminUserBo = new AdminUserBo();
+                AdminUserDto adminUserBo = new AdminUserDto();
                 BeanUtils.copyProperties(adminUser, adminUserBo);
 
                 if (null != adminUser.getRoles() && adminUser.getRoles().size() > 0) {
@@ -76,7 +74,7 @@ public class UserServiceImpl implements AdminUserService {
                     var ids = adminUser.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
                     Iterable<Role> adminRoles = adminRoleRepository.findAllById(ids);
                     var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
-                        AdminRoleBo adminRoleBo = new AdminRoleBo();
+                        AdminRoleDto adminRoleBo = new AdminRoleDto();
                         BeanUtils.copyProperties(adminRole, adminRoleBo);
                         return adminRoleBo;
                     }).collect(Collectors.toList());
@@ -85,7 +83,7 @@ public class UserServiceImpl implements AdminUserService {
                 return adminUserBo;
             }
         }).map(adminUserBo -> {
-            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            AdminUserDtoRes adminUserBoRes = new AdminUserDtoRes();
             adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
             adminUserBoRes.setReturnObject(adminUserBo);
             return adminUserBoRes;
@@ -94,9 +92,9 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/resetPassword")
-    public Mono<BooleanRes> resetPassword(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
+    public Mono<BooleanRes> resetPassword(@RequestBody IdsLongReq idsLongReq1) {
         //初始化密码为123456
-        return idsLongReqMono.map(idsLongReq ->
+        return Mono.just(idsLongReq1).map(idsLongReq ->
                 adminUserRepository.updatePassword("123456", idsLongReq.getIds()))
                 .map(aBoolean -> {
                     BooleanRes booleanRes = new BooleanRes();
@@ -108,8 +106,8 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/changePassword")
-    public Mono<BooleanRes> changePassword(@RequestBody Mono<ChangePasswordBo> changePasswordBoMono) {
-        return changePasswordBoMono.map(changePasswordBo -> {
+    public Mono<BooleanRes> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+        return Mono.just(changePasswordDto).map(changePasswordBo -> {
             Optional<User> adminUserOptional = adminUserRepository.findById(changePasswordBo.getAdminUserId());
             if (!adminUserOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过adminUserId:%d找到相关的后台用户信息", changePasswordBo.getAdminUserId()));
@@ -136,19 +134,19 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping(value = "/findOne", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Mono<AdminUserBoRes> findOne(@RequestBody Mono<IdLongReq> idLongReqMono) {
-        return idLongReqMono.map(idLongReq -> {
+    public Mono<AdminUserDtoRes> findOne(@RequestBody IdLongReq idLongReq1) {
+        return Mono.just(idLongReq1).map(idLongReq -> {
             Optional<User> adminUserOptional = adminUserRepository.findById(idLongReq.getId());
             if (adminUserOptional.isPresent()) {
                 User adminUser = adminUserOptional.get();
-                AdminUserBo adminUserBo = new AdminUserBo();
+                AdminUserDto adminUserBo = new AdminUserDto();
                 BeanUtils.copyProperties(adminUser, adminUserBo);
 
                 //加入角色信息
                 var ids = adminUser.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
                 Iterable<Role> adminRoles = adminRoleRepository.findAllById(ids);
                 var adminRoleBos = Lists.newArrayList(adminRoles).stream().map(adminRole -> {
-                    AdminRoleBo adminRoleBo = new AdminRoleBo();
+                    AdminRoleDto adminRoleBo = new AdminRoleDto();
                     BeanUtils.copyProperties(adminRole, adminRoleBo);
                     return adminRoleBo;
                 }).collect(Collectors.toList());
@@ -159,7 +157,7 @@ public class UserServiceImpl implements AdminUserService {
                 throw Exceptions.throwIllegalStateException("无法通过id:" + idLongReq.toString() + "找到对应的后台用户");
             }
         }).map(adminUserBo -> {
-            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            AdminUserDtoRes adminUserBoRes = new AdminUserDtoRes();
             adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
             adminUserBoRes.setReturnObject(adminUserBo);
             return adminUserBoRes;
@@ -168,12 +166,12 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/save")
-    public Mono<AdminUserBoRes> save(@RequestBody Mono<AdminUserBo> adminUserBoMono) {
-        return adminUserBoMono.map(adminUserBo -> {
+    public Mono<AdminUserDtoRes> save(@RequestBody AdminUserDto adminUserDto) {
+        return Mono.just(adminUserDto).map(adminUserBo -> {
             User adminUser = new User();
             BeanUtils.copyProperties(adminUserBo, adminUser);
             //是否有角色
-            List<AdminRoleBo> adminRoleBoList = adminUserBo.getRoles();
+            List<AdminRoleDto> adminRoleBoList = adminUserBo.getRoles();
             if (null != adminRoleBoList && !adminRoleBoList.isEmpty()) {
                 //处理角色
                 Set<RoleRef> adminRoleRefs = adminRoleBoList.stream().map(adminRoleBo -> {
@@ -192,7 +190,7 @@ public class UserServiceImpl implements AdminUserService {
                 throw Exceptions.throwIllegalStateException("保存用户信息失败:" + JsonUtil.toJson(adminUserBo));
             }
         }).map(adminUserBo -> {
-            AdminUserBoRes adminUserBoRes = new AdminUserBoRes();
+            AdminUserDtoRes adminUserBoRes = new AdminUserDtoRes();
             adminUserBoRes.setErrorCode(ApiErrorCode.ok.value);
             adminUserBoRes.setReturnObject(adminUserBo);
             return adminUserBoRes;
@@ -202,8 +200,8 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/softDelete")
-    public Mono<BooleanRes> softDelete(@RequestBody Mono<IdsLongReq> idsLongReqMono) {
-        return idsLongReqMono.map(idsLongReq -> {
+    public Mono<BooleanRes> softDelete(@RequestBody IdsLongReq idsLongReq1) {
+        return Mono.just(idsLongReq1).map(idsLongReq -> {
             Iterable<User> adminUsers = adminUserRepository.findAllById(idsLongReq.getIds());
             var list = Lists.newArrayList(adminUsers).stream().map(User::getId).collect(Collectors.toList());
             if (null != list && list.size() > 0) {
@@ -222,13 +220,8 @@ public class UserServiceImpl implements AdminUserService {
 
     @Override
     @PostMapping("/query")
-    public Mono<AdminUserBoListRes> query(@RequestBody Mono<SearchBo> searchBoMono) {
-        return Requests.flatMap(searchBoMono).map(searchBoJwtRequest -> {
-            SearchBo searchBo1 = searchBoJwtRequest.getParamObject();
-            Jwt jwt = searchBoJwtRequest.getJwt();
-            log.info("jwt:{}", jwt.getSubject());
-            return searchBo1;
-        }).map(searchBo -> {
+    public Mono<AdminUserDtoListRes> query(@RequestBody SearchDto searchDto) {
+        return Mono.just(searchDto).map(searchBo -> {
             var searchParams = searchBo.getSearchParams().stream()
                     .map(searchBoParam -> SearchParam.of(searchBoParam.getFieldName(), searchBoParam.getOperator(), searchBoParam.getValue())).collect(Collectors.toList());
             var searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
@@ -237,15 +230,15 @@ public class UserServiceImpl implements AdminUserService {
             Page<User> adminUserPage = adminUserRepository.findAll(searchParamBuilder, page);
             if (null != adminUserPage && adminUserPage.getTotalElements() > 0) {
                 return adminUserPage.stream().map(adminUserDto -> {
-                    AdminUserBo adminUserBo = new AdminUserBo();
+                    AdminUserDto adminUserBo = new AdminUserDto();
                     BeanUtils.copyProperties(adminUserDto, adminUserBo);
                     return adminUserBo;
                 }).collect(Collectors.toList());
             } else {
-                return new ArrayList<AdminUserBo>();
+                return new ArrayList<AdminUserDto>();
             }
         }).map(adminUserBos -> {
-            AdminUserBoListRes adminUserBoListRes = new AdminUserBoListRes();
+            AdminUserDtoListRes adminUserBoListRes = new AdminUserDtoListRes();
             adminUserBoListRes.setErrorCode(ApiErrorCode.ok.value);
             adminUserBoListRes.setReturnObject(adminUserBos);
             return adminUserBoListRes;

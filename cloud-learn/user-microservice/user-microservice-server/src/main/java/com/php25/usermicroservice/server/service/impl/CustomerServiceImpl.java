@@ -1,21 +1,21 @@
 package com.php25.usermicroservice.server.service.impl;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.ApiErrorCode;
-import com.php25.common.flux.IdStringReq;
-import com.php25.usermicroservice.client.bo.CustomerBo;
-import com.php25.usermicroservice.client.bo.LoginBo;
-import com.php25.usermicroservice.client.bo.LoginByEmailBo;
-import com.php25.usermicroservice.client.bo.LoginByMobileBo;
-import com.php25.usermicroservice.client.bo.ResetPwdByEmailBo;
-import com.php25.usermicroservice.client.bo.ResetPwdByMobileBo;
-import com.php25.usermicroservice.client.bo.StringBo;
-import com.php25.usermicroservice.client.bo.res.BooleanRes;
-import com.php25.usermicroservice.client.bo.res.CustomerBoRes;
-import com.php25.usermicroservice.client.bo.res.StringRes;
-import com.php25.usermicroservice.client.rpc.CustomerService;
+import com.php25.common.flux.IdLongReq;
+import com.php25.usermicroservice.client.dto.CustomerDto;
+import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
+import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
+import com.php25.usermicroservice.client.dto.StringDto;
+import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.usermicroservice.client.service.CustomerService;
+import com.php25.usermicroservice.server.constant.UserBusinessError;
+import com.php25.usermicroservice.server.model.Role;
+import com.php25.usermicroservice.server.model.RoleRef;
 import com.php25.usermicroservice.server.model.User;
 import com.php25.usermicroservice.server.repository.RoleRepository;
 import com.php25.usermicroservice.server.repository.UserRepository;
@@ -29,9 +29,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author: penghuiping
@@ -45,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Autowired
-    private UserRepository customerRepository;
+    private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -55,9 +56,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/register")
-    public Mono<BooleanRes> register(@RequestBody Mono<CustomerBo> customerBoMono) {
-        return customerBoMono.map(customerBo -> {
-            Optional<User> customerDtoOptional = customerRepository.findByMobile(customerBo.getMobile());
+    public Mono<BooleanRes> register(@RequestBody CustomerDto customerDto) {
+        return Mono.just(customerDto).map(customerBo -> {
+            Optional<User> customerDtoOptional = userRepository.findByMobile(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("%s手机号在系统中已经存在,无法注册", customerDtoOptional.get().getMobile()));
             }
@@ -72,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerBo.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
             User user = new User();
             BeanUtils.copyProperties(customerBo, user);
-            User customerDtoOptional1 = customerRepository.save(user);
+            User customerDtoOptional1 = userRepository.save(user);
             if (customerDtoOptional1 != null) {
                 return true;
             } else {
@@ -87,82 +88,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @PostMapping("/loginByUsername")
-    public Mono<StringRes> loginByUsername(@RequestBody Mono<LoginBo> loginBoMono) {
-        return loginBoMono.map(loginBo -> {
-            String username = loginBo.getUsername();
-            String password = loginBo.getPassword();
-            Optional<User> customer = customerRepository.findByUsernameAndPassword(username, password);
-            if (!customer.isPresent()) {
-                throw Exceptions.throwIllegalStateException(String.format("无法通过用户名:%s与密码:%s找到对应的客户信息", username, password));
-            }
-            Map<String, Object> map = new HashMap<>();
-            map.put("customer", customer.get());
-            //生成jwt
-            return tokenJwtService.getToken(customer.get().getId().toString(), map);
-        }).map(jwt -> {
-            StringRes stringRes = new StringRes();
-            stringRes.setErrorCode(ApiErrorCode.ok.value);
-            stringRes.setReturnObject(jwt);
-            return stringRes;
-        });
-    }
-
-    @Override
-    @PostMapping("/loginByMobile")
-    public Mono<StringRes> loginByMobile(@RequestBody Mono<LoginByMobileBo> loginByMobileBoMono) {
-        return loginByMobileBoMono.map(loginByMobileBo -> {
-            String mobile = loginByMobileBo.getMobile();
-            Optional<User> optionalCustomer = customerRepository.findByMobile(mobile);
-            if (!optionalCustomer.isPresent()) {
-                throw Exceptions.throwIllegalStateException(String.format("无法通过手机号:%s找到相关数据", mobile));
-            }
-
-            User customerDto = optionalCustomer.get();
-            Map<String, Object> map = new HashMap<>();
-            map.put("customer", customerDto);
-            //生成jwt
-            return tokenJwtService.getToken(customerDto.getId().toString(), map);
-        }).map(jwt -> {
-            StringRes stringRes = new StringRes();
-            stringRes.setErrorCode(ApiErrorCode.ok.value);
-            stringRes.setReturnObject(jwt);
-            return stringRes;
-        });
-    }
-
-    @Override
-    @PostMapping("/loginByEmail")
-    public Mono<StringRes> loginByEmail(@RequestBody Mono<LoginByEmailBo> loginByEmailBoMono) {
-        return loginByEmailBoMono.map(loginByEmailBo -> {
-            String email = loginByEmailBo.getEmail();
-            Optional<User> optionalCustomer = customerRepository.findByEmail(email);
-            if (!optionalCustomer.isPresent()) {
-                throw Exceptions.throwIllegalStateException(String.format("无法通过邮箱:%s找到相关数据", email));
-            }
-
-            User customerDto = optionalCustomer.get();
-            Map<String, Object> map = new HashMap<>();
-            map.put("customer", customerDto);
-            //生成jwt
-            String jwt = tokenJwtService.getToken(customerDto.getId().toString(), map);
-            return jwt;
-        }).map(jwt -> {
-            StringRes stringRes = new StringRes();
-            stringRes.setErrorCode(ApiErrorCode.ok.value);
-            stringRes.setReturnObject(jwt);
-            return stringRes;
-        });
-    }
-
-
-    @Override
     @PostMapping("/resetPasswordByMobile")
-    public Mono<BooleanRes> resetPasswordByMobile(@RequestBody Mono<ResetPwdByMobileBo> resetPwdByMobileBoMono) {
-        return resetPwdByMobileBoMono.map(resetPwdByMobileBo -> {
+    public Mono<BooleanRes> resetPasswordByMobile(@RequestBody ResetPwdByMobileDto resetPwdByMobileDto) {
+        return Mono.just(resetPwdByMobileDto).map(resetPwdByMobileBo -> {
             String mobile = resetPwdByMobileBo.getMobile();
             String newPassword = resetPwdByMobileBo.getNewPassword();
-            Optional<User> customerDtoOptional = customerRepository.findByMobile(mobile);
+            Optional<User> customerDtoOptional = userRepository.findByMobile(mobile);
             if (!customerDtoOptional.isPresent()) {
                 return false;
             }
@@ -170,7 +101,7 @@ public class CustomerServiceImpl implements CustomerService {
             //重置密码
             User customerDto = customerDtoOptional.get();
             customerDto.setPassword(newPassword);
-            User newCustomerOptional = customerRepository.save(customerDto);
+            User newCustomerOptional = userRepository.save(customerDto);
             if (newCustomerOptional != null) {
                 return false;
             }
@@ -185,11 +116,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/resetPasswordByEmail")
-    public Mono<BooleanRes> resetPasswordByEmail(@RequestBody Mono<ResetPwdByEmailBo> resetPwdByEmailBoMono) {
-        return resetPwdByEmailBoMono.map(resetPwdByEmailBo -> {
+    public Mono<BooleanRes> resetPasswordByEmail(@RequestBody ResetPwdByEmailDto resetPwdByEmailDto) {
+        return Mono.just(resetPwdByEmailDto).map(resetPwdByEmailBo -> {
             String email = resetPwdByEmailBo.getEmail();
             String newPassword = resetPwdByEmailBo.getNewPassword();
-            Optional<User> customerDtoOptional = customerRepository.findByEmail(email);
+            Optional<User> customerDtoOptional = userRepository.findByEmail(email);
             if (!customerDtoOptional.isPresent()) {
                 return false;
             }
@@ -197,7 +128,7 @@ public class CustomerServiceImpl implements CustomerService {
             //重置密码
             User customerDto = customerDtoOptional.get();
             customerDto.setPassword(newPassword);
-            User newCustomerOptional = customerRepository.save(customerDto);
+            User newCustomerOptional = userRepository.save(customerDto);
             if (newCustomerOptional != null) {
                 return false;
             }
@@ -212,48 +143,34 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<CustomerBoRes> findOne(@RequestBody Mono<IdStringReq> jwtMono) {
-        return jwtMono.map(idStringReq -> {
-            String customerIdStr = tokenJwtService.getKeyByToken(idStringReq.getId());
-            Long customerId = Long.valueOf(customerIdStr);
-            Optional<User> customerDtoOptional = customerRepository.findById(customerId);
+    public Mono<CustomerDtoRes> findOne(@RequestBody IdLongReq idLongReq) {
+        return Mono.just(idLongReq).map(idLongReq1 -> {
+            Long customerId = idLongReq1.getId();
+            Optional<User> customerDtoOptional = userRepository.findById(customerId);
 
             if (!customerDtoOptional.isPresent()) {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过customerId:%s找到对应的客户信息", customerId));
             }
-            User customerDto = customerDtoOptional.get();
-            CustomerBo customerBo = new CustomerBo();
-            BeanUtils.copyProperties(customerDto, customerBo);
-            customerBo.setJwt(idStringReq.getId());
-            return customerBo;
+            User user = customerDtoOptional.get();
+            CustomerDto customerDto = new CustomerDto();
+            BeanUtils.copyProperties(user, customerDto);
+            return customerDto;
         }).map(customerBo -> {
-            CustomerBoRes customerBoRes = new CustomerBoRes();
+            CustomerDtoRes customerBoRes = new CustomerDtoRes();
             customerBoRes.setErrorCode(ApiErrorCode.ok.value);
             customerBoRes.setReturnObject(customerBo);
             return customerBoRes;
         });
     }
 
-    @Override
-    @PostMapping("/validateJwt")
-    public Mono<BooleanRes> validateJwt(@RequestBody Mono<IdStringReq> jwtMono) {
-        return jwtMono
-                .map(idStringReq -> tokenJwtService.verifyToken(idStringReq.getId()))
-                .map(aBoolean -> {
-                    BooleanRes booleanRes = new BooleanRes();
-                    booleanRes.setErrorCode(ApiErrorCode.ok.value);
-                    booleanRes.setReturnObject(aBoolean);
-                    return booleanRes;
-                });
-    }
 
     @Override
     @PostMapping("/update")
-    public Mono<BooleanRes> update(@RequestBody Mono<CustomerBo> customerBoMono) {
-        return customerBoMono.map(customerBo -> {
-            User customerDto = new User();
-            BeanUtils.copyProperties(customerBo, customerDto);
-            User customerDtoOptional = customerRepository.save(customerDto);
+    public Mono<BooleanRes> update(@RequestBody CustomerDto customerDto) {
+        return Mono.just(customerDto).map(customerBo -> {
+            User user = new User();
+            BeanUtils.copyProperties(customerBo, user);
+            User customerDtoOptional = userRepository.save(user);
             if (customerDtoOptional != null) {
                 return false;
             } else {
@@ -269,20 +186,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/findCustomerByMobile")
-    public Mono<CustomerBoRes> findCustomerByMobile(@RequestBody Mono<StringBo> mobileMono) {
-        return mobileMono.map(stringBo -> {
+    public Mono<CustomerDtoRes> findCustomerByMobile(@RequestBody StringDto mobileParam) {
+        return Mono.just(mobileParam).map(stringBo -> {
             String mobile = stringBo.getContent();
-            Optional<User> customerDtoOptional = customerRepository.findByMobile(mobile);
+            Optional<User> customerDtoOptional = userRepository.findByMobile(mobile);
             if (customerDtoOptional.isPresent()) {
                 User customerDto = customerDtoOptional.get();
-                CustomerBo customerBo = new CustomerBo();
+                CustomerDto customerBo = new CustomerDto();
                 BeanUtils.copyProperties(customerDto, customerBo);
                 return customerBo;
             } else {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过mobile:%s找到对应的客户信息", mobile));
             }
         }).map(customerBo -> {
-            CustomerBoRes customerBoRes = new CustomerBoRes();
+            CustomerDtoRes customerBoRes = new CustomerDtoRes();
             customerBoRes.setErrorCode(ApiErrorCode.ok.value);
             customerBoRes.setReturnObject(customerBo);
             return customerBoRes;
@@ -290,21 +207,32 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @PostMapping("/logout")
-    public Mono<BooleanRes> logout(@RequestBody Mono<IdStringReq> jwtMono) {
-        return jwtMono.map(idStringReq -> {
-            if (!tokenJwtService.verifyToken(idStringReq.getId())) {
-                log.info("jwt不合法,登出失败");
-                return false;
+    @PostMapping("/findCustomerByUsername")
+    public Mono<CustomerDtoRes> findCustomerByUsername(@RequestBody StringDto username) {
+        return Mono.just(username).map(stringDto -> {
+            String username1 = stringDto.getContent();
+            Optional<User> userOptional = userRepository.findByUsername(username1);
+            if (!userOptional.isPresent()) {
+                throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
+            } else {
+                User user = userOptional.get();
+                return user;
             }
-            return tokenJwtService.cleanToken(idStringReq.getId());
-        }).map(aBoolean -> {
-            BooleanRes booleanRes = new BooleanRes();
-            booleanRes.setErrorCode(ApiErrorCode.ok.value);
-            booleanRes.setReturnObject(aBoolean);
-            return booleanRes;
-        });
+        }).map(user -> {
+            CustomerDto customerDto = new CustomerDto();
+            BeanUtils.copyProperties(user, customerDto, "roles");
 
+            if (null != user.getRoles() && !user.getRoles().isEmpty()) {
+               List<Long> roleIds = user.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+               Set<String> roleNames = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toSet());
+               customerDto.setRoles(roleNames);
+            }
+
+            CustomerDtoRes customerDtoRes = new CustomerDtoRes();
+            customerDtoRes.setErrorCode(ApiErrorCode.ok.value);
+            customerDtoRes.setReturnObject(customerDto);
+            return customerDtoRes;
+        });
     }
 
 //    @Override

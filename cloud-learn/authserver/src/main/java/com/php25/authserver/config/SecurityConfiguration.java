@@ -1,5 +1,6 @@
 package com.php25.authserver.config;
 
+import com.php25.common.core.service.SnowflakeIdWorker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,24 +21,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/oauth/**")
+                .authenticated()
+                .and().httpBasic();
+    }
+
+    @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.requestMatchers().anyRequest()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/oauth/**").authenticated()
-                .and().httpBasic();
+    @Bean
+    SnowflakeIdWorker snowflakeIdWorker() {
+        return new SnowflakeIdWorker(3, 0);
     }
 
 

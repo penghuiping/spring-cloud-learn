@@ -57,13 +57,7 @@ spring:
   #      master: master
   #      nodes: 10.182.175.63:26380,10.182.175.64:26380
   #    password: ${app.redis.password}
-  ########################################################
-  ### fileupload
-  ########################################################
-  servlet:
-    multipart:
-      max-file-size: 10Mb
-      max-request-size: 1000Mb
+
 
 
 

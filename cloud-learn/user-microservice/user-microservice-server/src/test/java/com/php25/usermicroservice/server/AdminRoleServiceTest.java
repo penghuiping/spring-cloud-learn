@@ -5,14 +5,14 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
-import com.php25.usermicroservice.client.bo.AdminMenuButtonBo;
-import com.php25.usermicroservice.client.bo.AdminRoleBo;
-import com.php25.usermicroservice.client.bo.SearchBo;
-import com.php25.usermicroservice.client.bo.SearchBoParam;
-import com.php25.usermicroservice.client.bo.res.AdminMenuButtonBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminRoleBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminRoleBoRes;
-import com.php25.usermicroservice.client.bo.res.BooleanRes;
+import com.php25.usermicroservice.client.dto.AdminMenuButtonDto;
+import com.php25.usermicroservice.client.dto.AdminRoleDto;
+import com.php25.usermicroservice.client.dto.SearchDto;
+import com.php25.usermicroservice.client.dto.SearchDtoParam;
+import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminRoleDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminRoleDtoRes;
+import com.php25.usermicroservice.client.dto.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,18 +45,18 @@ public class AdminRoleServiceTest {
 
     @Test
     public void save() {
-        AdminRoleBo adminRoleBo = new AdminRoleBo();
+        AdminRoleDto adminRoleBo = new AdminRoleDto();
         adminRoleBo.setName("admin1");
         adminRoleBo.setDescription("管理员1");
         adminRoleBo.setCreateTime(LocalDateTime.now());
         adminRoleBo.setUpdateTime(LocalDateTime.now());
         adminRoleBo.setEnable(1);
 
-        AdminMenuButtonBo adminMenuButtonBo = new AdminMenuButtonBo();
+        AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
         adminMenuButtonBo.setId(1L);
-        AdminMenuButtonBo adminMenuButtonBo1 = new AdminMenuButtonBo();
+        AdminMenuButtonDto adminMenuButtonBo1 = new AdminMenuButtonDto();
         adminMenuButtonBo1.setId(2L);
-        AdminMenuButtonBo adminMenuButtonBo3 = new AdminMenuButtonBo();
+        AdminMenuButtonDto adminMenuButtonBo3 = new AdminMenuButtonDto();
         adminMenuButtonBo3.setId(3L);
         adminRoleBo.setMenus(List.of(adminMenuButtonBo, adminMenuButtonBo1, adminMenuButtonBo3));
 
@@ -68,7 +68,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleBoRes.class);
+                .expectBody(AdminRoleDtoRes.class);
 
         log.info("/adminRole/save:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
 
@@ -77,12 +77,12 @@ public class AdminRoleServiceTest {
 
     @Test
     public void query() {
-        var searchBoParam = new SearchBoParam();
+        var searchBoParam = new SearchDtoParam();
         searchBoParam.setFieldName("role_name");
         searchBoParam.setOperator(Operator.EQ);
         searchBoParam.setValue("admin");
         var params = List.of(searchBoParam);
-        var searchBo = new SearchBo(params, 1, 5, Sort.Direction.ASC, "id");
+        var searchBo = new SearchDto(params, 1, 5, Sort.Direction.ASC, "id");
 
         var result = webTestClient.post().uri("/adminRole/query")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -91,7 +91,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleBoListRes.class);
+                .expectBody(AdminRoleDtoListRes.class);
 
         log.info("/adminRole/query:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -109,7 +109,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleBoRes.class);
+                .expectBody(AdminRoleDtoRes.class);
 
         log.info("/adminRole/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -141,7 +141,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminMenuButtonBoListRes.class);
+                .expectBody(AdminMenuButtonDtoListRes.class);
 
         log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -159,7 +159,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminMenuButtonBoListRes.class);
+                .expectBody(AdminMenuButtonDtoListRes.class);
 
         log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }

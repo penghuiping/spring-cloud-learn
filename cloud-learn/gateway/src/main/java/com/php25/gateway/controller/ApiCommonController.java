@@ -13,29 +13,27 @@ import com.php25.common.redis.RedisService;
 import com.php25.gateway.constant.BusinessError;
 import com.php25.gateway.vo.CustomerVo;
 import com.php25.gateway.vo.req.GetMsgCodeReq;
-import com.php25.gateway.vo.req.LoginByMobileReq;
-import com.php25.gateway.vo.req.LoginByUsernameReq;
 import com.php25.gateway.vo.req.RegisterReq;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.rpc.MailRpc;
 import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
-import com.php25.usermicroservice.client.bo.CustomerBo;
-import com.php25.usermicroservice.client.bo.LoginBo;
-import com.php25.usermicroservice.client.bo.LoginByMobileBo;
-import com.php25.usermicroservice.client.bo.StringBo;
-import com.php25.usermicroservice.client.rpc.CustomerService;
+import com.php25.usermicroservice.client.dto.CustomerDto;
+import com.php25.usermicroservice.client.dto.StringDto;
+import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -79,100 +77,6 @@ public class ApiCommonController extends JSONController {
     }
 
 
-    @PostMapping(value = "/common/loginByMobile.do")
-    public Mono<JSONResponse> loginByMobile(@Valid Mono<LoginByMobileReq> loginByMobileReqMono) {
-        return loginByMobileReqMono.map(params -> {
-            LoginByMobileBo loginByMobileBo = new LoginByMobileBo();
-            loginByMobileBo.setCode(params.getMsgCode());
-            loginByMobileBo.setMobile(params.getMobile());
-            return loginByMobileBo;
-        }).flatMap(loginByMobileBo -> customerRpc.loginByMobile(Mono.just(loginByMobileBo)).flatMap(jwtRes -> {
-            if (jwtRes.getErrorCode() == ApiErrorCode.ok.value) {
-                log.info("无法找到相应的手机号对应的用户记录,手机号为{}", loginByMobileBo.getMobile());
-                throw Exceptions.throwBusinessException(BusinessError.MOBILE_NOT_EXIST_ERROR);
-            } else {
-                String jwt = jwtRes.getReturnObject();
-                IdStringReq idStringReq = new IdStringReq();
-                idStringReq.setId(jwt);
-                return Mono.just(idStringReq);
-            }
-        }).flatMap(idStringReq -> {
-            var customerBoResMono = customerRpc.findOne(Mono.just(idStringReq));
-            return customerBoResMono.flatMap(customerBoRes -> {
-                if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                    CustomerVo customerVo = new CustomerVo();
-                    CustomerBo customerBo = customerBoRes.getReturnObject();
-                    log.info("用户信息为:{}", JsonUtil.toJson(customerBo));
-                    BeanUtils.copyProperties(customerBo, customerVo);
-                    IdStringReq idStringReq1 = new IdStringReq();
-                    idStringReq1.setId(customerBo.getImageId());
-                    customerVo.setToken(idStringReq.getId());
-                    return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-                        if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                            customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-                        }
-                        return succeed(customerVo);
-                    });
-                } else {
-                    throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
-                }
-            });
-        }));
-    }
-
-
-    @PostMapping(value = "/common/loginByUsername.do")
-    public Mono<JSONResponse> loginByUsername(@Valid Mono<LoginByUsernameReq> loginByUsernameReqMono) {
-        return loginByUsernameReqMono
-                .map(params -> {
-                    //获取参数
-                    String username = params.getUsername();
-                    String password = params.getPassword();
-                    String kaptchaCode = params.getKaptchaCode();
-
-                    //验证图形验证码
-                    if (!redisService.exists("kaptcha" + kaptchaCode)) {
-                        throw Exceptions.throwBusinessException(BusinessError.KAPTCHA_ERROR);
-                    } else {
-                        redisService.remove("kaptcha" + kaptchaCode);
-                    }
-
-                    LoginBo loginBo = new LoginBo();
-                    loginBo.setPassword(password);
-                    loginBo.setUsername(username);
-                    return loginBo;
-                    //登入认证
-                }).flatMap(loginBo -> customerRpc.loginByUsername(Mono.just(loginBo)).flatMap(jwtRes -> {
-                    if (ApiErrorCode.ok.value != jwtRes.getErrorCode()) {
-                        throw Exceptions.throwBusinessException(BusinessError.USERNAME_PASSWORD_ERROR);
-                    } else {
-                        //根据jwt查询用户信息
-                        String jwt = jwtRes.getReturnObject();
-                        IdStringReq idStringReq = new IdStringReq();
-                        idStringReq.setId(jwt);
-                        return customerRpc.findOne(Mono.just(idStringReq));
-                    }
-                }).flatMap(customerBoRes -> {
-                    if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
-                        throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
-                    } else {
-                        //获取头像
-                        IdStringReq idStringReq1 = new IdStringReq();
-                        idStringReq1.setId(customerBoRes.getReturnObject().getImageId());
-                        return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-                            CustomerVo customerVo = new CustomerVo();
-                            BeanUtils.copyProperties(customerBoRes.getReturnObject(), customerVo);
-                            customerVo.setToken(customerBoRes.getReturnObject().getJwt());
-                            if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                                customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-                            }
-                            return succeed(customerVo);
-                        });
-                    }
-                }));
-    }
-
-
     @PostMapping(value = "/common/register.do")
     public Mono<JSONResponse> register(@Valid Mono<RegisterReq> registerReqMono) {
 
@@ -196,9 +100,9 @@ public class ApiCommonController extends JSONController {
         }).flatMap(validateSMSReq -> {
             //根据手机号查询用户信息
             String mobile = validateSMSReq.getMobile();
-            StringBo stringBo = new StringBo();
+            StringDto stringBo = new StringDto();
             stringBo.setContent(mobile);
-            return customerRpc.findCustomerByMobile(Mono.just(stringBo));
+            return customerRpc.findCustomerByMobile(stringBo);
         });
 
 
@@ -208,7 +112,7 @@ public class ApiCommonController extends JSONController {
                 log.info("{},此手机号在系统中已经存在", registerReq.getMobile());
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_ALREADY_EXIST_ERROR);
             } else {
-                CustomerBo customerBo1 = new CustomerBo();
+                CustomerDto customerBo1 = new CustomerDto();
                 customerBo1.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
                 customerBo1.setCreateTime(LocalDateTime.now());
                 customerBo1.setEnable(1);
@@ -217,7 +121,7 @@ public class ApiCommonController extends JSONController {
                 customerBo1.setUsername(username);
                 customerBo1.setPassword(password);
                 //注册
-                return customerRpc.register(Mono.just(customerBo1));
+                return customerRpc.register(customerBo1);
             }
         }).flatMap(booleanResMono -> booleanResMono.map(booleanRes -> {
             if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
@@ -245,33 +149,35 @@ public class ApiCommonController extends JSONController {
 //    }
 
 
-    //    @GetMapping(value = "/common/showCustomerInfo.do")
-//    public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) {
-//        IdStringReq idStringReq = new IdStringReq();
-//        idStringReq.setId(jwt);
-//        return customerRpc.findOne(Mono.just(idStringReq)).flatMap(customerBoRes -> {
-//            if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
-//                return Mono.just(failed(BusinessError.COMMON_ERROR));
-//            } else {
-//                CustomerBo customerBo = customerBoRes.getReturnObject();
-//                CustomerVo customerVo = new CustomerVo();
-//                BeanUtils.copyProperties(customerBo, customerVo);
-//                customerVo.setToken(jwt);
-//
-//                IdStringReq idStringReq1 = new IdStringReq();
-//                idStringReq1.setId(customerBo.getImageId());
-//
-//                return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-//                    if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-//                        customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
-//                    }
-//                    return succeed(customerVo);
-//                });
-//            }
-//        });
-//    }
-//
-//
+    @GetMapping(value = "/common/showCustomerInfo.do")
+    public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "jwt") String jwt,
+                                               @NotBlank @RequestHeader(name = "username") String username) {
+        StringDto idStringReq = new StringDto();
+        idStringReq.setJwt(jwt);
+        idStringReq.setContent(username);
+
+        return customerRpc.findCustomerByUsername(idStringReq).flatMap(customerBoRes -> {
+            if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
+                return Mono.just(failed(BusinessError.COMMON_ERROR));
+            } else {
+                CustomerDto customerBo = customerBoRes.getReturnObject();
+                CustomerVo customerVo = new CustomerVo();
+                BeanUtils.copyProperties(customerBo, customerVo);
+                customerVo.setToken(jwt);
+
+                IdStringReq idStringReq1 = new IdStringReq();
+                idStringReq1.setId(customerBo.getImageId());
+
+                return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
+                    if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                        customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
+                    }
+                    return succeed(customerVo);
+                });
+            }
+        });
+    }
+
     @GetMapping(value = "/common/kaptchaRender.do")
     public Mono<JSONResponse> kaptchaRender() {
         return Mono.fromCallable(() -> {

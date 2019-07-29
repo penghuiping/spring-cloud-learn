@@ -5,15 +5,15 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.IdLongReq;
 import com.php25.common.flux.IdsLongReq;
-import com.php25.usermicroservice.client.bo.AdminRoleBo;
-import com.php25.usermicroservice.client.bo.AdminUserBo;
-import com.php25.usermicroservice.client.bo.ChangePasswordBo;
-import com.php25.usermicroservice.client.bo.LoginBo;
-import com.php25.usermicroservice.client.bo.SearchBo;
-import com.php25.usermicroservice.client.bo.SearchBoParam;
-import com.php25.usermicroservice.client.bo.res.AdminUserBoListRes;
-import com.php25.usermicroservice.client.bo.res.AdminUserBoRes;
-import com.php25.usermicroservice.client.bo.res.BooleanRes;
+import com.php25.usermicroservice.client.dto.AdminRoleDto;
+import com.php25.usermicroservice.client.dto.AdminUserDto;
+import com.php25.usermicroservice.client.dto.ChangePasswordDto;
+import com.php25.usermicroservice.client.dto.LoginDto;
+import com.php25.usermicroservice.client.dto.SearchDto;
+import com.php25.usermicroservice.client.dto.SearchDtoParam;
+import com.php25.usermicroservice.client.dto.res.AdminUserDtoListRes;
+import com.php25.usermicroservice.client.dto.res.AdminUserDtoRes;
+import com.php25.usermicroservice.client.dto.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +45,7 @@ public class AdminUserServiceTest {
 
     @Test
     public void save() {
-        AdminUserBo adminUserBo = new AdminUserBo();
+        AdminUserDto adminUserBo = new AdminUserDto();
         adminUserBo.setNickname("mary");
         adminUserBo.setUsername("mary");
         adminUserBo.setEmail("123@qq.com");
@@ -55,7 +55,7 @@ public class AdminUserServiceTest {
         adminUserBo.setMobile("18621287362");
         adminUserBo.setPassword("123456");
 
-        AdminRoleBo adminRoleBo = new AdminRoleBo();
+        AdminRoleDto adminRoleBo = new AdminRoleDto();
         adminRoleBo.setId(2L);
         adminUserBo.setRoles(List.of(adminRoleBo));
 
@@ -66,7 +66,7 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserBoRes.class);
+                .expectBody(AdminUserDtoRes.class);
 
         log.info("/adminUser/save:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -74,7 +74,7 @@ public class AdminUserServiceTest {
 
     @Test
     public void login() {
-        LoginBo loginBo = new LoginBo();
+        LoginDto loginBo = new LoginDto();
         loginBo.setUsername("jack");
         loginBo.setPassword("123456");
 
@@ -85,7 +85,7 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserBoRes.class);
+                .expectBody(AdminUserDtoRes.class);
 
         log.info("/adminUser/login:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -113,7 +113,7 @@ public class AdminUserServiceTest {
 
     @Test
     public void changePassword() {
-        ChangePasswordBo changePasswordBo = new ChangePasswordBo();
+        ChangePasswordDto changePasswordBo = new ChangePasswordDto();
         changePasswordBo.setAdminUserId(1L);
         changePasswordBo.setNewPassword("654321");
         changePasswordBo.setOriginPassword("123456");
@@ -143,7 +143,7 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserBoRes.class);
+                .expectBody(AdminUserDtoRes.class);
 
         log.info("/adminUser/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -170,12 +170,12 @@ public class AdminUserServiceTest {
 
     @Test
     public void query() {
-        var searchBoParam = new SearchBoParam();
+        var searchBoParam = new SearchDtoParam();
         searchBoParam.setFieldName("username");
         searchBoParam.setOperator(Operator.EQ);
         searchBoParam.setValue("jack");
         var params = List.of(searchBoParam);
-        var searchBo = new SearchBo(params, 1, 5, Sort.Direction.ASC, "id");
+        var searchBo = new SearchDto(params, 1, 5, Sort.Direction.ASC, "id");
 
         var result = webTestClient.post().uri("/adminUser/query")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -184,7 +184,7 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserBoListRes.class);
+                .expectBody(AdminUserDtoListRes.class);
 
         log.info("/adminUser/query:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
