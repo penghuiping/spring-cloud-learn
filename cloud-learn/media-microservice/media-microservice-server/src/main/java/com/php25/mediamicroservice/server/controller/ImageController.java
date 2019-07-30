@@ -1,6 +1,9 @@
 package com.php25.mediamicroservice.server.controller;
 
+import com.google.common.collect.Lists;
+import com.j256.simplemagic.ContentInfoUtil;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.util.DigestUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
@@ -9,17 +12,21 @@ import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
-import com.php25.mediamicroservice.server.dto.ImgDto;
-import com.php25.mediamicroservice.server.service.ImageService;
+import com.php25.mediamicroservice.server.model.Img;
+import com.php25.mediamicroservice.server.repository.ImgRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,20 +42,45 @@ import java.util.stream.Collectors;
 @RequestMapping("/img")
 public class ImageController implements ImageRpc {
 
+    @Value("${base_assets_upload_path}")
+    private String resourcePath;
+
+    @Value("${base_assets_upload_url}")
+    private String resourceUrl;
+
     @Autowired
-    private ImageService imageService;
+    private ImgRepository imgRepository;
 
     @Override
     @PostMapping("/save")
     public Mono<String> save(@RequestBody Mono<Base64ImageBo> base64ImageReqMono) {
-        return base64ImageReqMono.map(base64ImageReq -> imageService.save(base64ImageReq.getContent()));
+        return base64ImageReqMono.map(base64ImageReq -> {
+            String base64Image = base64ImageReq.getContent();
+            //获取文件类型
+            var arr = DigestUtil.decodeBase64(base64Image);
+            var util = new ContentInfoUtil();
+            var info = util.findMatch(arr);
+            String name = DigestUtil.SHAStr(base64Image) + "." + info.getFileExtensions()[0];
+            String absolutePath = resourcePath + "/" + name;
+
+            //写入文件
+            var path1 = Paths.get(absolutePath);
+            try {
+                if (!Files.exists(path1)) {
+                    Files.write(path1, arr);
+                }
+            } catch (IOException e) {
+                throw Exceptions.throwIllegalStateException("写入文件出错", e);
+            }
+            return name;
+        });
     }
 
     @Override
     @PostMapping("/findOne")
     public Mono<ImgBoRes> findOne(@RequestBody Mono<IdStringReq> idStringReqMono) {
         return idStringReqMono.map(idStringReq -> {
-            Optional<ImgDto> imgDtoOptional = imageService.findOne(idStringReq.getId());
+            Optional<Img> imgDtoOptional = imgRepository.findById(idStringReq.getId());
             if (imgDtoOptional.isPresent()) {
                 ImgBo imgBo = new ImgBo();
                 BeanUtils.copyProperties(imgDtoOptional.get(), imgBo);
@@ -68,9 +100,10 @@ public class ImageController implements ImageRpc {
     @PostMapping("/findAll")
     public Mono<ImgBoListRes> findAll(@RequestBody Mono<IdsStringReq> idsStringReqMono) {
         return idsStringReqMono.map(idsStringReq -> {
-            Optional<List<ImgDto>> optionalImgDtos = imageService.findAll(idsStringReq.getIds());
-            if (optionalImgDtos.isPresent() && !optionalImgDtos.get().isEmpty()) {
-                return optionalImgDtos.get().stream().map(imgDto -> {
+            Iterable<Img> imgIterable = imgRepository.findAllById(idsStringReq.getIds());
+            List<Img> imgs = Lists.newArrayList(imgIterable);
+            if (null != imgs && imgs.size() > 0) {
+                return imgs.stream().map(imgDto -> {
                     ImgBo imgBo = new ImgBo();
                     BeanUtils.copyProperties(imgDto, imgBo);
                     return imgBo;

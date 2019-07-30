@@ -113,7 +113,7 @@ public class ApiCommonController extends JSONController {
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_ALREADY_EXIST_ERROR);
             } else {
                 CustomerDto customerBo1 = new CustomerDto();
-                customerBo1.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                customerBo1.setId(idGeneratorService.getSnowflakeId().longValue());
                 customerBo1.setCreateTime(LocalDateTime.now());
                 customerBo1.setEnable(1);
                 String username = registerReq.getUsername();

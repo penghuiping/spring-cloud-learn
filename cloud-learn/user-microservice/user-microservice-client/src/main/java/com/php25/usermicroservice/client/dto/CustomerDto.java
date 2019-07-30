@@ -4,6 +4,7 @@ import com.php25.common.flux.BaseDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -20,6 +21,7 @@ public class CustomerDto extends BaseDto implements Serializable {
     /**
      * 用户名
      */
+    @NotBlank
     private String username;
 
     /**
@@ -30,11 +32,13 @@ public class CustomerDto extends BaseDto implements Serializable {
     /**
      * 手机
      */
+    @NotBlank
     private String mobile;
 
     /**
      * 密码
      */
+    @NotBlank
     private String password;
 
     /**

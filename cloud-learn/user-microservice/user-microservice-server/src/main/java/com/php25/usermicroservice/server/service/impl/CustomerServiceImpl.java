@@ -19,7 +19,6 @@ import com.php25.usermicroservice.server.model.RoleRef;
 import com.php25.usermicroservice.server.model.User;
 import com.php25.usermicroservice.server.repository.RoleRepository;
 import com.php25.usermicroservice.server.repository.UserRepository;
-import com.php25.usermicroservice.server.service.TokenJwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
     private RoleRepository roleRepository;
     @Autowired
     private IdGeneratorService idGeneratorService;
-    @Autowired
-    private TokenJwtService tokenJwtService;
+
 
     @Override
     @PostMapping("/register")
@@ -65,12 +63,12 @@ public class CustomerServiceImpl implements CustomerService {
 
             //判断username是否存在，如果不存在，自动补上
             if (StringUtil.isBlank(customerBo.getUsername())) {
-                customerBo.setUsername(idGeneratorService.getModelPrimaryKey());
+                customerBo.setUsername(idGeneratorService.getSnowflakeId().longValue() + "");
             }
             //刚注册的用户都是合法用户
             customerBo.setEnable(1);
             //生成前台用户主键
-            customerBo.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+            customerBo.setId(idGeneratorService.getSnowflakeId().longValue());
             User user = new User();
             BeanUtils.copyProperties(customerBo, user);
             User customerDtoOptional1 = userRepository.save(user);
@@ -223,9 +221,9 @@ public class CustomerServiceImpl implements CustomerService {
             BeanUtils.copyProperties(user, customerDto, "roles");
 
             if (null != user.getRoles() && !user.getRoles().isEmpty()) {
-               List<Long> roleIds = user.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
-               Set<String> roleNames = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toSet());
-               customerDto.setRoles(roleNames);
+                List<Long> roleIds = user.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+                Set<String> roleNames = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toSet());
+                customerDto.setRoles(roleNames);
             }
 
             CustomerDtoRes customerDtoRes = new CustomerDtoRes();

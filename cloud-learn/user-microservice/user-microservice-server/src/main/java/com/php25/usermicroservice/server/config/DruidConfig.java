@@ -199,12 +199,12 @@ public class DruidConfig {
                     log.info("adminUser save...");
                     User adminUser = (User) entity;
                     //todo 优化 uid
-                    adminUser.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                    adminUser.setId(idGeneratorService.getSnowflakeId().longValue());
                 }
             } else if (entity instanceof Role) {
                 if (null == ((Role) entity).getId()) {
                     Role adminRole = (Role) entity;
-                    adminRole.setId(idGeneratorService.getModelPrimaryKeyNumber().longValue());
+                    adminRole.setId(idGeneratorService.getSnowflakeId().longValue());
                 }
             }
         };
