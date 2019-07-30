@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.server.config;
 
 import com.php25.common.core.util.AssertUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @date: 2019/7/26 17:49
  * @description:
  */
+@Slf4j
 @Configuration
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
@@ -33,22 +35,24 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        ServerHttpSecurity.AuthorizeExchangeSpec value = http.csrf().disable().authorizeExchange();
-        value = value.pathMatchers("/adminUser/*").hasAuthority("admin");
-        value = value.pathMatchers("/adminRole/*").hasAuthority("admin");
-        value = value.pathMatchers("/customer/*").hasAuthority("customer");
-        value = value.pathMatchers("/oauth2/*").hasAuthority("admin");
-        return value.anyExchange().authenticated()
+        return http.csrf().disable()
+                .authorizeExchange()
+                .pathMatchers("/adminUser/**","/adminRole/**","/oauth2/**").hasAuthority("admin")
+                .pathMatchers("/customer/**").hasAuthority("customer")
+                .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {
                     @Override
                     protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
                         Collection<String> authorities = (Collection<String>) jwt.getHeaders().get("authorities");
+                        log.info("authorities:{}",authorities);
                         return authorities.stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .collect(Collectors.toList());
                     }
-                })).and().and().build();
+                }))
+                .and().and().build();
+
     }
 
 
@@ -60,7 +64,6 @@ public class WebSecurityConfig {
 
     private PublicKey loadPublicKey(String pubStr) {
         AssertUtil.hasText(pubStr, "pubStr不能为空");
-
         try {
             byte[] keyBytes = Base64.getDecoder().decode(pubStr);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);

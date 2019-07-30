@@ -1,4 +1,4 @@
-package com.php25.mediamicroservice.server.controller;
+package com.php25.mediamicroservice.server.service;
 
 import com.google.common.collect.Lists;
 import com.j256.simplemagic.ContentInfoUtil;
@@ -11,7 +11,7 @@ import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
-import com.php25.mediamicroservice.client.rpc.ImageRpc;
+import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.mediamicroservice.server.model.Img;
 import com.php25.mediamicroservice.server.repository.ImgRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/img")
-public class ImageController implements ImageRpc {
+public class ImageServiceImpl implements ImageService {
 
     @Value("${base_assets_upload_path}")
     private String resourcePath;
@@ -53,8 +53,8 @@ public class ImageController implements ImageRpc {
 
     @Override
     @PostMapping("/save")
-    public Mono<String> save(@RequestBody Mono<Base64ImageBo> base64ImageReqMono) {
-        return base64ImageReqMono.map(base64ImageReq -> {
+    public Mono<String> save(@RequestBody Base64ImageBo base64ImageReq1) {
+        return Mono.just(base64ImageReq1).map(base64ImageReq -> {
             String base64Image = base64ImageReq.getContent();
             //获取文件类型
             var arr = DigestUtil.decodeBase64(base64Image);
@@ -78,15 +78,15 @@ public class ImageController implements ImageRpc {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<ImgBoRes> findOne(@RequestBody Mono<IdStringReq> idStringReqMono) {
-        return idStringReqMono.map(idStringReq -> {
+    public Mono<ImgBoRes> findOne(@RequestBody IdStringReq idStringReq1) {
+        return Mono.just(idStringReq1).map(idStringReq -> {
             Optional<Img> imgDtoOptional = imgRepository.findById(idStringReq.getId());
             if (imgDtoOptional.isPresent()) {
                 ImgBo imgBo = new ImgBo();
                 BeanUtils.copyProperties(imgDtoOptional.get(), imgBo);
                 return imgBo;
             } else {
-                throw Exceptions.throwIllegalStateException(String.format("无法通过%s找到对应的图片", idStringReqMono));
+                throw Exceptions.throwIllegalStateException(String.format("无法通过%s找到对应的图片", idStringReq.getId()));
             }
         }).map(imgBo -> {
             ImgBoRes imgBoRes = new ImgBoRes();
@@ -98,8 +98,8 @@ public class ImageController implements ImageRpc {
 
     @Override
     @PostMapping("/findAll")
-    public Mono<ImgBoListRes> findAll(@RequestBody Mono<IdsStringReq> idsStringReqMono) {
-        return idsStringReqMono.map(idsStringReq -> {
+    public Mono<ImgBoListRes> findAll(@RequestBody IdsStringReq idsStringReq1) {
+        return Mono.just(idsStringReq1).map(idsStringReq -> {
             Iterable<Img> imgIterable = imgRepository.findAllById(idsStringReq.getIds());
             List<Img> imgs = Lists.newArrayList(imgIterable);
             if (null != imgs && imgs.size() > 0) {

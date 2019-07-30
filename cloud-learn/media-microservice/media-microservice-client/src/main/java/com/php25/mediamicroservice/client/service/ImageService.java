@@ -1,4 +1,4 @@
-package com.php25.mediamicroservice.client.rpc;
+package com.php25.mediamicroservice.client.service;
 
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
@@ -14,21 +14,21 @@ import javax.validation.Valid;
  * @Date: 2018/6/22 11:09
  * @Description:
  */
-public interface ImageRpc {
+public interface ImageService {
 
     /**
      * 保存base64Image图片，并返回保存的文件名
      */
-    public Mono<String> save(@Valid Mono<Base64ImageBo> base64ImageReqMono);
+    public Mono<String> save(@Valid Base64ImageBo base64ImageReq);
 
     /**
      * 通过图片id查询图片信息
      */
-    public Mono<ImgBoRes> findOne(@Valid Mono<IdStringReq> idStringReqMono);
+    public Mono<ImgBoRes> findOne(@Valid IdStringReq idStringReq);
 
 
     /**
      * 批量查询图片信息
      */
-    public Mono<ImgBoListRes> findAll(@Valid Mono<IdsStringReq> idsStringReqMono);
+    public Mono<ImgBoListRes> findAll(@Valid IdsStringReq idsStringReq);
 }

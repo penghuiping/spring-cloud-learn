@@ -14,13 +14,14 @@ import com.php25.gateway.constant.BusinessError;
 import com.php25.gateway.vo.CustomerVo;
 import com.php25.gateway.vo.req.GetMsgCodeReq;
 import com.php25.gateway.vo.req.RegisterReq;
-import com.php25.mediamicroservice.client.rpc.ImageRpc;
+import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.service.MailService;
 import com.php25.notifymicroservice.client.service.MobileMessageService;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.StringDto;
+import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
 import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -46,16 +47,16 @@ import java.time.LocalDateTime;
 public class ApiCommonController extends JSONController {
 
     @Autowired
-    private CustomerService customerRpc;
+    private CustomerService customerService;
 
     @Autowired
-    private MailService mailRpc;
+    private MailService mailService;
 
     @Autowired
-    private MobileMessageService mobileMessageRpc;
+    private MobileMessageService mobileMessageService;
 
     @Autowired
-    private ImageRpc imageRpc;
+    private ImageService imageService;
 
     @Autowired
     private IdGeneratorService idGeneratorService;
@@ -71,7 +72,7 @@ public class ApiCommonController extends JSONController {
             log.info(JsonUtil.toPrettyJson(params));
             var sendSmsReq = new SendSMSReq();
             sendSmsReq.setMobile(params.getMobile());
-            return mobileMessageRpc.sendSMS(Mono.just(sendSmsReq))
+            return mobileMessageService.sendSMS(Mono.just(sendSmsReq))
                     .map(booleanRes -> succeed(booleanRes.getReturnObject()));
         });
     }
@@ -90,7 +91,7 @@ public class ApiCommonController extends JSONController {
             return validateSMSReq1;
         }).flatMap(validateSMSReq -> {
             //效验短信验证码
-            return mobileMessageRpc.validateSMS(Mono.just(validateSMSReq)).map(booleanRes -> {
+            return mobileMessageService.validateSMS(Mono.just(validateSMSReq)).map(booleanRes -> {
                 if (booleanRes.getErrorCode() != ApiErrorCode.ok.value || !booleanRes.getReturnObject()) {
                     throw Exceptions.throwBusinessException(BusinessError.MOBILE_CODE_ERROR);
                 } else {
@@ -102,13 +103,14 @@ public class ApiCommonController extends JSONController {
             String mobile = validateSMSReq.getMobile();
             StringDto stringBo = new StringDto();
             stringBo.setContent(mobile);
-            return customerRpc.findCustomerByMobile(stringBo);
+            return customerService.findCustomerByMobile(stringBo);
         });
 
-
-        return customerBoResMono.zipWith(registerReqMono, (customerBoRes, registerReq) -> {
+        return customerBoResMono.zipWith(registerReqMono).map(tuples -> {
+            CustomerDtoRes customerDtoRes = tuples.getT1();
+            RegisterReq registerReq = tuples.getT2();
             //判断此手机是否可以注册
-            if (customerBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+            if (customerDtoRes.getErrorCode() == ApiErrorCode.ok.value) {
                 log.info("{},此手机号在系统中已经存在", registerReq.getMobile());
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_ALREADY_EXIST_ERROR);
             } else {
@@ -121,7 +123,7 @@ public class ApiCommonController extends JSONController {
                 customerBo1.setUsername(username);
                 customerBo1.setPassword(password);
                 //注册
-                return customerRpc.register(customerBo1);
+                return customerService.register(customerBo1);
             }
         }).flatMap(booleanResMono -> booleanResMono.map(booleanRes -> {
             if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
@@ -139,7 +141,7 @@ public class ApiCommonController extends JSONController {
 //    public Mono<JSONResponse> logout(@NotBlank @RequestHeader(name = "jwt") String jwt) {
 //        IdStringReq idStringReq = new IdStringReq();
 //        idStringReq.setId(jwt);
-//        return customerRpc.logout(Mono.just(idStringReq)).map(booleanRes -> {
+//        return customerService.logout(Mono.just(idStringReq)).map(booleanRes -> {
 //            if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
 //                throw new ControllerException(booleanRes.getMessage());
 //            } else {
@@ -156,27 +158,49 @@ public class ApiCommonController extends JSONController {
         idStringReq.setJwt(jwt);
         idStringReq.setContent(username);
 
-        return customerRpc.findCustomerByUsername(idStringReq).flatMap(customerBoRes -> {
-            if (customerBoRes.getErrorCode() != ApiErrorCode.ok.value) {
-                return Mono.just(failed(BusinessError.COMMON_ERROR));
-            } else {
-                CustomerDto customerBo = customerBoRes.getReturnObject();
-                CustomerVo customerVo = new CustomerVo();
-                BeanUtils.copyProperties(customerBo, customerVo);
-                customerVo.setToken(jwt);
-
-                IdStringReq idStringReq1 = new IdStringReq();
-                idStringReq1.setId(customerBo.getImageId());
-
-                return imageRpc.findOne(Mono.just(idStringReq1)).map(imgBoRes -> {
-                    if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
-                        customerVo.setImage(imgBoRes.getReturnObject().getImgUrl());
+        //查询出客户信息
+        Mono<CustomerVo> customerVoMono = Mono.just(idStringReq)
+                .flatMap(stringDto -> customerService.findCustomerByUsername(stringDto))
+                .map(customerDtoRes -> {
+                    log.info("showCustomerInfo...:{}", JsonUtil.toJson(customerDtoRes));
+                    if (customerDtoRes.getErrorCode() != ApiErrorCode.ok.value) {
+                        throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+                    } else {
+                        CustomerDto customerDto = customerDtoRes.getReturnObject();
+                        CustomerVo customerVo = new CustomerVo();
+                        BeanUtils.copyProperties(customerDto, customerVo);
+                        customerVo.setImage(customerDto.getImageId());
+                        return customerVo;
                     }
-                    return succeed(customerVo);
                 });
+
+
+        //查询出客户对应的图片
+        Mono<String> imageMono = customerVoMono.flatMap(customerVo -> {
+            String imageId = customerVo.getImage();
+            IdStringReq idStringReq1 = new IdStringReq();
+            idStringReq1.setId(imageId);
+            idStringReq1.setJwt(jwt);
+            return imageService.findOne(idStringReq1);
+        }).map(imgBoRes -> {
+            log.info("图片信息:{}", JsonUtil.toJson(imgBoRes));
+            if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+                return imgBoRes.getReturnObject().getImgUrl();
+            } else {
+                return "";
             }
         });
+
+
+        //最后组合返回
+        return imageMono.zipWith(customerVoMono).map(objects -> {
+            CustomerVo customerVo = objects.getT2();
+            String imageUrl = objects.getT1();
+            customerVo.setImage(imageUrl);
+            return customerVo;
+        }).map(this::succeed);
     }
+
 
     @GetMapping(value = "/common/kaptchaRender.do")
     public Mono<JSONResponse> kaptchaRender() {
@@ -190,13 +214,13 @@ public class ApiCommonController extends JSONController {
 //
 //    @PostMapping("/common/changePersonInfo.do")
 //    public Mono<JSONResponse> changePersonInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) {
-//        ResultDto<CustomerBo> resultDto = customerRpc.findOne(jwt);
+//        ResultDto<CustomerBo> resultDto = customerService.findOne(jwt);
 //        return null;
 //    }
 //
 //    @GetMapping("/testMessage.do")
 //    public ResponseEntity<String> testMessage() {
-//        customerRpc.testMessage();
+//        customerService.testMessage();
 //        return ResponseEntity.ok("ok");
 //    }
 

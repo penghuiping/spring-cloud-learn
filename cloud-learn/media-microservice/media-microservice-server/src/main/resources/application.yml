@@ -10,30 +10,6 @@ server:
   port: 9092
   type: provider
 ###############################################
-## dubbo配置
-###############################################
-dubbo:
-  scan:
-    basePackages: com.php25.mediamicroservice.server.rpc
-  ## ApplicationConfig Bean
-  application:
-    id: dubbo-provider-mediaservice
-    name: dubbo-provider-mediaservice
-    qos-port: 22224
-    qos-enable: true
-    qosAcceptForeignIp: false
-  ## ProtocolConfig Bean
-  protocol:
-    id: dubbo
-    name: dubbo
-    port: 12347
-    serialization: hessian2
-  ## RegistryConfig Bean
-  registry:
-    id: my-registry
-    address: zookeeper://localhost:2181
-    client: curator
-###############################################
 ## apollo配置
 ###############################################
 app:
@@ -43,6 +19,17 @@ apollo:
     enabled: true
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
-
+###############################################
+## eureka配置
+##############################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    enabled: true
+    healthcheck:
+      enabled: true
+  instance:
+    leaseRenewalIntervalInSeconds: 5
 
 

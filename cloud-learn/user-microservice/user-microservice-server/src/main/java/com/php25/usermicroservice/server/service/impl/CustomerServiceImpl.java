@@ -219,7 +219,6 @@ public class CustomerServiceImpl implements CustomerService {
         }).map(user -> {
             CustomerDto customerDto = new CustomerDto();
             BeanUtils.copyProperties(user, customerDto, "roles");
-
             if (null != user.getRoles() && !user.getRoles().isEmpty()) {
                 List<Long> roleIds = user.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
                 Set<String> roleNames = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toSet());
@@ -230,6 +229,8 @@ public class CustomerServiceImpl implements CustomerService {
             customerDtoRes.setErrorCode(ApiErrorCode.ok.value);
             customerDtoRes.setReturnObject(customerDto);
             return customerDtoRes;
+        }).doOnError(throwable -> {
+            log.info("出错啦",throwable);
         });
     }
 

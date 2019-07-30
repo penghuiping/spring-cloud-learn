@@ -1,4 +1,4 @@
-package com.php25.mediamicroservice.client.rpc.impl;
+package com.php25.mediamicroservice.client.service.impl;
 
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.IdsStringReq;
@@ -6,7 +6,8 @@ import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
 import com.php25.mediamicroservice.client.constant.Constant;
-import com.php25.mediamicroservice.client.rpc.ImageRpc;
+import com.php25.mediamicroservice.client.service.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
@@ -18,46 +19,47 @@ import reactor.core.publisher.Mono;
  * @date: 2019/7/17 14:45
  * @description:
  */
+@Slf4j
 @Component
-public class ImageRpcImpl implements ImageRpc {
+public class ImageClientServiceImpl implements ImageService {
 
     @Autowired
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<String> save(Mono<Base64ImageBo> base64ImageReqMono) {
+    public Mono<String> save(Base64ImageBo base64ImageReq) {
         return WebClient.builder()
                 .baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
                 .uri("/img/save")
-                .body(base64ImageReqMono, Base64ImageBo.class)
+                .syncBody(base64ImageReq)
                 .retrieve()
                 .bodyToMono(String.class);
     }
 
     @Override
-    public Mono<ImgBoRes> findOne(Mono<IdStringReq> idStringReqMono) {
+    public Mono<ImgBoRes> findOne(IdStringReq idStringReq) {
         return WebClient.builder()
                 .baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
                 .uri("/img/findOne")
-                .body(idStringReqMono, IdStringReq.class)
+                .syncBody(idStringReq)
                 .retrieve()
                 .bodyToMono(ImgBoRes.class);
     }
 
     @Override
-    public Mono<ImgBoListRes> findAll(Mono<IdsStringReq> idsStringReqMono) {
+    public Mono<ImgBoListRes> findAll(IdsStringReq idsStringReq) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
                 .post()
                 .uri("/img/findAll")
-                .body(idsStringReqMono, IdsStringReq.class)
+                .syncBody(idsStringReq)
                 .retrieve()
                 .bodyToMono(ImgBoListRes.class);
     }
