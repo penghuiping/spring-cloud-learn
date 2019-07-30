@@ -5,6 +5,7 @@ import com.php25.common.flux.IdsStringReq;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
+import com.php25.mediamicroservice.client.bo.res.StringRes;
 import com.php25.mediamicroservice.client.constant.Constant;
 import com.php25.mediamicroservice.client.service.ImageService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class ImageClientServiceImpl implements ImageService {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<String> save(Base64ImageBo base64ImageReq) {
+    public Mono<StringRes> save(Base64ImageBo base64ImageReq) {
         return WebClient.builder()
                 .baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
@@ -36,7 +37,7 @@ public class ImageClientServiceImpl implements ImageService {
                 .uri("/img/save")
                 .syncBody(base64ImageReq)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(StringRes.class);
     }
 
     @Override

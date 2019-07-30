@@ -50,7 +50,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: ${app.db.username}
     password: ${app.db.password}
     initSize: 5

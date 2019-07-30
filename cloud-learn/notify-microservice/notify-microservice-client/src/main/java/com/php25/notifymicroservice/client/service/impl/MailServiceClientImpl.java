@@ -2,6 +2,7 @@ package com.php25.notifymicroservice.client.service.impl;
 
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
+import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import com.php25.notifymicroservice.client.constant.Constant;
 import com.php25.notifymicroservice.client.service.MailService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class MailServiceClientImpl implements MailService {
     private LoadBalancerExchangeFilterFunction lbFunction;
 
     @Override
-    public Mono<Boolean> sendSimpleMail(Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
+    public Mono<BooleanRes> sendSimpleMail(Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -32,11 +33,11 @@ public class MailServiceClientImpl implements MailService {
                 .uri("/mail/sendSimpleMail")
                 .body(sendSimpleMailReqMono, SendSimpleMailReq.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class);
     }
 
     @Override
-    public Mono<Boolean> sendAttachmentsMail(Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
+    public Mono<BooleanRes> sendAttachmentsMail(Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
         return WebClient.builder().baseUrl(Constant.BASE_URL)
                 .filter(lbFunction)
                 .build()
@@ -44,7 +45,7 @@ public class MailServiceClientImpl implements MailService {
                 .uri("/mail/sendAttachmentsMail")
                 .body(sendAttachmentsMailReqMono, SendAttachmentsMailReq.class)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(BooleanRes.class);
     }
 
 

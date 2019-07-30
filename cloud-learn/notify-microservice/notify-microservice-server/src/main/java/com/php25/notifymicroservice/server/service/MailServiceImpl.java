@@ -2,9 +2,11 @@ package com.php25.notifymicroservice.server.service;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
+import com.php25.common.flux.ApiErrorCode;
 import com.php25.notifymicroservice.client.bo.Pair;
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
+import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import com.php25.notifymicroservice.client.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @PostMapping("/sendSimpleMail")
-    public Mono<Boolean> sendSimpleMail(@RequestBody Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
+    public Mono<BooleanRes> sendSimpleMail(@RequestBody Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
         return sendSimpleMailReqMono.map(params -> {
             String sendTo = params.getSendTo();
             String title = params.getTitle();
@@ -56,12 +58,17 @@ public class MailServiceImpl implements MailService {
             message.setText(content);
             mailSender.send(message);
             return true;
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 
     @Override
     @PostMapping(value = "/sendAttachmentsMail")
-    public Mono<Boolean> sendAttachmentsMail(@RequestBody Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
+    public Mono<BooleanRes> sendAttachmentsMail(@RequestBody Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
         return sendAttachmentsMailReqMono.map(params -> {
             var pairs = params.getAttachments().stream().map(stringStringPairBo -> {
                 var path = Paths.get(System.getProperty("java.io.tmpdir"), stringStringPairBo.getKey());
@@ -95,6 +102,11 @@ public class MailServiceImpl implements MailService {
                 throw Exceptions.throwIllegalStateException("发送邮件失败！", e);
             }
             return true;
+        }).map(aBoolean -> {
+            BooleanRes booleanRes = new BooleanRes();
+            booleanRes.setErrorCode(ApiErrorCode.ok.value);
+            booleanRes.setReturnObject(aBoolean);
+            return booleanRes;
         });
     }
 

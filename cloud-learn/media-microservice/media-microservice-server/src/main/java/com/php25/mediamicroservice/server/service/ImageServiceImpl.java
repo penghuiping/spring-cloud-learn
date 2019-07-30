@@ -11,6 +11,7 @@ import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
+import com.php25.mediamicroservice.client.bo.res.StringRes;
 import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.mediamicroservice.server.model.Img;
 import com.php25.mediamicroservice.server.repository.ImgRepository;
@@ -53,7 +54,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @PostMapping("/save")
-    public Mono<String> save(@RequestBody Base64ImageBo base64ImageReq1) {
+    public Mono<StringRes> save(@RequestBody Base64ImageBo base64ImageReq1) {
         return Mono.just(base64ImageReq1).map(base64ImageReq -> {
             String base64Image = base64ImageReq.getContent();
             //获取文件类型
@@ -73,6 +74,11 @@ public class ImageServiceImpl implements ImageService {
                 throw Exceptions.throwIllegalStateException("写入文件出错", e);
             }
             return name;
+        }).map(s -> {
+            StringRes stringRes = new StringRes();
+            stringRes.setErrorCode(ApiErrorCode.ok.value);
+            stringRes.setReturnObject(s);
+            return stringRes;
         });
     }
 
