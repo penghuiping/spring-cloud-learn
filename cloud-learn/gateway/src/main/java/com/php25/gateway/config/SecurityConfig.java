@@ -31,7 +31,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.redis.JdkSerializationStrategy;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
@@ -50,7 +49,6 @@ public class SecurityConfig {
     @Bean
     TokenStore tokenStore() {
         RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
-        tokenStore.setSerializationStrategy(new JdkSerializationStrategy());
         return tokenStore;
     }
 
@@ -80,7 +78,7 @@ public class SecurityConfig {
                             } else {
                                 return Mono.just(new AuthorizationDecision(false));
                             }
-                        }catch (AuthenticationException | InvalidTokenException e) {
+                        } catch (AuthenticationException | InvalidTokenException e) {
                             return Mono.just(new AuthorizationDecision(false));
                         }
                     }

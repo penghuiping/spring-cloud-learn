@@ -6,7 +6,6 @@ import com.php25.authserver.service.RedisAuthorizationCodeServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,8 +28,6 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
     @Autowired
     AuthenticationManager authenticationManager;
 
-    @Autowired
-    RedisConnectionFactory redisConnectionFactory;
 
     @Autowired
     RedisTemplate redisTemplate;
@@ -55,7 +52,7 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
 
     @Bean
     TokenStore tokenStore() {
-        RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
+        RedisTokenStore tokenStore = new RedisTokenStore(redisTemplate.getConnectionFactory());
         tokenStore.setSerializationStrategy(new JdkSerializationStrategy());
         return tokenStore;
     }
