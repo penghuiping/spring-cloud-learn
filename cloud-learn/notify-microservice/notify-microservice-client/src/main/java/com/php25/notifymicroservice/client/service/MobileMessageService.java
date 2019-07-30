@@ -1,4 +1,4 @@
-package com.php25.notifymicroservice.client.rpc;
+package com.php25.notifymicroservice.client.service;
 
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
@@ -12,7 +12,7 @@ import javax.validation.Valid;
  * @Date: 2018/7/19 11:19
  * @Description:
  */
-public interface MobileMessageRpc {
+public interface MobileMessageService {
 
     /**
      * 插入\修改一条验证码信息

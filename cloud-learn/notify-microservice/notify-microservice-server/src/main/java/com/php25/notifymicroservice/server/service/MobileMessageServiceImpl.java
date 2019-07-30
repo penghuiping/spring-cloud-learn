@@ -1,11 +1,13 @@
-package com.php25.notifymicroservice.server.controller;
+package com.php25.notifymicroservice.server.service;
 
+import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.ApiErrorCode;
+import com.php25.common.redis.RedisService;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
-import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
-import com.php25.notifymicroservice.server.service.MobileMessageService;
+import com.php25.notifymicroservice.client.service.MobileMessageService;
+import com.php25.notifymicroservice.server.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-
-import javax.validation.Valid;
 
 /**
  * @author: penghuiping
@@ -26,10 +26,11 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/mobileMsg")
-public class MobileMessageController implements MobileMessageRpc {
+public class MobileMessageServiceImpl implements MobileMessageService {
+
 
     @Autowired
-    private MobileMessageService mobileMessageService;
+    private RedisService redisService;
 
     /**
      * 发送验证码
@@ -40,7 +41,10 @@ public class MobileMessageController implements MobileMessageRpc {
         return sendSMSReqMono.map(params -> {
             String mobile = params.getMobile();
             log.info("手机号为:{}", mobile);
-            return mobileMessageService.sendSMS(mobile);
+
+            String message = "1111";
+            redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+            return true;
         }).map(aBoolean -> {
             BooleanRes booleanRes = new BooleanRes();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
@@ -58,7 +62,14 @@ public class MobileMessageController implements MobileMessageRpc {
         return validateSMSReqMono.map(params -> {
             String mobile = params.getMobile();
             String code = params.getMsgCode();
-            return mobileMessageService.validateSMS(mobile, code);
+
+            String mobileCode = redisService.get("sms" + mobile, String.class);
+            if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
+                redisService.remove("sms" + mobile);
+                return true;
+            } else {
+                return false;
+            }
         }).map(aBoolean -> {
             BooleanRes booleanRes = new BooleanRes();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);

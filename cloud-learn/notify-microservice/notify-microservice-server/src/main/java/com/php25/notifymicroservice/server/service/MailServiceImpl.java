@@ -1,14 +1,18 @@
-package com.php25.notifymicroservice.server.controller;
+package com.php25.notifymicroservice.server.service;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.notifymicroservice.client.bo.Pair;
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
-import com.php25.notifymicroservice.client.rpc.MailRpc;
-import com.php25.notifymicroservice.server.service.MailService;
+import com.php25.notifymicroservice.client.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,16 +33,28 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/mail")
-public class MailController implements MailRpc {
+public class MailServiceImpl implements MailService {
+
+    @Value("${spring.mail.username}")
+    private String sender;
 
     @Autowired
-    private MailService mailService;
+    private JavaMailSender mailSender;
 
     @Override
     @PostMapping("/sendSimpleMail")
     public Mono<Boolean> sendSimpleMail(@RequestBody Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
         return sendSimpleMailReqMono.map(params -> {
-            mailService.sendSimpleMail(params.getSendTo(), params.getTitle(), params.getContent());
+            String sendTo = params.getSendTo();
+            String title = params.getTitle();
+            String content = params.getContent();
+            var message = new SimpleMailMessage();
+            message.setFrom(sender);
+            //自己给自己发送邮件
+            message.setTo(sendTo);
+            message.setSubject(title);
+            message.setText(content);
+            mailSender.send(message);
             return true;
         });
     }
@@ -59,7 +75,25 @@ public class MailController implements MailRpc {
                     throw Exceptions.throwIllegalStateException("存储邮箱附件失败", e);
                 }
             }).collect(Collectors.toList());
-            mailService.sendAttachmentsMail(params.getSendTo(), params.getTitle(), params.getContent(), pairs);
+
+            var mimeMessage = mailSender.createMimeMessage();
+            try {
+                String sendTo = params.getSendTo();
+                String title = params.getTitle();
+                String content = params.getContent();
+                var helper = new MimeMessageHelper(mimeMessage, true);
+                helper.setFrom(sender);
+                helper.setTo(sendTo);
+                helper.setSubject(title);
+                helper.setText(content);
+
+                for (var pair : pairs) {
+                    helper.addAttachment(pair.getKey(), new FileSystemResource(pair.getValue()));
+                }
+                mailSender.send(mimeMessage);
+            } catch (Exception e) {
+                throw Exceptions.throwIllegalStateException("发送邮件失败！", e);
+            }
             return true;
         });
     }

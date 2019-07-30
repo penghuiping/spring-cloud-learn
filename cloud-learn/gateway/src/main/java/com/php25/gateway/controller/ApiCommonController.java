@@ -17,8 +17,8 @@ import com.php25.gateway.vo.req.RegisterReq;
 import com.php25.mediamicroservice.client.rpc.ImageRpc;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
-import com.php25.notifymicroservice.client.rpc.MailRpc;
-import com.php25.notifymicroservice.client.rpc.MobileMessageRpc;
+import com.php25.notifymicroservice.client.service.MailService;
+import com.php25.notifymicroservice.client.service.MobileMessageService;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.StringDto;
 import com.php25.usermicroservice.client.service.CustomerService;
@@ -49,10 +49,10 @@ public class ApiCommonController extends JSONController {
     private CustomerService customerRpc;
 
     @Autowired
-    private MailRpc mailRpc;
+    private MailService mailRpc;
 
     @Autowired
-    private MobileMessageRpc mobileMessageRpc;
+    private MobileMessageService mobileMessageRpc;
 
     @Autowired
     private ImageRpc imageRpc;

@@ -1,4 +1,4 @@
-package com.php25.notifymicroservice.client.rpc;
+package com.php25.notifymicroservice.client.service;
 
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
@@ -11,7 +11,7 @@ import javax.validation.Valid;
  * @Date: 2018/7/19 11:19
  * @Description:
  */
-public interface MailRpc {
+public interface MailService {
 
     /**
      * 发送简单邮件
