@@ -78,6 +78,11 @@
             <groupId>com.php25.media-microservice.client</groupId>
             <artifactId>media-microservice-client</artifactId>
         </dependency>
+
+        <!--jshint-->
+        <!--babel-maven-plugin-->
+
+        <!--minify-->
     </dependencies>
 
     <build>

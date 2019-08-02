@@ -4,6 +4,8 @@ import com.php25.common.flux.BaseDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * @author: penghuiping
  * @date: 2019/7/28 20:37
@@ -11,7 +13,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class Oauth2ClientDto extends BaseDto {
+public class Oauth2ClientDto extends BaseDto implements Serializable {
 
     private String appId;
 

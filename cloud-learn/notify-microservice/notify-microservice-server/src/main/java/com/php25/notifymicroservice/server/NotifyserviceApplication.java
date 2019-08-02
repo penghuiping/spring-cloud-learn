@@ -2,6 +2,8 @@ package com.php25.notifymicroservice.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan(value = {"com.php25.notifymicroservice.server", "com.php25.common.flux"})
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableBinding({Processor.class})
 public class NotifyserviceApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(NotifyserviceApplication.class);

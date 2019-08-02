@@ -11,6 +11,12 @@ app:
   filesever:
     host: ${fileServer_host}
     path: ${fileServer_path}
+  rabbitmq:
+    ip: ${rabbitmq_ip}
+    port: ${rabbitmq_port}
+    username: ${rabbitmq_username}
+    password: ${rabbitmq_password}
+    virtualHost: ${rabbitmq_virtualHost}
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -50,16 +56,46 @@ spring:
         max-wait: -1s
         min-idle: 0
     timeout: 5s
-  #    cluster:
-  #      max-redirects: 3
-  #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
-  #    sentinel:
-  #      master: master
-  #      nodes: 10.182.175.63:26380,10.182.175.64:26380
-  #    password: ${app.redis.password}
-
-
-
+    #    cluster:
+    #      max-redirects: 3
+    #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
+    #    sentinel:
+    #      master: master
+    #      nodes: 10.182.175.63:26380,10.182.175.64:26380
+    #    password: ${app.redis.password}
+  ########################################################
+  ### JMS Rabbitmq
+  ########################################################
+  cloud:
+    stream:
+      binders:
+        local_rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${app.rabbitmq.ip}
+                port: ${app.rabbitmq.port}
+                username: ${app.rabbitmq.username}
+                password: ${app.rabbitmq.password}
+                virtual-host: ${app.rabbitmq.virtualHost}
+      bindings:
+        input:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
+        output:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
+        reply-input:
+          destination: data-exchange-1
+          contentType: application/json
+          binder: local_rabbit
+        reply-output:
+          destination: data-exchange-1
+          contentType: application/json
+          binder: local_rabbit
 
 
 

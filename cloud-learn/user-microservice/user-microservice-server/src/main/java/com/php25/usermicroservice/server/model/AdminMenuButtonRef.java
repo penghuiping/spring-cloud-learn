@@ -19,4 +19,6 @@ public class AdminMenuButtonRef {
 
     @Column("menu_id")
     private Long menuId;
+
+
 }

@@ -59,25 +59,15 @@ spring:
     gateway:
       routes:
       - id: hystrix_route
-        uri: http://localhost:8081
+        uri: http://localhost:8083
         predicates:
-        - Path=/api/**
+        - Path=/oauth/**
         filters:
         - name: Hystrix
           args:
             name: fallbackcmd
             fallbackUri: forward:/fallback
-        - RewritePath=/api/(?<segment>.*), /api/$\{segment}
-      - id: hystrix_route
-        uri: http://localhost:8082
-        predicates:
-        - Path=/admin/**
-        filters:
-        - name: Hystrix
-          args:
-            name: fallbackcmd
-            fallbackUri: forward:/fallback
-        - RewritePath=/admin/(?<segment>.*), /admin/$\{segment}
+        - RewritePath=/oauth/(?<segment>.*), /oauth/$\{segment}
 hystrix:
   command:
     fallbackcmd:

@@ -1,5 +1,6 @@
 package com.php25.authserver.service;
 
+
 import com.php25.common.core.util.AssertUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,7 +33,6 @@ public class JwtService {
                 .setHeaderParam("authorities", List.of("admin", "customer"))
                 .setSubject("jack")
                 .compact();
-        log.info("jwt:{}", jwt);
         return jwt;
     }
 
@@ -49,3 +49,4 @@ public class JwtService {
         }
     }
 }
+

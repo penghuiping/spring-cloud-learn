@@ -6,6 +6,7 @@ import com.php25.common.flux.IdStringReq;
 import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
 import com.php25.usermicroservice.client.service.Oauth2ClientService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -21,6 +22,7 @@ import java.time.Duration;
  * @date: 2019/3/28 17:23
  * @description:
  */
+@Slf4j
 @Service
 public class MyClientDetailsService implements ClientDetailsService {
 

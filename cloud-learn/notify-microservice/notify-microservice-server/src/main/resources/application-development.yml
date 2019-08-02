@@ -68,30 +68,30 @@ spring:
     publicKey:
     decrypt: false
   ########################################################
-  ### Java Persistence Api
-  ########################################################
-  jpa:
-    database: MYSQL
-    # Show or not log for each sql query
-    show-sql: true
-    format-sql: true
-    # Hibernate ddl auto (create, create-drop, update)
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
-        cache:
-          use_second_level_cache: false
-  ########################################################
   ### JMS Rabbitmq
   ########################################################
-  rabbitmq:
-    host: ${app.rabbitmq.ip}
-    port: ${app.rabbitmq.port}
-    username: ${app.rabbitmq.username}
-    password: ${app.rabbitmq.password}
-    virtualHost: ${app.rabbitmq.virtualHost}
+  cloud:
+    stream:
+      binders:
+        local_rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${app.rabbitmq.ip}
+                port: ${app.rabbitmq.port}
+                username: ${app.rabbitmq.username}
+                password: ${app.rabbitmq.password}
+                virtual-host: ${app.rabbitmq.virtualHost}
+      bindings:
+        input:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
+        output:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
   ########################################################
   ### redis
   ########################################################
@@ -141,13 +141,6 @@ spring:
           starttls:
             enable: true
             required: true
-########################################################
-### jpush
-########################################################
-jiguang:
-  sms:
-    APP_KEY:
-    MASTER_SECRET:
 
 
 

@@ -67,24 +67,28 @@ spring:
   ########################################################
   ### JMS Rabbitmq
   ########################################################
-  #  rabbitmq:
-  #    host: ${app.rabbitmq.ip}
-  #    port: ${app.rabbitmq.port}
-  #    username: ${app.rabbitmq.username}
-  #    password: ${app.rabbitmq.password}
-  #    virtualHost: ${app.rabbitmq.virtualHost}
-#  cloud:
-#    stream:
-#      kafka:
-#        binder:
-#          brokers: localhost:9092
-#      bindings:
-#        greetings-in:
-#          destination: greetings
-#          contentType: application/json
-#        greetings-out:
-#          destination: greetings
-#          contentType: application/json
+  cloud:
+    stream:
+      binders:
+        local_rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${app.rabbitmq.ip}
+                port: ${app.rabbitmq.port}
+                username: ${app.rabbitmq.username}
+                password: ${app.rabbitmq.password}
+                virtual-host: ${app.rabbitmq.virtualHost}
+      bindings:
+        input:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
+        output:
+          destination: data-exchange
+          contentType: application/json
+          binder: local_rabbit
   ########################################################
   ### redis
   ########################################################

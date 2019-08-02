@@ -2,7 +2,6 @@ package com.php25.gateway.filter;
 
 import com.php25.common.core.util.AssertUtil;
 import com.php25.common.core.util.StringUtil;
-import com.php25.usermicroservice.client.service.CustomerService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +44,10 @@ public class JwtFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {
         var request = serverWebExchange.getRequest();
         var response = serverWebExchange.getResponse();
+        if (request.getURI().getPath().toString().startsWith("/oauth")) {
+            return webFilterChain.filter(serverWebExchange);
+        }
+
         log.info("进入JwtFilter");
         //从header中获取jwt
         String token = request.getHeaders().getFirst("Authorization");
@@ -56,9 +59,10 @@ public class JwtFilter implements WebFilter {
             log.info("token:{}", token);
             OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
             String jwt = generateJwt(oAuth2Authentication);
-            request = request.mutate().header("jwt",jwt).build();
-            request = request.mutate().header("username",oAuth2Authentication.getName()).build();
-            log.info("生成的jwt:{}",jwt);
+            request = request.mutate().header("jwt", jwt).build();
+            request = request.mutate().header("token", token).build();
+            request = request.mutate().header("username", oAuth2Authentication.getName()).build();
+            log.info("生成的jwt:{}", jwt);
         }
 
         //认证通过

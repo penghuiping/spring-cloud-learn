@@ -64,6 +64,7 @@ public class SecurityConfig {
     @Order(-1)
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ResourceServerTokenServices resourceServerTokenServices) throws Exception {
         return http.csrf().disable().authorizeExchange()
+                .pathMatchers("/oauth/**").permitAll()
                 .pathMatchers("/**/**").access((authenticationMono, context) -> {
                     String token = context.getExchange().getRequest().getHeaders().getFirst("Authorization");
                     if (StringUtil.isBlank(token)) {

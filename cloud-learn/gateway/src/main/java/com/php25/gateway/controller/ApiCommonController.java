@@ -4,7 +4,6 @@ package com.php25.gateway.controller;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.core.util.RandomUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.flux.IdStringReq;
 import com.php25.common.flux.JSONController;
@@ -26,6 +25,7 @@ import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -50,9 +50,6 @@ public class ApiCommonController extends JSONController {
     private CustomerService customerService;
 
     @Autowired
-    private MailService mailService;
-
-    @Autowired
     private MobileMessageService mobileMessageService;
 
     @Autowired
@@ -64,6 +61,8 @@ public class ApiCommonController extends JSONController {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private TokenStore tokenStore;
 
     @PostMapping("/common/getMsgCode.do")
     public Mono<JSONResponse> getMsgCode(@Valid Mono<GetMsgCodeReq> getMsgCodeVoMono) {
@@ -132,23 +131,16 @@ public class ApiCommonController extends JSONController {
                 return succeed(booleanRes.getReturnObject());
             }
         }));
-
-
     }
 
 
-//    @GetMapping(value = "/common/SSOLogout.do")
-//    public Mono<JSONResponse> logout(@NotBlank @RequestHeader(name = "jwt") String jwt) {
-//        IdStringReq idStringReq = new IdStringReq();
-//        idStringReq.setId(jwt);
-//        return customerService.logout(Mono.just(idStringReq)).map(booleanRes -> {
-//            if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
-//                throw new ControllerException(booleanRes.getMessage());
-//            } else {
-//                return succeed(booleanRes.getReturnObject());
-//            }
-//        });
-//    }
+    @GetMapping(value = "/common/SSOLogout.do")
+    public Mono<JSONResponse> logout(@NotBlank @RequestHeader(name = "token") String token) {
+        return Mono.just(token).map(token1 -> {
+            tokenStore.removeAccessToken(tokenStore.readAccessToken(token1));
+            return succeed(true);
+        });
+    }
 
 
     @GetMapping(value = "/common/showCustomerInfo.do")
@@ -201,17 +193,6 @@ public class ApiCommonController extends JSONController {
         }).map(this::succeed);
     }
 
-
-    @GetMapping(value = "/common/kaptchaRender.do")
-    public Mono<JSONResponse> kaptchaRender() {
-        return Mono.fromCallable(() -> {
-            String kaptcha = RandomUtil.getRandomNumbers(6) + "";
-            redisService.set("kaptcha" + kaptcha, 1);
-            return succeed(kaptcha);
-        });
-    }
-//
-//
 //    @PostMapping("/common/changePersonInfo.do")
 //    public Mono<JSONResponse> changePersonInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) {
 //        ResultDto<CustomerBo> resultDto = customerService.findOne(jwt);
