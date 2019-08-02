@@ -84,6 +84,10 @@ spring:
           destination: data-exchange
           contentType: application/json
           binder: local_rabbit
+          consumer:
+            auto-bind-dlq: true
+            republish-to-dlq: true
+            max-attempts: 3
         output:
           destination: data-exchange
           contentType: application/json
@@ -117,15 +121,23 @@ spring:
   #      nodes: 10.182.175.63:26380,10.182.175.64:26380
   #    password: ${app.redis.password}
   ########################################################
-  ### fileupload
+  ### zipkin
   ########################################################
-#  servlet:
-#    multipart:
-#      max-file-size: 10Mb
-#      max-request-size: 1000Mb
-
-
-
+  zipkin:
+    base-url: http://localhost:9411
+    sleuth:
+      sampler:
+      percentage: 1.0
+########################################################
+### metrics
+########################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  server:
+    port: 8100
 
 
 

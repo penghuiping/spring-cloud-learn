@@ -48,7 +48,7 @@ public class JwtTest {
         String jwt = Jwts.builder().signWith(SignatureAlgorithm.RS256, privateKey1)
                 .setIssuer("www.php25.com")
                 .setIssuedAt(new Date())
-                .setHeaderParam("authorities",  List.of("admin"))
+                .setHeaderParam("authorities", List.of("admin"))
                 .setSubject("jack")
                 .compact();
         log.info("jwt:{}", jwt);

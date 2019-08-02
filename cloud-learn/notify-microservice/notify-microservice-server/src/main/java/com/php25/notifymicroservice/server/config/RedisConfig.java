@@ -22,7 +22,7 @@ public class RedisConfig {
 
     @Bean
     public SnowflakeIdWorker snowflakeIdWorker() {
-        return new SnowflakeIdWorker(0,2);
+        return new SnowflakeIdWorker(0, 2);
     }
 
 }

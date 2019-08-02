@@ -8,5 +8,5 @@ import com.php25.usermicroservice.server.model.User;
  * @date: 2019/7/25 16:40
  * @description:
  */
-public interface UserExRepository extends JdbcDbRepository<User,Long> {
+public interface UserExRepository extends JdbcDbRepository<User, Long> {
 }

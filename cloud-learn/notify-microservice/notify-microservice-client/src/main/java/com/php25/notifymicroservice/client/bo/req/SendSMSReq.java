@@ -14,7 +14,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class SendSMSReq {
 
-    /** 手机 **/
+    /**
+     * 手机
+     **/
     @NotBlank
     private String mobile;
 }

@@ -34,7 +34,6 @@ import java.util.Properties;
  */
 @Slf4j
 @Configuration
-@ConditionalOnExpression("'${server.type}'.contains('provider')")
 @EnableJdbcRepositories(basePackages = "com.php25.usermicroservice.server.repository")
 public class DruidConfig {
 

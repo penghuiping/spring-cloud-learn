@@ -26,18 +26,18 @@ public class RedisAuthorizationCodeServices extends RandomValueAuthorizationCode
     protected void store(String code, OAuth2Authentication authentication) {
         BoundHashOperations<String, String, byte[]> hashOperations = redisTemplate.boundHashOps("oauth2_code");
         hashOperations.put(code, SerializationUtils.serialize(authentication));
-        hashOperations.getOperations().expire(code,30L,TimeUnit.MINUTES);
+        hashOperations.getOperations().expire(code, 30L, TimeUnit.MINUTES);
     }
 
     @Override
     protected OAuth2Authentication remove(String code) {
         BoundHashOperations<String, String, byte[]> boundHashOperations = redisTemplate.boundHashOps("oauth2_code");
         byte[] value = boundHashOperations.get(code);
-        if(null != value) {
+        if (null != value) {
             OAuth2Authentication auth2Authentication = SerializationUtils.deserialize(value);
             boundHashOperations.delete(code);
             return auth2Authentication;
-        }else {
+        } else {
             return null;
         }
 

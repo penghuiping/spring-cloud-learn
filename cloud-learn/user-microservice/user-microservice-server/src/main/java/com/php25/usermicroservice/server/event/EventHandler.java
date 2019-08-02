@@ -18,6 +18,6 @@ public class EventHandler {
 
     @StreamListener(Processor.INPUT)
     public void handler(Message message) {
-        log.info("message:{}",message.getPayload().toString());
+        log.info("message:{}", message.getPayload().toString());
     }
 }

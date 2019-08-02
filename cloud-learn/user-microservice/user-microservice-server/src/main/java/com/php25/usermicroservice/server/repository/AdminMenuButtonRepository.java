@@ -33,6 +33,7 @@ public interface AdminMenuButtonRepository extends PagingAndSortingRepository<Ad
 
     /**
      * 查出所有有效的菜单
+     *
      * @return
      */
     @Query("select * from userservice_menu a where a.enable=1 order by a.sort asc")

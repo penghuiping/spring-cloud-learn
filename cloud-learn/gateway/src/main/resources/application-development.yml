@@ -68,6 +68,14 @@ spring:
             name: fallbackcmd
             fallbackUri: forward:/fallback
         - RewritePath=/oauth/(?<segment>.*), /oauth/$\{segment}
+  ########################################################
+  ### zipkin
+  ########################################################
+  zipkin:
+    base-url: http://localhost:9411
+    sleuth:
+      sampler:
+      percentage: 1.0
 hystrix:
   command:
     fallbackcmd:
@@ -94,7 +102,14 @@ hystrix:
             interruptOnCancel: false
         timeout:
           enabled: true
-
+########################################################
+### metrics
+########################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 
 

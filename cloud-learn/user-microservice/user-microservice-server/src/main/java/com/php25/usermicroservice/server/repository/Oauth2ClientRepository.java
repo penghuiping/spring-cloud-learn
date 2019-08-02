@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @description:
  */
 @Repository
-public interface Oauth2ClientRepository extends PagingAndSortingRepository<Oauth2Client,String> {
+public interface Oauth2ClientRepository extends PagingAndSortingRepository<Oauth2Client, String> {
 }

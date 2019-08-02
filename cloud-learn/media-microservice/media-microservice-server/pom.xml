@@ -66,6 +66,10 @@
             <artifactId>simplemagic</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.php25.media-microservice.client</groupId>
             <artifactId>media-microservice-client</artifactId>
         </dependency>

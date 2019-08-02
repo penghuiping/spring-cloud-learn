@@ -37,15 +37,16 @@ public class WebSecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
                 .authorizeExchange()
-                .pathMatchers("/adminUser/**","/adminRole/**","/oauth2/**").hasAuthority("admin")
+                .pathMatchers("/adminUser/**", "/adminRole/**", "/oauth2/**").hasAuthority("admin")
                 .pathMatchers("/customer/**").hasAuthority("customer")
+                .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {
                     @Override
                     protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
                         Collection<String> authorities = (Collection<String>) jwt.getHeaders().get("authorities");
-                        log.info("authorities:{}",authorities);
+                        log.info("authorities:{}", authorities);
                         return authorities.stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .collect(Collectors.toList());

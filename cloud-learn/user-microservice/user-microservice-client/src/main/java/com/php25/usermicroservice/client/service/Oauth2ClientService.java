@@ -34,11 +34,11 @@ public interface Oauth2ClientService {
 
     /**
      * 删除oauth2认证客户信息
+     *
      * @param idsStringReqMono
      * @return
      */
     Mono<BooleanRes> softDelete(@Valid Mono<IdsStringReq> idsStringReqMono);
-
 
 
 }

@@ -230,7 +230,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDtoRes.setReturnObject(customerDto);
             return customerDtoRes;
         }).doOnError(throwable -> {
-            log.info("出错啦",throwable);
+            log.info("出错啦", throwable);
         });
     }
 

@@ -25,7 +25,7 @@ public class SearchDto extends BaseDto {
     public SearchDto() {
     }
 
-    public SearchDto(List<SearchDtoParam> searchParams, Integer pageNum, Integer pageSize, Sort.Direction direction, String property)  {
+    public SearchDto(List<SearchDtoParam> searchParams, Integer pageNum, Integer pageSize, Sort.Direction direction, String property) {
         this.searchParams = searchParams;
         this.pageNum = pageNum;
         this.pageSize = pageSize;

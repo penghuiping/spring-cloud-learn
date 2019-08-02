@@ -11,8 +11,7 @@ spring:
       probability: 1.0
     traceId128: true
 server:
-  port: 9091
-  type: provider
+  port: 8101
 ###############################################
 ## apollo配置
 ###############################################

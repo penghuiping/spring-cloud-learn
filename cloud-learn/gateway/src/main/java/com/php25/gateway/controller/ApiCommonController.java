@@ -198,12 +198,4 @@ public class ApiCommonController extends JSONController {
 //        ResultDto<CustomerBo> resultDto = customerService.findOne(jwt);
 //        return null;
 //    }
-//
-//    @GetMapping("/testMessage.do")
-//    public ResponseEntity<String> testMessage() {
-//        customerService.testMessage();
-//        return ResponseEntity.ok("ok");
-//    }
-
-
 }

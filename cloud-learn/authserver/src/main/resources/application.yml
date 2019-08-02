@@ -7,8 +7,7 @@ spring:
   application:
     name: springbootlearn-authserver
 server:
-  port: 8083
-  type: provider
+  port: 8103
 ###############################################
 ## apollo配置
 ###############################################

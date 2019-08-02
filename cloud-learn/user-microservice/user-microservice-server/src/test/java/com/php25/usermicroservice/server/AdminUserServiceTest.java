@@ -91,8 +91,6 @@ public class AdminUserServiceTest {
     }
 
 
-
-
     @Test
     public void resetPassword() {
         IdsLongReq idsLongReq = new IdsLongReq();
@@ -147,8 +145,6 @@ public class AdminUserServiceTest {
 
         log.info("/adminUser/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
-
-
 
 
     @Test

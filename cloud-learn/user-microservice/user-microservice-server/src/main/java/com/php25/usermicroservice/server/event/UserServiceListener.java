@@ -4,10 +4,14 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.usermicroservice.client.dto.CustomerDto;
+import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.usermicroservice.server.model.Oauth2Client;
 import com.php25.usermicroservice.server.model.Role;
 import com.php25.usermicroservice.server.model.RoleRef;
 import com.php25.usermicroservice.server.model.User;
+import com.php25.usermicroservice.server.repository.Oauth2ClientRepository;
 import com.php25.usermicroservice.server.repository.RoleRepository;
 import com.php25.usermicroservice.server.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +47,17 @@ public class UserServiceListener {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private Oauth2ClientRepository oauth2ClientRepository;
+
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "userservice.findByUsername", durable = "true"),
-            exchange = @Exchange(value = "cloud-exchange", type = ExchangeTypes.DIRECT, ignoreDeclarationExceptions = "true", durable = "true"),
+            value = @Queue(value = "userservice.findByUsername",
+                    durable = "true"),
+            exchange = @Exchange(value = "cloud-exchange",
+                    type = ExchangeTypes.DIRECT,
+                    ignoreDeclarationExceptions = "true",
+                    durable = "true"),
             key = "userservice.findByUsername")
     )
     @SendTo
@@ -77,6 +88,41 @@ public class UserServiceListener {
             CustomerDtoRes customerDtoRes = new CustomerDtoRes();
             customerDtoRes.setErrorCode(ApiErrorCode.server_error.value);
             return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
+        }
+    }
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "userservice.oauth2ClientFindOne",
+                    durable = "true"),
+            exchange = @Exchange(value = "cloud-exchange",
+                    type = ExchangeTypes.DIRECT,
+                    ignoreDeclarationExceptions = "true",
+                    durable = "true"),
+            key = "userservice.oauth2ClientFindOne")
+    )
+    @SendTo
+    public Message oauth2ClientFindOne(String appId) {
+        Oauth2ClientDtoRes oauth2ClientDtoRes = new Oauth2ClientDtoRes();
+        try {
+            Optional<Oauth2Client> oauth2ClientOptional = oauth2ClientRepository.findById(appId);
+            if (oauth2ClientOptional.isPresent()) {
+                Oauth2Client oauth2Client = oauth2ClientOptional.get();
+                Oauth2ClientDto oauth2ClientDto = new Oauth2ClientDto();
+                BeanUtils.copyProperties(oauth2Client, oauth2ClientDto);
+                oauth2ClientDtoRes.setErrorCode(ApiErrorCode.ok.value);
+                oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
+                return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
+            } else {
+                Oauth2ClientDto oauth2ClientDto = new Oauth2ClientDto();
+                oauth2ClientDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+                oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
+                return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
+            }
+        } catch (Exception e) {
+            Oauth2ClientDto oauth2ClientDto = new Oauth2ClientDto();
+            oauth2ClientDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+            oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
+            return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
         }
     }
 }

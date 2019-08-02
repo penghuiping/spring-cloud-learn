@@ -66,7 +66,6 @@ public class User {
     private LocalDateTime updateTime;
 
 
-
     /**
      * 是否有效 0:无效,1:有效,2:软删除
      */

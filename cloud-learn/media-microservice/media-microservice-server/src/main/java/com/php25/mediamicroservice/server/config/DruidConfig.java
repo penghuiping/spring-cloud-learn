@@ -27,7 +27,6 @@ import java.util.Properties;
  */
 @Slf4j
 @Configuration
-@ConditionalOnExpression("'${server.type}'.contains('provider')")
 public class DruidConfig {
 
     @Autowired

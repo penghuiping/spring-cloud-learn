@@ -14,11 +14,15 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class ValidateSMSReq {
 
-    /** 手机号 **/
+    /**
+     * 手机号
+     **/
     @NotBlank
     private String mobile;
 
-    /** 验证码 **/
+    /**
+     * 验证码
+     **/
     @NotBlank
     private String msgCode;
 }

@@ -51,7 +51,7 @@ public class ImageServiceTest {
     @Test
     public void findAll() {
         IdsStringReq idsStringReq = new IdsStringReq();
-        idsStringReq.setIds(List.of("1","2"));
+        idsStringReq.setIds(List.of("1", "2"));
 
         var result = webTestClient.post().uri("/img/findAll")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -67,7 +67,7 @@ public class ImageServiceTest {
 
     @Test
     public void save() {
-        Base64ImageBo base64ImageBo= new Base64ImageBo();
+        Base64ImageBo base64ImageBo = new Base64ImageBo();
         var result = webTestClient.post().uri("/img/save")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

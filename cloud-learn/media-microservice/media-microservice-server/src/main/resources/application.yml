@@ -7,7 +7,7 @@ spring:
   application:
     name: springbootlearn-mediaservice
 server:
-  port: 9092
+  port: 8100
   type: provider
 ###############################################
 ## apollo配置
