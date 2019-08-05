@@ -1,6 +1,6 @@
 package com.php25.mediamicroservice.client.bo.res;
 
-import com.php25.common.flux.BaseResponse;
+import com.php25.common.flux.web.BaseResponse;
 import com.php25.mediamicroservice.client.bo.ImgBo;
 
 import java.util.List;

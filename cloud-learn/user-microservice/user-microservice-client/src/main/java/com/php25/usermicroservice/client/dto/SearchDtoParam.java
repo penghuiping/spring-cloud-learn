@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.client.dto;
 
 import com.php25.common.core.specification.Operator;
-import com.php25.common.flux.BaseDto;
+import com.php25.common.flux.web.BaseDto;
 
 /**
  * @author: penghuiping

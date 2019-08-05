@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.client.service;
 
-import com.php25.common.flux.IdLongReq;
-import com.php25.common.flux.IdsLongReq;
+import com.php25.common.flux.web.IdLongReq;
+import com.php25.common.flux.web.IdsLongReq;
 import com.php25.usermicroservice.client.dto.AdminUserDto;
 import com.php25.usermicroservice.client.dto.ChangePasswordDto;
 import com.php25.usermicroservice.client.dto.LoginDto;

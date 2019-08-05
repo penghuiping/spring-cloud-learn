@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.client.dto.res;
 
-import com.php25.common.flux.BaseResponse;
+
+import com.php25.common.flux.web.BaseResponse;
 
 /**
  * @author: penghuiping

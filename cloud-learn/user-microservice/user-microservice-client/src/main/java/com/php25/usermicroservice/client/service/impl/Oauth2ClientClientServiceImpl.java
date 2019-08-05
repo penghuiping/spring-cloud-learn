@@ -1,14 +1,13 @@
 package com.php25.usermicroservice.client.service.impl;
 
-import com.php25.common.flux.IdStringReq;
-import com.php25.common.flux.IdsStringReq;
-import com.php25.usermicroservice.client.constant.Constant;
+import com.php25.common.flux.web.IdStringReq;
+import com.php25.common.flux.web.IdsStringReq;
 import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.BooleanRes;
 import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
 import com.php25.usermicroservice.client.service.Oauth2ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -24,13 +23,12 @@ import javax.validation.Valid;
 public class Oauth2ClientClientServiceImpl implements Oauth2ClientService {
 
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("Userservice_UserWebClient")
+    private WebClient webClient;
 
     @Override
     public Mono<Oauth2ClientDtoRes> findOne(@Valid IdStringReq idStringReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/oauth2/findOne")
                 .header("Authorization", "Bearer " + idStringReq.getJwt())

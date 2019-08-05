@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.client.service;
 
-import com.php25.common.flux.IdStringReq;
-import com.php25.common.flux.IdsStringReq;
+import com.php25.common.flux.web.IdStringReq;
+import com.php25.common.flux.web.IdsStringReq;
 import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.BooleanRes;
 import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;

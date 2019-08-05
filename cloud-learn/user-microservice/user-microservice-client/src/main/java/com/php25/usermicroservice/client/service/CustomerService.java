@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.client.service;
 
-import com.php25.common.flux.IdLongReq;
+import com.php25.common.flux.web.IdLongReq;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;

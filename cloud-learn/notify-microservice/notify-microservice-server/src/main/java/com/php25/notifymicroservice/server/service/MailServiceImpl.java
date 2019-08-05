@@ -2,7 +2,7 @@ package com.php25.notifymicroservice.server.service;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
-import com.php25.common.flux.ApiErrorCode;
+import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.notifymicroservice.client.bo.Pair;
 import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;

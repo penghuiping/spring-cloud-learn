@@ -1,16 +1,15 @@
 package com.php25.mediamicroservice.client.service.impl;
 
-import com.php25.common.flux.IdStringReq;
-import com.php25.common.flux.IdsStringReq;
+import com.php25.common.flux.web.IdStringReq;
+import com.php25.common.flux.web.IdsStringReq;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
 import com.php25.mediamicroservice.client.bo.res.StringRes;
-import com.php25.mediamicroservice.client.constant.Constant;
 import com.php25.mediamicroservice.client.service.ImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -25,14 +24,12 @@ import reactor.core.publisher.Mono;
 public class ImageClientServiceImpl implements ImageService {
 
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("Mediaservice_WebClient")
+    private WebClient webClient;
 
     @Override
     public Mono<StringRes> save(Base64ImageBo base64ImageReq) {
-        return WebClient.builder()
-                .baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/img/save")
                 .syncBody(base64ImageReq)
@@ -42,10 +39,7 @@ public class ImageClientServiceImpl implements ImageService {
 
     @Override
     public Mono<ImgBoRes> findOne(IdStringReq idStringReq) {
-        return WebClient.builder()
-                .baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/img/findOne")
                 .syncBody(idStringReq)
@@ -55,9 +49,7 @@ public class ImageClientServiceImpl implements ImageService {
 
     @Override
     public Mono<ImgBoListRes> findAll(IdsStringReq idsStringReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/img/findAll")
                 .syncBody(idsStringReq)

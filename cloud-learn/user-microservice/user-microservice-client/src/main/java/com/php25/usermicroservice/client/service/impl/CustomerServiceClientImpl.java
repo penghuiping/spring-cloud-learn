@@ -1,8 +1,7 @@
 package com.php25.usermicroservice.client.service.impl;
 
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.IdLongReq;
-import com.php25.usermicroservice.client.constant.Constant;
+import com.php25.common.flux.web.IdLongReq;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
@@ -12,7 +11,7 @@ import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
 import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -27,13 +26,12 @@ import reactor.core.publisher.Mono;
 public class CustomerServiceClientImpl implements CustomerService {
 
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("Userservice_UserWebClient")
+    private WebClient webClient;
 
     @Override
     public Mono<BooleanRes> register(CustomerDto customerDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/register")
                 .syncBody(customerDto)
@@ -43,9 +41,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<BooleanRes> resetPasswordByMobile(ResetPwdByMobileDto resetPwdByMobileDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/resetPasswordByMobile")
                 .syncBody(resetPwdByMobileDto)
@@ -55,9 +51,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<BooleanRes> resetPasswordByEmail(ResetPwdByEmailDto resetPwdByEmailDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/resetPasswordByEmail")
                 .syncBody(resetPwdByEmailDto)
@@ -67,9 +61,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<CustomerDtoRes> findOne(IdLongReq idLongReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/findOne")
                 .syncBody(idLongReq)
@@ -81,9 +73,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<BooleanRes> update(CustomerDto customerDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/update")
                 .syncBody(customerDto)
@@ -93,9 +83,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<CustomerDtoRes> findCustomerByMobile(StringDto mobile) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/findCustomerByMobile")
                 .header("Authorization", "Bearer " + mobile.getJwt())
@@ -106,9 +94,7 @@ public class CustomerServiceClientImpl implements CustomerService {
 
     @Override
     public Mono<CustomerDtoRes> findCustomerByUsername(StringDto username) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/customer/findCustomerByUsername")
                 .header("Authorization", "Bearer " + username.getJwt())
@@ -116,15 +102,4 @@ public class CustomerServiceClientImpl implements CustomerService {
                 .retrieve()
                 .bodyToMono(CustomerDtoRes.class);
     }
-
-    //    @Override
-//    public Mono<Object> testMessage() {
-//        return WebClient.builder().baseUrl(Constant.BASE_URL)
-//                .filter(lbFunction)
-//                .build()
-//                .post()
-//                .uri("/customer/testMessage")
-//                .retrieve()
-//                .bodyToMono(Object.class);
-//    }
 }

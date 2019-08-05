@@ -1,7 +1,7 @@
 package com.php25.mediamicroservice.client.service;
 
-import com.php25.common.flux.IdStringReq;
-import com.php25.common.flux.IdsStringReq;
+import com.php25.common.flux.web.IdStringReq;
+import com.php25.common.flux.web.IdsStringReq;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;

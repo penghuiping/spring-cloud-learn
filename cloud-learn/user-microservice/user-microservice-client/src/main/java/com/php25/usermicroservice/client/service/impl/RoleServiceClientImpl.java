@@ -1,8 +1,7 @@
 package com.php25.usermicroservice.client.service.impl;
 
-import com.php25.common.flux.IdLongReq;
-import com.php25.common.flux.IdsLongReq;
-import com.php25.usermicroservice.client.constant.Constant;
+import com.php25.common.flux.web.IdLongReq;
+import com.php25.common.flux.web.IdsLongReq;
 import com.php25.usermicroservice.client.dto.AdminRoleDto;
 import com.php25.usermicroservice.client.dto.SearchDto;
 import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDtoListRes;
@@ -11,7 +10,7 @@ import com.php25.usermicroservice.client.dto.res.AdminRoleDtoRes;
 import com.php25.usermicroservice.client.dto.res.BooleanRes;
 import com.php25.usermicroservice.client.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -27,13 +26,12 @@ import javax.validation.Valid;
 public class RoleServiceClientImpl implements RoleService {
 
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("Userservice_UserWebClient")
+    private WebClient webClient;
 
     @Override
     public Mono<AdminRoleDtoListRes> query(SearchDto searchDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/adminRole/query")
                 .syncBody(searchDto)
@@ -44,9 +42,7 @@ public class RoleServiceClientImpl implements RoleService {
 
     @Override
     public Mono<AdminRoleDtoRes> save(AdminRoleDto adminRoleDto) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/adminRole/save")
                 .syncBody(adminRoleDto)
@@ -57,9 +53,7 @@ public class RoleServiceClientImpl implements RoleService {
 
     @Override
     public Mono<BooleanRes> softDelete(IdsLongReq idsLongReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/adminRole/softDelete")
                 .syncBody(idsLongReq)
@@ -69,9 +63,7 @@ public class RoleServiceClientImpl implements RoleService {
 
     @Override
     public Mono<AdminRoleDtoRes> findOne(@Valid IdLongReq idLongReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/adminRole/findOne")
                 .syncBody(idLongReq)
@@ -81,9 +73,7 @@ public class RoleServiceClientImpl implements RoleService {
 
     @Override
     public Mono<AdminMenuButtonDtoListRes> findAllMenuTree() {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .get()
                 .uri("/adminRole/findAllMenuTree")
                 .retrieve()
@@ -93,9 +83,7 @@ public class RoleServiceClientImpl implements RoleService {
 
     @Override
     public Mono<AdminMenuButtonDtoListRes> findAllByAdminRoleId(IdLongReq idLongReq) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/adminRole/findAllByAdminRoleId")
                 .syncBody(idLongReq)
