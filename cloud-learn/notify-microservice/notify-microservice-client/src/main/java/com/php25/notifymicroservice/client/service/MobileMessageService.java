@@ -17,7 +17,7 @@ public interface MobileMessageService {
     /**
      * 插入\修改一条验证码信息
      */
-    Mono<BooleanRes> sendSMS(@Valid Mono<SendSMSReq> sendSMSReqMono);
+    Mono<BooleanRes> sendSMS(@Valid SendSMSReq sendSMSReq);
 
     /**
      * 通过电话号码查询有效验证码数据

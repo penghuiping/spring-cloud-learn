@@ -6,6 +6,17 @@ spring:
     active: development
   application:
     name: springbootlearn-userservice
+  zipkin:
+    base-url: http://localhost:9411
+    service.name: springbootlearn-userservice
+    sender.type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
+    web:
+      client:
+        enabled: true
   data:
     redis:
       repositories:

@@ -1,6 +1,7 @@
 package com.php25.gateway.controller;
 
 
+import brave.Tracer;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
@@ -64,14 +65,18 @@ public class ApiCommonController extends JSONController {
     @Autowired
     private TokenStore tokenStore;
 
+    @Autowired
+    private Tracer tracer;
+
     @PostMapping("/common/getMsgCode.do")
     public Mono<JSONResponse> getMsgCode(@Valid Mono<GetMsgCodeReq> getMsgCodeVoMono) {
         return getMsgCodeVoMono.flatMap(params -> {
+            log.info("current span:{}",tracer.currentSpan());
             log.info("获取短信验证码。。。。");
             log.info(JsonUtil.toPrettyJson(params));
             var sendSmsReq = new SendSMSReq();
             sendSmsReq.setMobile(params.getMobile());
-            return mobileMessageService.sendSMS(Mono.just(sendSmsReq))
+            return mobileMessageService.sendSMS(sendSmsReq)
                     .map(booleanRes -> succeed(booleanRes.getReturnObject()));
         });
     }

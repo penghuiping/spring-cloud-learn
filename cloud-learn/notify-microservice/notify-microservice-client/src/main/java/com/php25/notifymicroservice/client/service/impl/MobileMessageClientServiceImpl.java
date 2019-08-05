@@ -3,11 +3,10 @@ package com.php25.notifymicroservice.client.service.impl;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
-import com.php25.notifymicroservice.client.constant.Constant;
 import com.php25.notifymicroservice.client.service.MobileMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -22,25 +21,22 @@ import reactor.core.publisher.Mono;
 public class MobileMessageClientServiceImpl implements MobileMessageService {
 
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("NotifyService_WebClient")
+    private WebClient webClient;
 
     @Override
-    public Mono<BooleanRes> sendSMS(Mono<SendSMSReq> sendSMSReqMono) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+    public Mono<BooleanRes> sendSMS(SendSMSReq sendSMSReq) {
+        return webClient
                 .post()
                 .uri("/mobileMsg/sendSMS")
-                .body(sendSMSReqMono, SendSMSReq.class)
+                .syncBody(sendSMSReq)
                 .retrieve()
                 .bodyToMono(BooleanRes.class);
     }
 
     @Override
     public Mono<BooleanRes> validateSMS(Mono<ValidateSMSReq> validateSMSReqMono) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/mobileMsg/validateSMS")
                 .body(validateSMSReqMono, ValidateSMSReq.class)

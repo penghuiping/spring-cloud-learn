@@ -7,6 +7,7 @@ import com.php25.notifymicroservice.client.constant.Constant;
 import com.php25.notifymicroservice.client.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,14 +22,14 @@ import reactor.core.publisher.Mono;
 @Component
 public class MailServiceClientImpl implements MailService {
 
+
     @Autowired
-    private LoadBalancerExchangeFilterFunction lbFunction;
+    @Qualifier("NotifyService_WebClient")
+    private WebClient webClient;
 
     @Override
     public Mono<BooleanRes> sendSimpleMail(Mono<SendSimpleMailReq> sendSimpleMailReqMono) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return  webClient
                 .post()
                 .uri("/mail/sendSimpleMail")
                 .body(sendSimpleMailReqMono, SendSimpleMailReq.class)
@@ -38,9 +39,7 @@ public class MailServiceClientImpl implements MailService {
 
     @Override
     public Mono<BooleanRes> sendAttachmentsMail(Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
-        return WebClient.builder().baseUrl(Constant.BASE_URL)
-                .filter(lbFunction)
-                .build()
+        return webClient
                 .post()
                 .uri("/mail/sendAttachmentsMail")
                 .body(sendAttachmentsMailReqMono, SendAttachmentsMailReq.class)

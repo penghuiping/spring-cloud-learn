@@ -43,6 +43,7 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     com.php25: INFO
+    org.springframework.cloud.sleuth: debug
 spring:
   ########################################################
   ###datasource
@@ -124,14 +125,6 @@ spring:
   #      master: master
   #      nodes: 10.182.175.63:26380,10.182.175.64:26380
   #    password: ${app.redis.password}
-  ########################################################
-  ### zipkin
-  ########################################################
-  zipkin:
-    base-url: http://localhost:9411
-    sleuth:
-      sampler:
-      percentage: 1.0
   ########################################################
   ### fileupload
   ########################################################

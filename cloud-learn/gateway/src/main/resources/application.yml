@@ -6,10 +6,17 @@ spring:
     active: development
   application:
     name: springbootlearn-gateway
+  zipkin:
+    base-url: http://localhost:9411
+    service.name: springbootlearn-gateway
+    sender.type: web
   sleuth:
     sampler:
       probability: 1.0
     traceId128: true
+    web:
+      client:
+        enabled: true
   main:
     allow-bean-definition-overriding: true
   cloud:

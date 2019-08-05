@@ -1,5 +1,7 @@
 package com.php25.notifymicroservice.server.service;
 
+import brave.ScopedSpan;
+import brave.Tracer;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.ApiErrorCode;
 import com.php25.common.redis.RedisService;
@@ -8,6 +10,7 @@ import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import com.php25.notifymicroservice.client.service.MobileMessageService;
 import com.php25.notifymicroservice.server.constant.Constant;
+import com.php25.notifymicroservice.server.trace.annotation.Traced;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -32,16 +35,27 @@ public class MobileMessageServiceImpl implements MobileMessageService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    Tracer tracer;
+
     /**
      * 发送验证码
      */
     @Override
     @PostMapping("/sendSMS")
-    public Mono<BooleanRes> sendSMS(@RequestBody Mono<SendSMSReq> sendSMSReqMono) {
-        return sendSMSReqMono.map(params -> {
+    public Mono<BooleanRes> sendSMS(@RequestBody SendSMSReq sendSMSReq) {
+        ScopedSpan scopedSpan = tracer.startScopedSpan("sendSMS");
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            scopedSpan.error(e);
+        }finally {
+            scopedSpan.finish();
+        }
+        return Mono.just(sendSMSReq).map(params -> {
+            log.info("current span:{}",tracer.currentSpan());
             String mobile = params.getMobile();
             log.info("手机号为:{}", mobile);
-
             String message = "1111";
             redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
             return true;

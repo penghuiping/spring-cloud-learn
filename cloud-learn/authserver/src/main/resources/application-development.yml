@@ -92,14 +92,6 @@ spring:
           destination: data-exchange
           contentType: application/json
           binder: local_rabbit
-  ########################################################
-  ### zipkin
-  ########################################################
-  zipkin:
-    base-url: http://localhost:9411
-    sleuth:
-      sampler:
-      percentage: 1.0
 ########################################################
 ### metrics
 ########################################################
