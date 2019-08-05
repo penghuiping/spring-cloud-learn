@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
-import com.php25.common.flux.ApiErrorCode;
-import com.php25.common.flux.IdLongReq;
+import com.php25.common.flux.web.ApiErrorCode;
+import com.php25.common.flux.web.IdLongReq;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
 import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
@@ -233,14 +233,4 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("出错啦", throwable);
         });
     }
-
-//    @Override
-//    public Mono<Object> testMessage() {
-//        return Mono.fromCallable(() -> {
-//            greetingsService.sendGreeting();
-//            return null;
-//        }).doOnError(throwable -> {
-//            log.error("出错啦", throwable);
-//        });
-//    }
 }

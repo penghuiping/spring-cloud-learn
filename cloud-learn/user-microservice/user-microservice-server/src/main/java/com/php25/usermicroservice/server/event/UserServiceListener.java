@@ -2,7 +2,7 @@ package com.php25.usermicroservice.server.event;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.ApiErrorCode;
+import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
