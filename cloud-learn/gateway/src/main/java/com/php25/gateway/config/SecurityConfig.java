@@ -17,8 +17,11 @@
 package com.php25.gateway.config;
 
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.flux.web.LogFilter;
+import com.php25.gateway.filter.JwtFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -61,7 +64,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(-1)
+    @Order(1)
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ResourceServerTokenServices resourceServerTokenServices) throws Exception {
         return http.csrf().disable().authorizeExchange()
                 .pathMatchers("/oauth/**").permitAll()
@@ -84,6 +87,28 @@ public class SecurityConfig {
                         }
                     }
                 }).anyExchange().authenticated().and().build();
+    }
+
+    @Order(0)
+    @Bean
+    public LogFilter logFilter() {
+        return new LogFilter();
+    }
+
+    @Order(2)
+    @Bean
+    public JwtFilter jwtFilter() {
+        return new JwtFilter();
+    }
+
+    @Bean
+    KeyResolver userKeyResolver() {
+        return exchange ->{
+            log.info("userResolver start...");
+            String username = exchange.getRequest().getHeaders().getFirst("username");
+            log.info("userResolver:username:{}",username);
+            return Mono.just(username);
+        };
     }
 
 }

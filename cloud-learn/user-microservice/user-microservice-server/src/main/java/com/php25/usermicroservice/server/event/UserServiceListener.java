@@ -81,12 +81,12 @@ public class UserServiceListener {
                 return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
             } else {
                 CustomerDtoRes customerDtoRes = new CustomerDtoRes();
-                customerDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+                customerDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
                 return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
             }
         } catch (Exception e) {
             CustomerDtoRes customerDtoRes = new CustomerDtoRes();
-            customerDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+            customerDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
             return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
         }
     }
@@ -114,13 +114,13 @@ public class UserServiceListener {
                 return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
             } else {
                 Oauth2ClientDto oauth2ClientDto = new Oauth2ClientDto();
-                oauth2ClientDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+                oauth2ClientDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
                 oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
                 return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
             }
         } catch (Exception e) {
             Oauth2ClientDto oauth2ClientDto = new Oauth2ClientDto();
-            oauth2ClientDtoRes.setErrorCode(ApiErrorCode.server_error.value);
+            oauth2ClientDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
             oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
             return MessageBuilder.withPayload(JsonUtil.toJson(oauth2ClientDtoRes)).build();
         }

@@ -59,8 +59,8 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: hystrix_route
-        uri: http://localhost:8103
+      - id: authserver
+        uri: lb://SPRINGBOOTLEARN-AUTHSERVER
         predicates:
         - Path=/oauth/**
         filters:
@@ -69,6 +69,25 @@ spring:
             name: fallbackcmd
             fallbackUri: forward:/fallback
         - RewritePath=/oauth/(?<segment>.*), /oauth/$\{segment}
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 1 #每秒允许处理多少请求
+            redis-rate-limiter.burstCapacity: 2 #每个用户每秒允许处理多少请求
+      - id: gateway-getMsgCode
+        uri: forward:///api/common/getMsgCode.do
+        predicates:
+        - Path=/api/common/getMsgCode.do
+        filters:
+        - RewritePath=/openapi/(?<segment>.*), /api/$\{segment}
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 1  #每秒允许处理多少请求
+            redis-rate-limiter.burstCapacity: 1  #每个用户每秒允许处理多少请求
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/fallback
+
 hystrix:
   command:
     fallbackcmd:

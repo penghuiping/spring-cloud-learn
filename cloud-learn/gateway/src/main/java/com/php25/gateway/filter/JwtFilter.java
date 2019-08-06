@@ -1,16 +1,13 @@
 package com.php25.gateway.filter;
 
 import com.php25.common.core.util.AssertUtil;
-import com.php25.common.core.util.StringUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -29,8 +26,6 @@ import java.util.stream.Collectors;
  * @date: 2019/7/12 17:59
  * @description:
  */
-@Component
-@Order(10)
 @Slf4j
 public class JwtFilter implements WebFilter {
 
@@ -42,28 +37,23 @@ public class JwtFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {
+        log.info("进入JwtFilter");
+
         var request = serverWebExchange.getRequest();
         var response = serverWebExchange.getResponse();
-        if (request.getURI().getPath().toString().startsWith("/oauth")) {
+        if (request.getURI().getPath().startsWith("/oauth")) {
+            request = request.mutate().header("username", "anonymity").build();
             return webFilterChain.filter(serverWebExchange);
         }
 
-        log.info("进入JwtFilter");
         //从header中获取jwt
         String token = request.getHeaders().getFirst("Authorization");
-
-        if (StringUtil.isBlank(token)) {
-
-        } else {
-            token = token.substring(7);
-            log.info("token:{}", token);
-            OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
-            String jwt = generateJwt(oAuth2Authentication);
-            request = request.mutate().header("jwt", jwt).build();
-            request = request.mutate().header("token", token).build();
-            request = request.mutate().header("username", oAuth2Authentication.getName()).build();
-            log.info("生成的jwt:{}", jwt);
-        }
+        token = token.substring(7);
+        OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
+        String jwt = generateJwt(oAuth2Authentication);
+        request = request.mutate().header("jwt", jwt).build();
+        request = request.mutate().header("token", token).build();
+        request = request.mutate().header("username", oAuth2Authentication.getName()).build();
 
         //认证通过
         return webFilterChain.filter(serverWebExchange.mutate().request(request).build());

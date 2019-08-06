@@ -17,7 +17,6 @@ import com.php25.gateway.vo.req.RegisterReq;
 import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
-import com.php25.notifymicroservice.client.service.MailService;
 import com.php25.notifymicroservice.client.service.MobileMessageService;
 import com.php25.usermicroservice.client.dto.CustomerDto;
 import com.php25.usermicroservice.client.dto.StringDto;
@@ -71,7 +70,7 @@ public class ApiCommonController extends JSONController {
     @PostMapping("/common/getMsgCode.do")
     public Mono<JSONResponse> getMsgCode(@Valid Mono<GetMsgCodeReq> getMsgCodeVoMono) {
         return getMsgCodeVoMono.flatMap(params -> {
-            log.info("current span:{}",tracer.currentSpan());
+            log.info("current span:{}", tracer.currentSpan());
             log.info("获取短信验证码。。。。");
             log.info(JsonUtil.toPrettyJson(params));
             var sendSmsReq = new SendSMSReq();
@@ -96,7 +95,7 @@ public class ApiCommonController extends JSONController {
         }).flatMap(validateSMSReq -> {
             //效验短信验证码
             return mobileMessageService.validateSMS(Mono.just(validateSMSReq)).map(booleanRes -> {
-                if (booleanRes.getErrorCode() != ApiErrorCode.ok.value || !booleanRes.getReturnObject()) {
+                if (booleanRes.getErrorCode().equals(ApiErrorCode.ok.value) || !booleanRes.getReturnObject()) {
                     throw Exceptions.throwBusinessException(BusinessError.MOBILE_CODE_ERROR);
                 } else {
                     return validateSMSReq;
@@ -114,7 +113,7 @@ public class ApiCommonController extends JSONController {
             CustomerDtoRes customerDtoRes = tuples.getT1();
             RegisterReq registerReq = tuples.getT2();
             //判断此手机是否可以注册
-            if (customerDtoRes.getErrorCode() == ApiErrorCode.ok.value) {
+            if (customerDtoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
                 log.info("{},此手机号在系统中已经存在", registerReq.getMobile());
                 throw Exceptions.throwBusinessException(BusinessError.MOBILE_ALREADY_EXIST_ERROR);
             } else {
@@ -130,8 +129,8 @@ public class ApiCommonController extends JSONController {
                 return customerService.register(customerBo1);
             }
         }).flatMap(booleanResMono -> booleanResMono.map(booleanRes -> {
-            if (booleanRes.getErrorCode() != ApiErrorCode.ok.value) {
-                throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+            if (!booleanRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
+                throw Exceptions.throwBusinessException(booleanRes.getErrorCode(),booleanRes.getMessage());
             } else {
                 return succeed(booleanRes.getReturnObject());
             }
@@ -153,15 +152,15 @@ public class ApiCommonController extends JSONController {
                                                @NotBlank @RequestHeader(name = "username") String username) {
         StringDto idStringReq = new StringDto();
         idStringReq.setJwt(jwt);
-        idStringReq.setContent(username);
+        idStringReq.setContent("123");
 
         //查询出客户信息
         Mono<CustomerVo> customerVoMono = Mono.just(idStringReq)
                 .flatMap(stringDto -> customerService.findCustomerByUsername(stringDto))
                 .map(customerDtoRes -> {
                     log.info("showCustomerInfo...:{}", JsonUtil.toJson(customerDtoRes));
-                    if (customerDtoRes.getErrorCode() != ApiErrorCode.ok.value) {
-                        throw Exceptions.throwBusinessException(BusinessError.COMMON_ERROR);
+                    if (!customerDtoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
+                        throw Exceptions.throwBusinessException(customerDtoRes.getErrorCode(),customerDtoRes.getMessage());
                     } else {
                         CustomerDto customerDto = customerDtoRes.getReturnObject();
                         CustomerVo customerVo = new CustomerVo();
@@ -181,7 +180,7 @@ public class ApiCommonController extends JSONController {
             return imageService.findOne(idStringReq1);
         }).map(imgBoRes -> {
             log.info("图片信息:{}", JsonUtil.toJson(imgBoRes));
-            if (imgBoRes.getErrorCode() == ApiErrorCode.ok.value) {
+            if (!imgBoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
                 return imgBoRes.getReturnObject().getImgUrl();
             } else {
                 return "";
