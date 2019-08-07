@@ -1,5 +1,6 @@
 package com.php25.gateway.config;
 
+import com.php25.common.core.service.SnowflakeIdWorker;
 import com.php25.common.flux.web.LogFilter;
 import com.php25.gateway.filter.JwtFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,11 @@ public class RouterConfig {
         source.registerCorsConfiguration("/**", config);
 
         return new CorsWebFilter(source);
+    }
+
+    @Bean
+    public SnowflakeIdWorker snowflakeIdWorker() {
+        return new SnowflakeIdWorker(0, 1);
     }
 
 

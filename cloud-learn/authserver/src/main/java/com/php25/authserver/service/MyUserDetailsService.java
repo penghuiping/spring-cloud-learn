@@ -36,7 +36,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Message message = rabbitMessagingTemplate.sendAndReceive("cloud-exchange", "userservice.findByUsername", MessageBuilder.withPayload(username).build());
         CustomerDtoRes customerBoRes = JsonUtil.fromJson(message.getPayload().toString(), CustomerDtoRes.class);
-        if (ApiErrorCode.ok.value == customerBoRes.getErrorCode()) {
+        if (ApiErrorCode.ok.value.equals(customerBoRes.getErrorCode())) {
             CustomerDto customerBo = customerBoRes.getReturnObject();
             if (null != customerBo.getRoles() && customerBo.getRoles().size() > 0) {
                 List<GrantedAuthority> grantedAuthorities = customerBo

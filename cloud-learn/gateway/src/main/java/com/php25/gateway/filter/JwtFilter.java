@@ -43,21 +43,21 @@ public class JwtFilter implements WebFilter {
         var response = serverWebExchange.getResponse();
         if (request.getURI().getPath().startsWith("/oauth")) {
             request = request.mutate().header("username", "anonymity").build();
-            return webFilterChain.filter(serverWebExchange);
+            return webFilterChain.filter(serverWebExchange.mutate().request(request).build());
+        } else {
+            //从header中获取jwt
+            String token = request.getHeaders().getFirst("Authorization");
+            log.info("access_token:{}", token);
+            token = token.substring(7);
+            OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
+            String jwt = generateJwt(oAuth2Authentication);
+            request = request.mutate().headers(httpHeaders -> {
+                httpHeaders.put("Authorization", List.of("Bearer " + jwt));
+                httpHeaders.put("username", List.of(oAuth2Authentication.getName()));
+            }).build();
+            //认证通过
+            return webFilterChain.filter(serverWebExchange.mutate().request(request).build());
         }
-
-        //从header中获取jwt
-        String token = request.getHeaders().getFirst("Authorization");
-        token = token.substring(7);
-        OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
-        String jwt = generateJwt(oAuth2Authentication);
-        request = request.mutate().header("jwt", jwt).build();
-        request = request.mutate().header("token", token).build();
-        request = request.mutate().header("username", oAuth2Authentication.getName()).build();
-
-        //认证通过
-        return webFilterChain.filter(serverWebExchange.mutate().request(request).build());
-
     }
 
 

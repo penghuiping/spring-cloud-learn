@@ -86,7 +86,6 @@ public class CustomerServiceClientImpl implements CustomerService {
         return webClient
                 .post()
                 .uri("/customer/findCustomerByMobile")
-                .header("Authorization", "Bearer " + mobile.getJwt())
                 .syncBody(mobile)
                 .retrieve()
                 .bodyToMono(CustomerDtoRes.class);
@@ -97,7 +96,6 @@ public class CustomerServiceClientImpl implements CustomerService {
         return webClient
                 .post()
                 .uri("/customer/findCustomerByUsername")
-                .header("Authorization", "Bearer " + username.getJwt())
                 .syncBody(username)
                 .retrieve()
                 .bodyToMono(CustomerDtoRes.class);

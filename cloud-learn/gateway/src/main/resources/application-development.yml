@@ -74,11 +74,11 @@ spring:
             redis-rate-limiter.replenishRate: 1 #每秒允许处理多少请求
             redis-rate-limiter.burstCapacity: 2 #每个用户每秒允许处理多少请求
       - id: gateway-getMsgCode
-        uri: forward:///api/common/getMsgCode.do
+        uri: lb://springbootlearn-h5api
         predicates:
-        - Path=/api/common/getMsgCode.do
+        - Path=/api/**
         filters:
-        - RewritePath=/openapi/(?<segment>.*), /api/$\{segment}
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
         - name: RequestRateLimiter
           args:
             redis-rate-limiter.replenishRate: 1  #每秒允许处理多少请求

@@ -31,7 +31,6 @@ public class Oauth2ClientClientServiceImpl implements Oauth2ClientService {
         return webClient
                 .post()
                 .uri("/oauth2/findOne")
-                .header("Authorization", "Bearer " + idStringReq.getJwt())
                 .syncBody(idStringReq)
                 .retrieve()
                 .bodyToMono(Oauth2ClientDtoRes.class);
