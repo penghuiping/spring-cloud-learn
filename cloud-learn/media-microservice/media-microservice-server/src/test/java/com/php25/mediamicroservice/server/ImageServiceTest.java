@@ -24,14 +24,14 @@ import java.util.List;
  * @description:
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ImageServiceTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
-    @Test
+//    @Test
     public void findOne() {
         IdStringReq idStringReq = new IdStringReq();
         idStringReq.setId("1");
@@ -48,7 +48,7 @@ public class ImageServiceTest {
         log.info("/img/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody().getReturnObject()));
     }
 
-    @Test
+//    @Test
     public void findAll() {
         IdsStringReq idsStringReq = new IdsStringReq();
         idsStringReq.setIds(List.of("1", "2"));
@@ -65,7 +65,7 @@ public class ImageServiceTest {
         log.info("/img/findAll:{}", JsonUtil.toJson(result.returnResult().getResponseBody().getReturnObject()));
     }
 
-    @Test
+//    @Test
     public void save() {
         Base64ImageBo base64ImageBo = new Base64ImageBo();
         var result = webTestClient.post().uri("/img/save")

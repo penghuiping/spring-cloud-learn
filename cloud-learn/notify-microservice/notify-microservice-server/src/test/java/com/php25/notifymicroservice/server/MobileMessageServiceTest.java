@@ -19,7 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  * @description:
  */
 @Slf4j
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MobileMessageServiceTest {
 
@@ -27,7 +27,7 @@ public class MobileMessageServiceTest {
     private WebTestClient webTestClient;
 
 
-    @Test
+//    @Test
     public void sendSMS() {
         SendSMSReq sendSMSReq = new SendSMSReq();
         sendSMSReq.setMobile("18812345678");
@@ -44,7 +44,7 @@ public class MobileMessageServiceTest {
         log.info("/mobileMsg/sendSMS:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-    @Test
+//    @Test
     public void validateSMS() {
         ValidateSMSReq validateSMSReq = new ValidateSMSReq();
         validateSMSReq.setMobile("18812345678");

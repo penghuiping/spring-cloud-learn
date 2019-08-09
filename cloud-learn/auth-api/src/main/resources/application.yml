@@ -5,10 +5,10 @@ spring:
   profiles:
     active: development
   application:
-    name: springbootlearn-authserver
+    name: springbootlearn-authapi
   zipkin:
     base-url: http://localhost:9411
-    service.name: springbootlearn-authserver
+    service.name: springbootlearn-authapi
     sender.type: web
   sleuth:
     sampler:

@@ -1,7 +1,6 @@
 package com.php25.h5api.controller.user;
 
 
-import brave.Tracer;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
@@ -9,7 +8,6 @@ import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.IdStringReq;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
-import com.php25.common.redis.RedisService;
 import com.php25.h5api.constant.BusinessError;
 import com.php25.h5api.vo.user.CustomerRes;
 import com.php25.h5api.vo.user.GetMsgCodeReq;
@@ -49,16 +47,61 @@ public class UserController extends JSONController {
     private CustomerService customerService;
 
     @Autowired
-    private MobileMessageService mobileMessageService;
+    private ImageService imageService;
 
     @Autowired
-    private ImageService imageService;
+    private MobileMessageService mobileMessageService;
 
     @Autowired
     private IdGeneratorService idGeneratorService;
 
-    @Autowired
-    private RedisService redisService;
+
+    @GetMapping(value = "/showCustomerInfo.do")
+    public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "username") String username) {
+        StringDto idStringReq = new StringDto();
+        idStringReq.setContent(username);
+
+        //查询出客户信息
+        Mono<CustomerRes> customerVoMono = Mono.just(idStringReq)
+                .flatMap(stringDto -> customerService.findCustomerByUsername(stringDto))
+                .map(customerDtoRes -> {
+                    log.info("showCustomerInfo...:{}", JsonUtil.toJson(customerDtoRes));
+                    if (!customerDtoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
+                        throw Exceptions.throwBusinessException(customerDtoRes.getErrorCode(), customerDtoRes.getMessage());
+                    } else {
+                        CustomerDto customerDto = customerDtoRes.getReturnObject();
+                        CustomerRes customerVo = new CustomerRes();
+                        BeanUtils.copyProperties(customerDto, customerVo);
+                        customerVo.setImage(customerDto.getImageId());
+                        return customerVo;
+                    }
+                });
+
+
+        //查询出客户对应的图片
+        Mono<String> imageMono = customerVoMono.flatMap(customerVo -> {
+            String imageId = customerVo.getImage();
+            IdStringReq idStringReq1 = new IdStringReq();
+            idStringReq1.setId(imageId);
+            return imageService.findOne(idStringReq1);
+        }).map(imgBoRes -> {
+            log.info("图片信息:{}", JsonUtil.toJson(imgBoRes));
+            if (!imgBoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
+                return imgBoRes.getReturnObject().getImgUrl();
+            } else {
+                return "";
+            }
+        });
+
+
+        //最后组合返回
+        return imageMono.zipWith(customerVoMono).map(objects -> {
+            CustomerRes customerVo = objects.getT2();
+            String imageUrl = objects.getT1();
+            customerVo.setImage(imageUrl);
+            return customerVo;
+        }).map(this::succeed);
+    }
 
 
     @PostMapping("/getMsgCode.do")
@@ -76,7 +119,6 @@ public class UserController extends JSONController {
 
     @PostMapping(value = "/register.do")
     public Mono<JSONResponse> register(@Valid Mono<RegisterReq> registerReqMono) {
-
         //效验短信验证码
         var customerBoResMono = registerReqMono.map(registerReq -> {
             String mobile = registerReq.getMobile();
@@ -128,55 +170,6 @@ public class UserController extends JSONController {
                 return succeed(booleanRes.getReturnObject());
             }
         }));
-    }
-
-
-    @GetMapping(value = "/showCustomerInfo.do")
-    public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "jwt") String jwt,
-                                               @NotBlank @RequestHeader(name = "username") String username) {
-        StringDto idStringReq = new StringDto();
-        idStringReq.setContent(username);
-
-        //查询出客户信息
-        Mono<CustomerRes> customerVoMono = Mono.just(idStringReq)
-                .flatMap(stringDto -> customerService.findCustomerByUsername(stringDto))
-                .map(customerDtoRes -> {
-                    log.info("showCustomerInfo...:{}", JsonUtil.toJson(customerDtoRes));
-                    if (!customerDtoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
-                        throw Exceptions.throwBusinessException(customerDtoRes.getErrorCode(), customerDtoRes.getMessage());
-                    } else {
-                        CustomerDto customerDto = customerDtoRes.getReturnObject();
-                        CustomerRes customerVo = new CustomerRes();
-                        BeanUtils.copyProperties(customerDto, customerVo);
-                        customerVo.setImage(customerDto.getImageId());
-                        return customerVo;
-                    }
-                });
-
-
-        //查询出客户对应的图片
-        Mono<String> imageMono = customerVoMono.flatMap(customerVo -> {
-            String imageId = customerVo.getImage();
-            IdStringReq idStringReq1 = new IdStringReq();
-            idStringReq1.setId(imageId);
-            return imageService.findOne(idStringReq1);
-        }).map(imgBoRes -> {
-            log.info("图片信息:{}", JsonUtil.toJson(imgBoRes));
-            if (!imgBoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
-                return imgBoRes.getReturnObject().getImgUrl();
-            } else {
-                return "";
-            }
-        });
-
-
-        //最后组合返回
-        return imageMono.zipWith(customerVoMono).map(objects -> {
-            CustomerRes customerVo = objects.getT2();
-            String imageUrl = objects.getT1();
-            customerVo.setImage(imageUrl);
-            return customerVo;
-        }).map(this::succeed);
     }
 
 //    @PostMapping("/common/changePersonInfo.do")

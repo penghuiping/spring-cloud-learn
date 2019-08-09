@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>authserver</artifactId>
+    <artifactId>auth-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
@@ -51,10 +51,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.user-microservice.client</groupId>
-            <artifactId>user-microservice-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,6 +103,14 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.notify-microservice.client</groupId>
+            <artifactId>notify-microservice-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.user-microservice.client</groupId>
+            <artifactId>user-microservice-client</artifactId>
         </dependency>
     </dependencies>
 

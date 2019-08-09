@@ -10,9 +10,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @date: 2018/9/5 10:40
  * @description:
  */
-@Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@Slf4j
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerServiceTest {
 
 

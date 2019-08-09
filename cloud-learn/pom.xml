@@ -23,7 +23,7 @@
         <module>media-microservice</module>
         <module>gateway</module>
         <module>h5-api</module>
-        <module>authserver</module>
+        <module>auth-api</module>
         <module>eureka</module>
     </modules>
 </project>

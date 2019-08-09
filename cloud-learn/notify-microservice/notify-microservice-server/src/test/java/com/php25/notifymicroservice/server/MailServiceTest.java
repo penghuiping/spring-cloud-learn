@@ -23,7 +23,7 @@ import java.util.List;
  * @description:
  */
 @Slf4j
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MailServiceTest {
 
@@ -33,7 +33,7 @@ public class MailServiceTest {
     @Value("${spring.mail.username}")
     private String mailAddress;
 
-    @Test
+//    @Test
     public void sendSimpleMail() {
         SendSimpleMailReq sendSimpleMailReq = new SendSimpleMailReq();
         sendSimpleMailReq.setContent("你好");
@@ -52,7 +52,7 @@ public class MailServiceTest {
         log.info("/mail/sendSimpleMail:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-    @Test
+//    @Test
     public void sendAttachmentsMail() {
         SendAttachmentsMailReq sendAttachmentsMailReq = new SendAttachmentsMailReq();
         sendAttachmentsMailReq.setContent("你好");

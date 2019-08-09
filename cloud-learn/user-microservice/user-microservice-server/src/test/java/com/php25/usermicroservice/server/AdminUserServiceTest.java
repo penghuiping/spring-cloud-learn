@@ -33,8 +33,8 @@ import java.util.List;
  * @description:
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AdminUserServiceTest {
 
     @Autowired
@@ -43,7 +43,7 @@ public class AdminUserServiceTest {
     @Autowired
     private IdGeneratorService idGeneratorService;
 
-    @Test
+//    @Test
     public void save() {
         AdminUserDto adminUserBo = new AdminUserDto();
         adminUserBo.setNickname("mary");
@@ -72,7 +72,7 @@ public class AdminUserServiceTest {
     }
 
 
-    @Test
+//    @Test
     public void login() {
         LoginDto loginBo = new LoginDto();
         loginBo.setUsername("jack");
@@ -91,7 +91,7 @@ public class AdminUserServiceTest {
     }
 
 
-    @Test
+//    @Test
     public void resetPassword() {
         IdsLongReq idsLongReq = new IdsLongReq();
         idsLongReq.setIds(List.of(1L));
@@ -109,7 +109,7 @@ public class AdminUserServiceTest {
         log.info("/adminUser/resetPassword:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-    @Test
+//    @Test
     public void changePassword() {
         ChangePasswordDto changePasswordBo = new ChangePasswordDto();
         changePasswordBo.setAdminUserId(1L);
@@ -129,7 +129,7 @@ public class AdminUserServiceTest {
     }
 
 
-    @Test
+//    @Test
     public void findOne() {
         IdLongReq idsLongReq = new IdLongReq();
         idsLongReq.setId(1L);
@@ -147,7 +147,7 @@ public class AdminUserServiceTest {
     }
 
 
-    @Test
+//    @Test
     public void softDelete() {
         IdsLongReq idsLongReq = new IdsLongReq();
         idsLongReq.setIds(List.of(207156698513670144L));
@@ -164,7 +164,7 @@ public class AdminUserServiceTest {
         log.info("/adminUser/softDelete:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-    @Test
+//    @Test
     public void query() {
         var searchBoParam = new SearchDtoParam();
         searchBoParam.setFieldName("username");

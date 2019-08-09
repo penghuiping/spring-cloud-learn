@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
  * @description:
  */
 @Slf4j
-@RestController
+@RestController("/oauth")
 public class Oauth2Controller extends JSONController {
 
     @Autowired
@@ -30,10 +30,10 @@ public class Oauth2Controller extends JSONController {
         return ResponseEntity.ok(code);
     }
 
-
-    @GetMapping(value = "/oauth/SSOLogout.do")
+    @GetMapping(value = "/SSOLogout.do")
     public ResponseEntity<JSONResponse> logout(@NotBlank @RequestHeader(name = "token") String token) {
         tokenStore.removeAccessToken(tokenStore.readAccessToken(token));
         return ResponseEntity.ok(succeed(true));
     }
+
 }
