@@ -5,13 +5,13 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
-import com.php25.usermicroservice.client.dto.StringDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByEmailDto;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByMobileDto;
+import com.php25.usermicroservice.client.dto.req.ReqStringDto;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import com.php25.usermicroservice.client.service.CustomerService;
 import com.php25.usermicroservice.server.constant.UserBusinessError;
 import com.php25.usermicroservice.server.model.Role;
@@ -43,18 +43,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/customer")
 public class CustomerServiceImpl implements CustomerService {
 
-
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleRepository roleRepository;
+
     @Autowired
     private IdGeneratorService idGeneratorService;
 
 
     @Override
     @PostMapping("/register")
-    public Mono<BooleanRes> register(@RequestBody CustomerDto customerDto) {
+    public Mono<ResBoolean> register(@RequestBody CustomerDto customerDto) {
         return Mono.just(customerDto).map(customerBo -> {
             Optional<User> customerDtoOptional = userRepository.findByMobile(customerBo.getMobile());
             if (customerDtoOptional.isPresent()) {
@@ -78,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return false;
             }
         }).map(aBoolean -> {
-            BooleanRes booleanRes = new BooleanRes();
+            ResBoolean booleanRes = new ResBoolean();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
             booleanRes.setReturnObject(aBoolean);
             return booleanRes;
@@ -87,7 +88,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/resetPasswordByMobile")
-    public Mono<BooleanRes> resetPasswordByMobile(@RequestBody ResetPwdByMobileDto resetPwdByMobileDto) {
+    public Mono<ResBoolean> resetPasswordByMobile(@RequestBody ReqResetPwdByMobileDto resetPwdByMobileDto) {
         return Mono.just(resetPwdByMobileDto).map(resetPwdByMobileBo -> {
             String mobile = resetPwdByMobileBo.getMobile();
             String newPassword = resetPwdByMobileBo.getNewPassword();
@@ -105,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             return true;
         }).map(aBoolean -> {
-            BooleanRes booleanRes = new BooleanRes();
+            ResBoolean booleanRes = new ResBoolean();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
             booleanRes.setReturnObject(aBoolean);
             return booleanRes;
@@ -114,7 +115,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/resetPasswordByEmail")
-    public Mono<BooleanRes> resetPasswordByEmail(@RequestBody ResetPwdByEmailDto resetPwdByEmailDto) {
+    public Mono<ResBoolean> resetPasswordByEmail(@RequestBody ReqResetPwdByEmailDto resetPwdByEmailDto) {
         return Mono.just(resetPwdByEmailDto).map(resetPwdByEmailBo -> {
             String email = resetPwdByEmailBo.getEmail();
             String newPassword = resetPwdByEmailBo.getNewPassword();
@@ -132,7 +133,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             return true;
         }).map(aBoolean -> {
-            BooleanRes booleanRes = new BooleanRes();
+            ResBoolean booleanRes = new ResBoolean();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
             booleanRes.setReturnObject(aBoolean);
             return booleanRes;
@@ -141,7 +142,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<CustomerDtoRes> findOne(@RequestBody IdLongReq idLongReq) {
+    public Mono<ResCustomerDto> findOne(@RequestBody ReqIdLong idLongReq) {
         return Mono.just(idLongReq).map(idLongReq1 -> {
             Long customerId = idLongReq1.getId();
             Optional<User> customerDtoOptional = userRepository.findById(customerId);
@@ -154,7 +155,7 @@ public class CustomerServiceImpl implements CustomerService {
             BeanUtils.copyProperties(user, customerDto);
             return customerDto;
         }).map(customerBo -> {
-            CustomerDtoRes customerBoRes = new CustomerDtoRes();
+            ResCustomerDto customerBoRes = new ResCustomerDto();
             customerBoRes.setErrorCode(ApiErrorCode.ok.value);
             customerBoRes.setReturnObject(customerBo);
             return customerBoRes;
@@ -164,7 +165,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/update")
-    public Mono<BooleanRes> update(@RequestBody CustomerDto customerDto) {
+    public Mono<ResBoolean> update(@RequestBody CustomerDto customerDto) {
         return Mono.just(customerDto).map(customerBo -> {
             User user = new User();
             BeanUtils.copyProperties(customerBo, user);
@@ -175,7 +176,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return true;
             }
         }).map(aBoolean -> {
-            BooleanRes booleanRes = new BooleanRes();
+            ResBoolean booleanRes = new ResBoolean();
             booleanRes.setErrorCode(ApiErrorCode.ok.value);
             booleanRes.setReturnObject(aBoolean);
             return booleanRes;
@@ -184,7 +185,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/findCustomerByMobile")
-    public Mono<CustomerDtoRes> findCustomerByMobile(@RequestBody StringDto mobileParam) {
+    public Mono<ResCustomerDto> findCustomerByMobile(@RequestBody ReqStringDto mobileParam) {
         return Mono.just(mobileParam).map(stringBo -> {
             String mobile = stringBo.getContent();
             Optional<User> customerDtoOptional = userRepository.findByMobile(mobile);
@@ -197,7 +198,7 @@ public class CustomerServiceImpl implements CustomerService {
                 throw Exceptions.throwIllegalStateException(String.format("无法通过mobile:%s找到对应的客户信息", mobile));
             }
         }).map(customerBo -> {
-            CustomerDtoRes customerBoRes = new CustomerDtoRes();
+            ResCustomerDto customerBoRes = new ResCustomerDto();
             customerBoRes.setErrorCode(ApiErrorCode.ok.value);
             customerBoRes.setReturnObject(customerBo);
             return customerBoRes;
@@ -206,7 +207,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @PostMapping("/findCustomerByUsername")
-    public Mono<CustomerDtoRes> findCustomerByUsername(@RequestBody StringDto username) {
+    public Mono<ResCustomerDto> findCustomerByUsername(@RequestBody ReqStringDto username) {
         return Mono.just(username).map(stringDto -> {
             String username1 = stringDto.getContent();
             Optional<User> userOptional = userRepository.findByUsername(username1);
@@ -225,7 +226,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerDto.setRoles(roleNames);
             }
 
-            CustomerDtoRes customerDtoRes = new CustomerDtoRes();
+            ResCustomerDto customerDtoRes = new ResCustomerDto();
             customerDtoRes.setErrorCode(ApiErrorCode.ok.value);
             customerDtoRes.setReturnObject(customerDto);
             return customerDtoRes;

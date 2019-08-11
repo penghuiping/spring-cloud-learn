@@ -2,11 +2,11 @@ package com.php25.usermicroservice.server.service.impl;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
-import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
+import com.php25.usermicroservice.client.dto.res.ResAppDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
 import com.php25.usermicroservice.client.service.Oauth2ClientService;
 import com.php25.usermicroservice.server.model.Oauth2Client;
 import com.php25.usermicroservice.server.repository.Oauth2ClientRepository;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -39,7 +38,7 @@ public class Oauth2ClientServiceImpl implements Oauth2ClientService {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<Oauth2ClientDtoRes> findOne(@RequestBody IdStringReq idStringReq1) {
+    public Mono<ResAppDto> findOne(@RequestBody ReqIdString idStringReq1) {
         return Mono.just(idStringReq1).map(idStringReq -> {
             Optional<Oauth2Client> oauth2ClientOptional = oauth2ClientRepository.findById(idStringReq.getId());
             if (!oauth2ClientOptional.isPresent()) {
@@ -51,7 +50,7 @@ public class Oauth2ClientServiceImpl implements Oauth2ClientService {
                 return oauth2ClientDto;
             }
         }).map(oauth2ClientDto -> {
-            Oauth2ClientDtoRes oauth2ClientDtoRes = new Oauth2ClientDtoRes();
+            ResAppDto oauth2ClientDtoRes = new ResAppDto();
             oauth2ClientDtoRes.setErrorCode(ApiErrorCode.ok.value);
             oauth2ClientDtoRes.setReturnObject(oauth2ClientDto);
             return oauth2ClientDtoRes;
@@ -59,12 +58,12 @@ public class Oauth2ClientServiceImpl implements Oauth2ClientService {
     }
 
     @Override
-    public Mono<BooleanRes> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono) {
+    public Mono<ResBoolean> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono) {
         return null;
     }
 
     @Override
-    public Mono<BooleanRes> softDelete(@Valid Mono<IdsStringReq> idsStringReqMono) {
+    public Mono<ResBoolean> softDelete(@Valid Mono<ReqIdsString> idsStringReqMono) {
         return null;
     }
 }

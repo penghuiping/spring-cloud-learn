@@ -1,10 +1,10 @@
 package com.php25.usermicroservice.client.service;
 
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
-import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
+import com.php25.usermicroservice.client.dto.res.ResAppDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -22,7 +22,7 @@ public interface Oauth2ClientService {
      * @param idStringReq
      * @return
      */
-    Mono<Oauth2ClientDtoRes> findOne(@Valid IdStringReq idStringReq);
+    Mono<ResAppDto> findOne(@Valid ReqIdString idStringReq);
 
     /**
      * 新增或者更新oauth2认证客户信息
@@ -30,7 +30,7 @@ public interface Oauth2ClientService {
      * @param oauth2ClientDtoMono
      * @return
      */
-    Mono<BooleanRes> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono);
+    Mono<ResBoolean> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono);
 
     /**
      * 删除oauth2认证客户信息
@@ -38,7 +38,7 @@ public interface Oauth2ClientService {
      * @param idsStringReqMono
      * @return
      */
-    Mono<BooleanRes> softDelete(@Valid Mono<IdsStringReq> idsStringReqMono);
+    Mono<ResBoolean> softDelete(@Valid Mono<ReqIdsString> idsStringReqMono);
 
 
 }

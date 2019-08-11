@@ -3,10 +3,10 @@ package com.php25.usermicroservice.server.event;
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
-import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResAppDto;
 import com.php25.usermicroservice.server.model.Oauth2Client;
 import com.php25.usermicroservice.server.model.Role;
 import com.php25.usermicroservice.server.model.RoleRef;
@@ -67,7 +67,7 @@ public class UserServiceListener {
             Optional<User> userOptional = userRepository.findByUsername(username);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                CustomerDtoRes customerDtoRes = new CustomerDtoRes();
+                ResCustomerDto customerDtoRes = new ResCustomerDto();
                 CustomerDto customerDto = new CustomerDto();
                 BeanUtils.copyProperties(user, customerDto, "roles");
                 if (null != user.getRoles() && !user.getRoles().isEmpty()) {
@@ -80,12 +80,12 @@ public class UserServiceListener {
                 log.info("customerDtoRes:{}", JsonUtil.toJson(customerDtoRes));
                 return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
             } else {
-                CustomerDtoRes customerDtoRes = new CustomerDtoRes();
+                ResCustomerDto customerDtoRes = new ResCustomerDto();
                 customerDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
                 return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
             }
         } catch (Exception e) {
-            CustomerDtoRes customerDtoRes = new CustomerDtoRes();
+            ResCustomerDto customerDtoRes = new ResCustomerDto();
             customerDtoRes.setErrorCode(ApiErrorCode.unknown_error.value);
             return MessageBuilder.withPayload(JsonUtil.toJson(customerDtoRes)).build();
         }
@@ -102,7 +102,7 @@ public class UserServiceListener {
     )
     @SendTo
     public Message oauth2ClientFindOne(String appId) {
-        Oauth2ClientDtoRes oauth2ClientDtoRes = new Oauth2ClientDtoRes();
+        ResAppDto oauth2ClientDtoRes = new ResAppDto();
         try {
             Optional<Oauth2Client> oauth2ClientOptional = oauth2ClientRepository.findById(appId);
             if (oauth2ClientOptional.isPresent()) {

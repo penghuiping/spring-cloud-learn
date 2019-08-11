@@ -1,10 +1,10 @@
 package com.php25.usermicroservice.client.service.impl;
 
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
-import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
+import com.php25.usermicroservice.client.dto.res.ResAppDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
 import com.php25.usermicroservice.client.service.Oauth2ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,22 +27,22 @@ public class Oauth2ClientClientServiceImpl implements Oauth2ClientService {
     private WebClient webClient;
 
     @Override
-    public Mono<Oauth2ClientDtoRes> findOne(@Valid IdStringReq idStringReq) {
+    public Mono<ResAppDto> findOne(@Valid ReqIdString idStringReq) {
         return webClient
                 .post()
                 .uri("/oauth2/findOne")
                 .syncBody(idStringReq)
                 .retrieve()
-                .bodyToMono(Oauth2ClientDtoRes.class);
+                .bodyToMono(ResAppDto.class);
     }
 
     @Override
-    public Mono<BooleanRes> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono) {
+    public Mono<ResBoolean> save(@Valid Mono<Oauth2ClientDto> oauth2ClientDtoMono) {
         return null;
     }
 
     @Override
-    public Mono<BooleanRes> softDelete(@Valid Mono<IdsStringReq> idsStringReqMono) {
+    public Mono<ResBoolean> softDelete(@Valid Mono<ReqIdsString> idsStringReqMono) {
         return null;
     }
 }

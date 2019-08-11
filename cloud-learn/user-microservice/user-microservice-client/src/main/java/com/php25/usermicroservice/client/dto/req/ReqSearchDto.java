@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.flux.web.BaseDto;
 import org.springframework.data.domain.Sort;
@@ -10,7 +10,7 @@ import java.util.List;
  * @date: 2019/7/15 20:49
  * @description:
  */
-public class SearchDto extends BaseDto {
+public class ReqSearchDto extends BaseDto {
 
     private List<SearchDtoParam> searchParams;
 
@@ -22,10 +22,10 @@ public class SearchDto extends BaseDto {
 
     private String property;
 
-    public SearchDto() {
+    public ReqSearchDto() {
     }
 
-    public SearchDto(List<SearchDtoParam> searchParams, Integer pageNum, Integer pageSize, Sort.Direction direction, String property) {
+    public ReqSearchDto(List<SearchDtoParam> searchParams, Integer pageNum, Integer pageSize, Sort.Direction direction, String property) {
         this.searchParams = searchParams;
         this.pageNum = pageNum;
         this.pageSize = pageSize;

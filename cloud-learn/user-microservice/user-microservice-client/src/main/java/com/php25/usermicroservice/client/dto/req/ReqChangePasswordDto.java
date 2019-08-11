@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  */
 @Setter
 @Getter
-public class ChangePasswordDto extends BaseDto {
+public class ReqChangePasswordDto extends BaseDto {
 
     @NotNull
     @Min(0L)

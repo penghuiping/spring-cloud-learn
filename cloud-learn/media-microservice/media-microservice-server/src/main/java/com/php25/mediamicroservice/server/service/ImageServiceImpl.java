@@ -5,8 +5,8 @@ import com.j256.simplemagic.ContentInfoUtil;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.ImgBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
@@ -84,7 +84,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @PostMapping("/findOne")
-    public Mono<ImgBoRes> findOne(@RequestBody IdStringReq idStringReq1) {
+    public Mono<ImgBoRes> findOne(@RequestBody ReqIdString idStringReq1) {
         return Mono.just(idStringReq1).map(idStringReq -> {
             Optional<Img> imgDtoOptional = imgRepository.findById(idStringReq.getId());
             if (imgDtoOptional.isPresent()) {
@@ -104,7 +104,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @PostMapping("/findAll")
-    public Mono<ImgBoListRes> findAll(@RequestBody IdsStringReq idsStringReq1) {
+    public Mono<ImgBoListRes> findAll(@RequestBody ReqIdsString idsStringReq1) {
         return Mono.just(idsStringReq1).map(idsStringReq -> {
             Iterable<Img> imgIterable = imgRepository.findAllById(idsStringReq.getIds());
             List<Img> imgs = Lists.newArrayList(imgIterable);

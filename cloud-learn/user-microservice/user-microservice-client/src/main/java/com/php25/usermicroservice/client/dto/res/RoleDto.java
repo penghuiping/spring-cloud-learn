@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.res;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Setter
 @Getter
-public class AdminRoleDto extends BaseDto implements Serializable {
+public class RoleDto extends BaseDto implements Serializable {
 
     private Long id;
 

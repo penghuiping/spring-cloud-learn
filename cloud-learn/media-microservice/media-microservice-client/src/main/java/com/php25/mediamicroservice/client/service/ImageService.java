@@ -1,7 +1,7 @@
 package com.php25.mediamicroservice.client.service;
 
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
@@ -25,11 +25,11 @@ public interface ImageService {
     /**
      * 通过图片id查询图片信息
      */
-    public Mono<ImgBoRes> findOne(@Valid IdStringReq idStringReq);
+    public Mono<ImgBoRes> findOne(@Valid ReqIdString idStringReq);
 
 
     /**
      * 批量查询图片信息
      */
-    public Mono<ImgBoListRes> findAll(@Valid IdsStringReq idsStringReq);
+    public Mono<ImgBoListRes> findAll(@Valid ReqIdsString idsStringReq);
 }

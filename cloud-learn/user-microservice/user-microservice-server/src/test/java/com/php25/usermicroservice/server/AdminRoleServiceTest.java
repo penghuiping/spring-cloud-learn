@@ -2,16 +2,16 @@ package com.php25.usermicroservice.server;
 
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.common.flux.web.IdsLongReq;
-import com.php25.usermicroservice.client.dto.AdminMenuButtonDto;
-import com.php25.usermicroservice.client.dto.AdminRoleDto;
-import com.php25.usermicroservice.client.dto.SearchDto;
-import com.php25.usermicroservice.client.dto.SearchDtoParam;
-import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDtoListRes;
-import com.php25.usermicroservice.client.dto.res.AdminRoleDtoListRes;
-import com.php25.usermicroservice.client.dto.res.AdminRoleDtoRes;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.common.flux.web.ReqIdsLong;
+import com.php25.usermicroservice.client.dto.req.ReqSearchDto;
+import com.php25.usermicroservice.client.dto.req.SearchDtoParam;
+import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDto;
+import com.php25.usermicroservice.client.dto.res.ResAdminMenuButtonDtoList;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.ResRoleDto;
+import com.php25.usermicroservice.client.dto.res.ResRoleDtoList;
+import com.php25.usermicroservice.client.dto.res.RoleDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +27,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -65,13 +64,11 @@ public class AdminRoleServiceTest {
                 .build();
     }
 
-    //    @Test
+    @Test
     public void save() {
-        AdminRoleDto adminRoleBo = new AdminRoleDto();
+        RoleDto adminRoleBo = new RoleDto();
         adminRoleBo.setName("admin1");
         adminRoleBo.setDescription("管理员1");
-        adminRoleBo.setCreateTime(LocalDateTime.now());
-        adminRoleBo.setUpdateTime(LocalDateTime.now());
         adminRoleBo.setEnable(1);
 
         AdminMenuButtonDto adminMenuButtonBo = new AdminMenuButtonDto();
@@ -90,7 +87,21 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleDtoRes.class);
+                .expectBody(ResRoleDto.class).consumeWith(document("adminRole", requestFields(
+                        fieldWithPath("name").description("角色名"),
+                        fieldWithPath("description").description("角色描述"),
+                        fieldWithPath("enable").description("是否有效"),
+                        fieldWithPath("menus").description("菜单")
+                ).andWithPrefix("menus[].",
+                        fieldWithPath("id").description("菜单id")
+                ), responseFields(beneathPath("returnObject"),
+                        fieldWithPath("id").description("角色id"),
+                        fieldWithPath("name").description("角色名"),
+                        fieldWithPath("description").description("角色描述"),
+                        fieldWithPath("createTime").description("角色创建时间"),
+                        fieldWithPath("updateTime").description("角色更新时间"),
+                        fieldWithPath("menus").description("菜单项"),
+                        fieldWithPath("enable").description("是否有效"))));
 
         log.info("/adminRole/save:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
 
@@ -104,7 +115,7 @@ public class AdminRoleServiceTest {
         searchBoParam.setOperator(Operator.EQ);
         searchBoParam.setValue("admin");
         List params = List.of(searchBoParam);
-        SearchDto searchBo = new SearchDto(params, 1, 5, Sort.Direction.ASC, "id");
+        ReqSearchDto searchBo = new ReqSearchDto(params, 1, 5, Sort.Direction.ASC, "id");
         log.info("参数为:{}", JsonUtil.toJson(searchBo));
         var result = webTestClient.post().uri("/adminRole/query")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -113,7 +124,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleDtoListRes.class).consumeWith(document("adminRole", requestFields(
+                .expectBody(ResRoleDtoList.class).consumeWith(document("adminRole", requestFields(
                         fieldWithPath("pageNum").description("当前第几页"),
                         fieldWithPath("pageSize").description("页面数量"),
                         fieldWithPath("direction").description("排序属性方向"),
@@ -124,9 +135,6 @@ public class AdminRoleServiceTest {
                         fieldWithPath("value").description("属性值"),
                         fieldWithPath("operator").description("比较符号")
                 ), responseFields(beneathPath("returnObject"),
-//                        fieldWithPath("errorCode").description("错误码"),
-//                        fieldWithPath("message").description("错误信息"),
-//                        fieldWithPath("returnObject").description("角色列表")).andWithPrefix("returnObject[].",
                         fieldWithPath("id").description("角色id"),
                         fieldWithPath("name").description("角色名"),
                         fieldWithPath("description").description("角色描述"),
@@ -140,7 +148,7 @@ public class AdminRoleServiceTest {
 
     //    @Test
     public void findOne() {
-        IdLongReq idLongReq = new IdLongReq();
+        ReqIdLong idLongReq = new ReqIdLong();
         idLongReq.setId(1L);
 
         var result = webTestClient.post().uri("/adminRole/findOne")
@@ -150,14 +158,14 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminRoleDtoRes.class);
+                .expectBody(ResRoleDto.class);
 
         log.info("/adminRole/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
     //    @Test
     public void softDelete() {
-        IdsLongReq idsLongReq = new IdsLongReq();
+        ReqIdsLong idsLongReq = new ReqIdsLong();
         idsLongReq.setIds(List.of(207174297410600960L, 207180606402985984L));
 
         var result = webTestClient.post().uri("/adminRole/softDelete")
@@ -167,7 +175,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(ResBoolean.class);
 
         log.info("/adminRole/softDelete:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -182,7 +190,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminMenuButtonDtoListRes.class);
+                .expectBody(ResAdminMenuButtonDtoList.class);
 
         log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
@@ -190,7 +198,7 @@ public class AdminRoleServiceTest {
 
     //    @Test
     public void findAllByAdminRoleId() {
-        IdLongReq idLongReq = new IdLongReq();
+        ReqIdLong idLongReq = new ReqIdLong();
         idLongReq.setId(2L);
 
         var result = webTestClient.post().uri("/adminRole/findAllByAdminRoleId")
@@ -200,7 +208,7 @@ public class AdminRoleServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminMenuButtonDtoListRes.class);
+                .expectBody(ResAdminMenuButtonDtoList.class);
 
         log.info("/adminRole/findAllMenuTree:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }

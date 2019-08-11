@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.res;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class AdminUserDto extends BaseDto implements Serializable {
 
     private String password;
 
-    private List<AdminRoleDto> roles;
+    private List<RoleDto> roles;
 
     private List<AdminMenuButtonDto> menus;
 

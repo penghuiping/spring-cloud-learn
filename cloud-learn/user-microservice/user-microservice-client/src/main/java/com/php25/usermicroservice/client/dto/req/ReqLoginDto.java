@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Setter
 @Getter
-public class LoginDto extends BaseDto {
+public class ReqLoginDto extends BaseDto {
 
     @NotBlank
     String username;

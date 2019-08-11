@@ -5,9 +5,9 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.common.flux.web.IdStringReq;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdString;
 import com.php25.h5api.constant.BusinessError;
 import com.php25.h5api.vo.user.CustomerRes;
 import com.php25.h5api.vo.user.GetMsgCodeReq;
@@ -16,9 +16,9 @@ import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.service.MobileMessageService;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.StringDto;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.usermicroservice.client.dto.req.ReqStringDto;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -58,7 +58,7 @@ public class UserController extends JSONController {
 
     @GetMapping(value = "/showCustomerInfo.do")
     public Mono<JSONResponse> showCustomerInfo(@NotBlank @RequestHeader(name = "username") String username) {
-        StringDto idStringReq = new StringDto();
+        ReqStringDto idStringReq = new ReqStringDto();
         idStringReq.setContent(username);
 
         //查询出客户信息
@@ -81,7 +81,7 @@ public class UserController extends JSONController {
         //查询出客户对应的图片
         Mono<String> imageMono = customerVoMono.flatMap(customerVo -> {
             String imageId = customerVo.getImage();
-            IdStringReq idStringReq1 = new IdStringReq();
+            ReqIdString idStringReq1 = new ReqIdString();
             idStringReq1.setId(imageId);
             return imageService.findOne(idStringReq1);
         }).map(imgBoRes -> {
@@ -139,13 +139,13 @@ public class UserController extends JSONController {
         }).flatMap(validateSMSReq -> {
             //根据手机号查询用户信息
             String mobile = validateSMSReq.getMobile();
-            StringDto stringBo = new StringDto();
+            ReqStringDto stringBo = new ReqStringDto();
             stringBo.setContent(mobile);
             return customerService.findCustomerByMobile(stringBo);
         });
 
         return customerBoResMono.zipWith(registerReqMono).map(tuples -> {
-            CustomerDtoRes customerDtoRes = tuples.getT1();
+            ResCustomerDto customerDtoRes = tuples.getT1();
             RegisterReq registerReq = tuples.getT2();
             //判断此手机是否可以注册
             if (customerDtoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {

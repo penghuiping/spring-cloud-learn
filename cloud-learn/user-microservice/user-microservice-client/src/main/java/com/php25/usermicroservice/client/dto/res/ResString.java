@@ -1,12 +1,12 @@
 package com.php25.usermicroservice.client.dto.res;
 
+
 import com.php25.common.flux.web.BaseResponse;
-import com.php25.usermicroservice.client.dto.AdminRoleDto;
 
 /**
  * @author: penghuiping
- * @date: 2019/7/23 11:04
+ * @date: 2019/7/23 11:02
  * @description:
  */
-public class AdminRoleDtoRes extends BaseResponse<AdminRoleDto> {
+public class ResString extends BaseResponse<String> {
 }

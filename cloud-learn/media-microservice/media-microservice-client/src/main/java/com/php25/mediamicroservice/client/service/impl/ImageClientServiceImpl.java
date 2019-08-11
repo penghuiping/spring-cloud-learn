@@ -1,7 +1,7 @@
 package com.php25.mediamicroservice.client.service.impl;
 
-import com.php25.common.flux.web.IdStringReq;
-import com.php25.common.flux.web.IdsStringReq;
+import com.php25.common.flux.web.ReqIdString;
+import com.php25.common.flux.web.ReqIdsString;
 import com.php25.mediamicroservice.client.bo.Base64ImageBo;
 import com.php25.mediamicroservice.client.bo.res.ImgBoListRes;
 import com.php25.mediamicroservice.client.bo.res.ImgBoRes;
@@ -38,7 +38,7 @@ public class ImageClientServiceImpl implements ImageService {
     }
 
     @Override
-    public Mono<ImgBoRes> findOne(IdStringReq idStringReq) {
+    public Mono<ImgBoRes> findOne(ReqIdString idStringReq) {
         return webClient
                 .post()
                 .uri("/img/findOne")
@@ -48,7 +48,7 @@ public class ImageClientServiceImpl implements ImageService {
     }
 
     @Override
-    public Mono<ImgBoListRes> findAll(IdsStringReq idsStringReq) {
+    public Mono<ImgBoListRes> findAll(ReqIdsString idsStringReq) {
         return webClient
                 .post()
                 .uri("/img/findAll")

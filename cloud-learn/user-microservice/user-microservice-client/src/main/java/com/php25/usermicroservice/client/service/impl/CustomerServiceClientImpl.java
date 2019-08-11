@@ -1,13 +1,13 @@
 package com.php25.usermicroservice.client.service.impl;
 
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
-import com.php25.usermicroservice.client.dto.StringDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByEmailDto;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByMobileDto;
+import com.php25.usermicroservice.client.dto.req.ReqStringDto;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,74 +30,74 @@ public class CustomerServiceClientImpl implements CustomerService {
     private WebClient webClient;
 
     @Override
-    public Mono<BooleanRes> register(CustomerDto customerDto) {
+    public Mono<ResBoolean> register(CustomerDto customerDto) {
         return webClient
                 .post()
                 .uri("/customer/register")
                 .syncBody(customerDto)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(ResBoolean.class);
     }
 
     @Override
-    public Mono<BooleanRes> resetPasswordByMobile(ResetPwdByMobileDto resetPwdByMobileDto) {
+    public Mono<ResBoolean> resetPasswordByMobile(ReqResetPwdByMobileDto resetPwdByMobileDto) {
         return webClient
                 .post()
                 .uri("/customer/resetPasswordByMobile")
                 .syncBody(resetPwdByMobileDto)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(ResBoolean.class);
     }
 
     @Override
-    public Mono<BooleanRes> resetPasswordByEmail(ResetPwdByEmailDto resetPwdByEmailDto) {
+    public Mono<ResBoolean> resetPasswordByEmail(ReqResetPwdByEmailDto resetPwdByEmailDto) {
         return webClient
                 .post()
                 .uri("/customer/resetPasswordByEmail")
                 .syncBody(resetPwdByEmailDto)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(ResBoolean.class);
     }
 
     @Override
-    public Mono<CustomerDtoRes> findOne(IdLongReq idLongReq) {
+    public Mono<ResCustomerDto> findOne(ReqIdLong idLongReq) {
         return webClient
                 .post()
                 .uri("/customer/findOne")
                 .syncBody(idLongReq)
                 .retrieve()
-                .bodyToMono(CustomerDtoRes.class).doOnNext(customerBoRes -> {
+                .bodyToMono(ResCustomerDto.class).doOnNext(customerBoRes -> {
                     log.info(JsonUtil.toJson(customerBoRes));
                 });
     }
 
     @Override
-    public Mono<BooleanRes> update(CustomerDto customerDto) {
+    public Mono<ResBoolean> update(CustomerDto customerDto) {
         return webClient
                 .post()
                 .uri("/customer/update")
                 .syncBody(customerDto)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(ResBoolean.class);
     }
 
     @Override
-    public Mono<CustomerDtoRes> findCustomerByMobile(StringDto mobile) {
+    public Mono<ResCustomerDto> findCustomerByMobile(ReqStringDto mobile) {
         return webClient
                 .post()
                 .uri("/customer/findCustomerByMobile")
                 .syncBody(mobile)
                 .retrieve()
-                .bodyToMono(CustomerDtoRes.class);
+                .bodyToMono(ResCustomerDto.class);
     }
 
     @Override
-    public Mono<CustomerDtoRes> findCustomerByUsername(StringDto username) {
+    public Mono<ResCustomerDto> findCustomerByUsername(ReqStringDto username) {
         return webClient
                 .post()
                 .uri("/customer/findCustomerByUsername")
                 .syncBody(username)
                 .retrieve()
-                .bodyToMono(CustomerDtoRes.class);
+                .bodyToMono(ResCustomerDto.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -8,16 +8,22 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * @author: penghuiping
- * @date: 2019/7/22 14:06
+ * @date: 2019/7/22 14:05
  * @description:
  */
-@Getter
 @Setter
-public class LoginByEmailDto extends BaseDto {
+@Getter
+public class ReqLoginByMobileDto extends BaseDto {
 
+    /**
+     * 手机号
+     **/
     @NotBlank
-    private String email;
+    private String mobile;
 
+    /**
+     * 验证码
+     **/
     @NotBlank
     private String code;
 }

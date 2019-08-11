@@ -3,8 +3,8 @@ package com.php25.authserver.service;
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Message message = rabbitMessagingTemplate.sendAndReceive("cloud-exchange", "userservice.findByUsername", MessageBuilder.withPayload(username).build());
-        CustomerDtoRes customerBoRes = JsonUtil.fromJson(message.getPayload().toString(), CustomerDtoRes.class);
+        ResCustomerDto customerBoRes = JsonUtil.fromJson(message.getPayload().toString(), ResCustomerDto.class);
         if (ApiErrorCode.ok.value.equals(customerBoRes.getErrorCode())) {
             CustomerDto customerBo = customerBoRes.getReturnObject();
             if (null != customerBo.getRoles() && customerBo.getRoles().size() > 0) {

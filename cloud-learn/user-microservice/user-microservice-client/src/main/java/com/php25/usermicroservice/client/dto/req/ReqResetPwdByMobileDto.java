@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.flux.web.BaseDto;
 import lombok.Getter;
@@ -13,10 +13,10 @@ import javax.validation.constraints.NotBlank;
  */
 @Setter
 @Getter
-public class ResetPwdByEmailDto extends BaseDto {
+public class ReqResetPwdByMobileDto extends BaseDto {
 
     @NotBlank
-    private String email;
+    private String mobile;
 
     @NotBlank
     private String oldPassword;

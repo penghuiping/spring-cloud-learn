@@ -1,12 +1,12 @@
 package com.php25.usermicroservice.client.service;
 
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.usermicroservice.client.dto.CustomerDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByEmailDto;
-import com.php25.usermicroservice.client.dto.ResetPwdByMobileDto;
-import com.php25.usermicroservice.client.dto.StringDto;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
-import com.php25.usermicroservice.client.dto.res.CustomerDtoRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByEmailDto;
+import com.php25.usermicroservice.client.dto.req.ReqResetPwdByMobileDto;
+import com.php25.usermicroservice.client.dto.req.ReqStringDto;
+import com.php25.usermicroservice.client.dto.res.CustomerDto;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -26,21 +26,21 @@ public interface CustomerService {
      * @param customerDto 客户信息
      * @return true:注册成功，false:注册失败
      */
-    Mono<BooleanRes> register(@Valid CustomerDto customerDto);
+    Mono<ResBoolean> register(@Valid CustomerDto customerDto);
 
     /**
      * 根据手机号重置密码
      *
      * @return true:重置成功,false:重置失败
      */
-    Mono<BooleanRes> resetPasswordByMobile(@Valid ResetPwdByMobileDto resetPwdByMobileDto);
+    Mono<ResBoolean> resetPasswordByMobile(@Valid ReqResetPwdByMobileDto resetPwdByMobileDto);
 
     /**
      * 根据邮箱重置密码
      *
      * @return true:重置成功;false:重置失败
      */
-    Mono<BooleanRes> resetPasswordByEmail(@Valid ResetPwdByEmailDto resetPwdByEmailDto);
+    Mono<ResBoolean> resetPasswordByEmail(@Valid ReqResetPwdByEmailDto resetPwdByEmailDto);
 
     /**
      * 根据jwt获取前台用户详情
@@ -48,7 +48,7 @@ public interface CustomerService {
      * @param idLongReq 用户id
      * @return 前台用户信息
      */
-    Mono<CustomerDtoRes> findOne(@Valid IdLongReq idLongReq);
+    Mono<ResCustomerDto> findOne(@Valid ReqIdLong idLongReq);
 
 
     /**
@@ -57,7 +57,7 @@ public interface CustomerService {
      * @param customerDto 前台用户信息
      * @return true:修改用户信息成功，false:修改用户信息失败
      */
-    Mono<BooleanRes> update(@Valid CustomerDto customerDto);
+    Mono<ResBoolean> update(@Valid CustomerDto customerDto);
 
     /**
      * 通过手机号查询前台客户信息
@@ -65,10 +65,10 @@ public interface CustomerService {
      * @param mobile 手机号
      * @return 返回前台客户信息
      */
-    Mono<CustomerDtoRes> findCustomerByMobile(@Valid StringDto mobile);
+    Mono<ResCustomerDto> findCustomerByMobile(@Valid ReqStringDto mobile);
 
 
-    Mono<CustomerDtoRes> findCustomerByUsername(@Valid StringDto username);
+    Mono<ResCustomerDto> findCustomerByUsername(@Valid ReqStringDto username);
 
 //    Mono<Object> testMessage();
 

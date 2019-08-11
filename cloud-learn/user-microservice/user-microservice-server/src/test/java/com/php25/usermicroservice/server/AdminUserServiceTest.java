@@ -3,25 +3,21 @@ package com.php25.usermicroservice.server;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.common.flux.web.IdsLongReq;
-import com.php25.usermicroservice.client.dto.AdminRoleDto;
-import com.php25.usermicroservice.client.dto.AdminUserDto;
-import com.php25.usermicroservice.client.dto.ChangePasswordDto;
-import com.php25.usermicroservice.client.dto.LoginDto;
-import com.php25.usermicroservice.client.dto.SearchDto;
-import com.php25.usermicroservice.client.dto.SearchDtoParam;
-import com.php25.usermicroservice.client.dto.res.AdminUserDtoListRes;
-import com.php25.usermicroservice.client.dto.res.AdminUserDtoRes;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.common.flux.web.ReqIdsLong;
+import com.php25.usermicroservice.client.dto.req.ReqChangePasswordDto;
+import com.php25.usermicroservice.client.dto.req.ReqLoginDto;
+import com.php25.usermicroservice.client.dto.req.ReqSearchDto;
+import com.php25.usermicroservice.client.dto.req.SearchDtoParam;
+import com.php25.usermicroservice.client.dto.res.AdminUserDto;
+import com.php25.usermicroservice.client.dto.res.ResAdminUserDto;
+import com.php25.usermicroservice.client.dto.res.ResAdminUserDtoList;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.RoleDto;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
@@ -43,7 +39,7 @@ public class AdminUserServiceTest {
     @Autowired
     private IdGeneratorService idGeneratorService;
 
-//    @Test
+    //    @Test
     public void save() {
         AdminUserDto adminUserBo = new AdminUserDto();
         adminUserBo.setNickname("mary");
@@ -55,7 +51,7 @@ public class AdminUserServiceTest {
         adminUserBo.setMobile("18621287362");
         adminUserBo.setPassword("123456");
 
-        AdminRoleDto adminRoleBo = new AdminRoleDto();
+        RoleDto adminRoleBo = new RoleDto();
         adminRoleBo.setId(2L);
         adminUserBo.setRoles(List.of(adminRoleBo));
 
@@ -66,15 +62,15 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserDtoRes.class);
+                .expectBody(ResAdminUserDto.class);
 
         log.info("/adminUser/save:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
 
-//    @Test
+    //    @Test
     public void login() {
-        LoginDto loginBo = new LoginDto();
+        ReqLoginDto loginBo = new ReqLoginDto();
         loginBo.setUsername("jack");
         loginBo.setPassword("123456");
 
@@ -85,15 +81,15 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserDtoRes.class);
+                .expectBody(ResAdminUserDto.class);
 
         log.info("/adminUser/login:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
 
-//    @Test
+    //    @Test
     public void resetPassword() {
-        IdsLongReq idsLongReq = new IdsLongReq();
+        ReqIdsLong idsLongReq = new ReqIdsLong();
         idsLongReq.setIds(List.of(1L));
 
 
@@ -104,14 +100,14 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(ResBoolean.class);
 
         log.info("/adminUser/resetPassword:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-//    @Test
+    //    @Test
     public void changePassword() {
-        ChangePasswordDto changePasswordBo = new ChangePasswordDto();
+        ReqChangePasswordDto changePasswordBo = new ReqChangePasswordDto();
         changePasswordBo.setAdminUserId(1L);
         changePasswordBo.setNewPassword("654321");
         changePasswordBo.setOriginPassword("123456");
@@ -123,15 +119,15 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(ResBoolean.class);
 
         log.info("/adminUser/changePassword:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
 
-//    @Test
+    //    @Test
     public void findOne() {
-        IdLongReq idsLongReq = new IdLongReq();
+        ReqIdLong idsLongReq = new ReqIdLong();
         idsLongReq.setId(1L);
 
         var result = webTestClient.post().uri("/adminUser/findOne")
@@ -141,15 +137,15 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserDtoRes.class);
+                .expectBody(ResAdminUserDto.class);
 
         log.info("/adminUser/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
 
-//    @Test
+    //    @Test
     public void softDelete() {
-        IdsLongReq idsLongReq = new IdsLongReq();
+        ReqIdsLong idsLongReq = new ReqIdsLong();
         idsLongReq.setIds(List.of(207156698513670144L));
 
         var result = webTestClient.post().uri("/adminUser/softDelete")
@@ -159,19 +155,19 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(ResBoolean.class);
 
         log.info("/adminUser/softDelete:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-//    @Test
+    //    @Test
     public void query() {
         var searchBoParam = new SearchDtoParam();
         searchBoParam.setFieldName("username");
         searchBoParam.setOperator(Operator.EQ);
         searchBoParam.setValue("jack");
         var params = List.of(searchBoParam);
-        var searchBo = new SearchDto(params, 1, 5, Sort.Direction.ASC, "id");
+        var searchBo = new ReqSearchDto(params, 1, 5, Sort.Direction.ASC, "id");
 
         var result = webTestClient.post().uri("/adminUser/query")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -180,7 +176,7 @@ public class AdminUserServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(AdminUserDtoListRes.class);
+                .expectBody(ResAdminUserDtoList.class);
 
         log.info("/adminUser/query:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }

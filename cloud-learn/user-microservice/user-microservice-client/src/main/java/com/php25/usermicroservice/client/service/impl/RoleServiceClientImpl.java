@@ -1,13 +1,13 @@
 package com.php25.usermicroservice.client.service.impl;
 
-import com.php25.common.flux.web.IdLongReq;
-import com.php25.common.flux.web.IdsLongReq;
-import com.php25.usermicroservice.client.dto.AdminRoleDto;
-import com.php25.usermicroservice.client.dto.SearchDto;
-import com.php25.usermicroservice.client.dto.res.AdminMenuButtonDtoListRes;
-import com.php25.usermicroservice.client.dto.res.AdminRoleDtoListRes;
-import com.php25.usermicroservice.client.dto.res.AdminRoleDtoRes;
-import com.php25.usermicroservice.client.dto.res.BooleanRes;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.common.flux.web.ReqIdsLong;
+import com.php25.usermicroservice.client.dto.req.ReqSearchDto;
+import com.php25.usermicroservice.client.dto.res.ResAdminMenuButtonDtoList;
+import com.php25.usermicroservice.client.dto.res.ResBoolean;
+import com.php25.usermicroservice.client.dto.res.ResRoleDto;
+import com.php25.usermicroservice.client.dto.res.ResRoleDtoList;
+import com.php25.usermicroservice.client.dto.res.RoleDto;
 import com.php25.usermicroservice.client.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,64 +30,64 @@ public class RoleServiceClientImpl implements RoleService {
     private WebClient webClient;
 
     @Override
-    public Mono<AdminRoleDtoListRes> query(SearchDto searchDto) {
+    public Mono<ResRoleDtoList> query(ReqSearchDto searchDto) {
         return webClient
                 .post()
                 .uri("/adminRole/query")
                 .syncBody(searchDto)
                 .retrieve()
-                .bodyToMono(AdminRoleDtoListRes.class);
+                .bodyToMono(ResRoleDtoList.class);
     }
 
 
     @Override
-    public Mono<AdminRoleDtoRes> save(AdminRoleDto adminRoleDto) {
+    public Mono<ResRoleDto> save(RoleDto adminRoleDto) {
         return webClient
                 .post()
                 .uri("/adminRole/save")
                 .syncBody(adminRoleDto)
                 .retrieve()
-                .bodyToMono(AdminRoleDtoRes.class);
+                .bodyToMono(ResRoleDto.class);
     }
 
 
     @Override
-    public Mono<BooleanRes> softDelete(IdsLongReq idsLongReq) {
+    public Mono<ResBoolean> softDelete(ReqIdsLong idsLongReq) {
         return webClient
                 .post()
                 .uri("/adminRole/softDelete")
                 .syncBody(idsLongReq)
                 .retrieve()
-                .bodyToMono(BooleanRes.class);
+                .bodyToMono(ResBoolean.class);
     }
 
     @Override
-    public Mono<AdminRoleDtoRes> findOne(@Valid IdLongReq idLongReq) {
+    public Mono<ResRoleDto> findOne(@Valid ReqIdLong idLongReq) {
         return webClient
                 .post()
                 .uri("/adminRole/findOne")
                 .syncBody(idLongReq)
                 .retrieve()
-                .bodyToMono(AdminRoleDtoRes.class);
+                .bodyToMono(ResRoleDto.class);
     }
 
     @Override
-    public Mono<AdminMenuButtonDtoListRes> findAllMenuTree() {
+    public Mono<ResAdminMenuButtonDtoList> findAllMenuTree() {
         return webClient
                 .get()
                 .uri("/adminRole/findAllMenuTree")
                 .retrieve()
-                .bodyToMono(AdminMenuButtonDtoListRes.class);
+                .bodyToMono(ResAdminMenuButtonDtoList.class);
     }
 
 
     @Override
-    public Mono<AdminMenuButtonDtoListRes> findAllByAdminRoleId(IdLongReq idLongReq) {
+    public Mono<ResAdminMenuButtonDtoList> findAllByAdminRoleId(ReqIdLong idLongReq) {
         return webClient
                 .post()
                 .uri("/adminRole/findAllByAdminRoleId")
                 .syncBody(idLongReq)
                 .retrieve()
-                .bodyToMono(AdminMenuButtonDtoListRes.class);
+                .bodyToMono(ResAdminMenuButtonDtoList.class);
     }
 }

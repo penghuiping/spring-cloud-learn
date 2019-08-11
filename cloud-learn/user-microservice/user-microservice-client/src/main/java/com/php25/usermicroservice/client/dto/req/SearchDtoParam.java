@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.client.dto;
+package com.php25.usermicroservice.client.dto.req;
 
 import com.php25.common.core.specification.Operator;
 import com.php25.common.flux.web.BaseDto;

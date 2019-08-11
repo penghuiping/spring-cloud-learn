@@ -3,8 +3,8 @@ package com.php25.authserver.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.usermicroservice.client.dto.Oauth2ClientDto;
-import com.php25.usermicroservice.client.dto.res.Oauth2ClientDtoRes;
+import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
+import com.php25.usermicroservice.client.dto.res.ResAppDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class MyClientDetailsService implements ClientDetailsService {
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
         Message message = rabbitMessagingTemplate.sendAndReceive("cloud-exchange", "userservice.oauth2ClientFindOne", MessageBuilder.withPayload(clientId).build());
-        Oauth2ClientDtoRes oauth2ClientDtoRes = JsonUtil.fromJson(message.getPayload().toString(), Oauth2ClientDtoRes.class);
+        ResAppDto oauth2ClientDtoRes = JsonUtil.fromJson(message.getPayload().toString(), ResAppDto.class);
         Oauth2ClientDto oauth2ClientDto = oauth2ClientDtoRes.getReturnObject();
         BaseClientDetails clientDetails = new BaseClientDetails();
         clientDetails.setClientId(oauth2ClientDto.getAppId());
