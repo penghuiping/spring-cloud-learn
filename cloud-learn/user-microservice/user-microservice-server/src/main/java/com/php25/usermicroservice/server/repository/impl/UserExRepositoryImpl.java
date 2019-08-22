@@ -1,8 +1,8 @@
-package com.php25.usermicroservice.server.repository.impl;
+package com.php25.usermicroservice.web.repository.impl;
 
 import com.php25.common.db.repository.JdbcDbRepositoryImpl;
-import com.php25.usermicroservice.server.model.User;
-import com.php25.usermicroservice.server.repository.UserExRepository;
+import com.php25.usermicroservice.web.model.User;
+import com.php25.usermicroservice.web.repository.UserExRepository;
 
 /**
  * @author: penghuiping

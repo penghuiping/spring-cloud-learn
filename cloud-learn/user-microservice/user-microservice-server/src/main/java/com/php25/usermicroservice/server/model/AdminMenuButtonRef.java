@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.model;
+package com.php25.usermicroservice.web.model;
 
 import lombok.Getter;
 import lombok.Setter;

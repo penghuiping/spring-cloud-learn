@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.event;
+package com.php25.usermicroservice.web.event;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
@@ -7,13 +7,13 @@ import com.php25.usermicroservice.client.dto.res.CustomerDto;
 import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.ResCustomerDto;
 import com.php25.usermicroservice.client.dto.res.ResAppDto;
-import com.php25.usermicroservice.server.model.Oauth2Client;
-import com.php25.usermicroservice.server.model.Role;
-import com.php25.usermicroservice.server.model.RoleRef;
-import com.php25.usermicroservice.server.model.User;
-import com.php25.usermicroservice.server.repository.Oauth2ClientRepository;
-import com.php25.usermicroservice.server.repository.RoleRepository;
-import com.php25.usermicroservice.server.repository.UserRepository;
+import com.php25.usermicroservice.web.model.Oauth2Client;
+import com.php25.usermicroservice.web.model.Role;
+import com.php25.usermicroservice.web.model.RoleRef;
+import com.php25.usermicroservice.web.model.User;
+import com.php25.usermicroservice.web.repository.Oauth2ClientRepository;
+import com.php25.usermicroservice.web.repository.RoleRepository;
+import com.php25.usermicroservice.web.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;

@@ -1,6 +1,9 @@
-package com.php25.h5api.controller.user;
+package com.php25.authserver.controller;
 
-
+import com.php25.authserver.constant.BusinessError;
+import com.php25.authserver.vo.CustomerRes;
+import com.php25.authserver.vo.GetMsgCodeReq;
+import com.php25.authserver.vo.RegisterReq;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.util.JsonUtil;
@@ -8,10 +11,6 @@ import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.flux.web.ReqIdString;
-import com.php25.h5api.constant.BusinessError;
-import com.php25.h5api.vo.user.CustomerRes;
-import com.php25.h5api.vo.user.GetMsgCodeReq;
-import com.php25.h5api.vo.user.RegisterReq;
 import com.php25.mediamicroservice.client.service.ImageService;
 import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
@@ -23,6 +22,8 @@ import com.php25.usermicroservice.client.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,13 +36,17 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
- * @author penghuiping
- * @date 2018/03/15
+ * @author: penghuiping
+ * @date: 2019/7/30 14:55
+ * @description:
  */
 @Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController extends JSONController {
+
+    @Autowired
+    private TokenStore tokenStore;
 
     @Autowired
     private CustomerService customerService;
@@ -54,6 +59,17 @@ public class UserController extends JSONController {
 
     @Autowired
     private IdGeneratorService idGeneratorService;
+
+    @RequestMapping("/callback")
+    public ResponseEntity callback(String code) {
+        return ResponseEntity.ok(code);
+    }
+
+    @GetMapping(value = "/SSOLogout.do")
+    public ResponseEntity<JSONResponse> logout(@NotBlank @RequestHeader(name = "token") String token) {
+        tokenStore.removeAccessToken(tokenStore.readAccessToken(token));
+        return ResponseEntity.ok(succeed(true));
+    }
 
 
     @GetMapping(value = "/showCustomerInfo.do")
@@ -86,13 +102,12 @@ public class UserController extends JSONController {
             return imageService.findOne(idStringReq1);
         }).map(imgBoRes -> {
             log.info("图片信息:{}", JsonUtil.toJson(imgBoRes));
-            if (!imgBoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
+            if (imgBoRes.getErrorCode().equals(ApiErrorCode.ok.value)) {
                 return imgBoRes.getReturnObject().getImgUrl();
             } else {
                 return "";
             }
         });
-
 
         //最后组合返回
         return imageMono.zipWith(customerVoMono).map(objects -> {
@@ -105,8 +120,8 @@ public class UserController extends JSONController {
 
 
     @PostMapping("/getMsgCode.do")
-    public Mono<JSONResponse> getMsgCode(@Valid Mono<GetMsgCodeReq> getMsgCodeVoMono) {
-        return getMsgCodeVoMono.flatMap(params -> {
+    public Mono<JSONResponse> getMsgCode(@Valid GetMsgCodeReq getMsgCodeVo) {
+        return Mono.just(getMsgCodeVo).flatMap(params -> {
             log.info("获取短信验证码。。。。");
             log.info(JsonUtil.toPrettyJson(params));
             var sendSmsReq = new SendSMSReq();
@@ -118,9 +133,9 @@ public class UserController extends JSONController {
 
 
     @PostMapping(value = "/register.do")
-    public Mono<JSONResponse> register(@Valid Mono<RegisterReq> registerReqMono) {
+    public Mono<JSONResponse> register(@Valid RegisterReq registerReq1) {
         //效验短信验证码
-        var customerBoResMono = registerReqMono.map(registerReq -> {
+        var customerBoResMono = Mono.just(registerReq1).map(registerReq -> {
             String mobile = registerReq.getMobile();
             String msgCode = registerReq.getMsgCode();
             ValidateSMSReq validateSMSReq1 = new ValidateSMSReq();
@@ -144,7 +159,7 @@ public class UserController extends JSONController {
             return customerService.findCustomerByMobile(stringBo);
         });
 
-        return customerBoResMono.zipWith(registerReqMono).map(tuples -> {
+        return customerBoResMono.zipWith(Mono.just(registerReq1)).map(tuples -> {
             ResCustomerDto customerDtoRes = tuples.getT1();
             RegisterReq registerReq = tuples.getT2();
             //判断此手机是否可以注册
@@ -172,9 +187,4 @@ public class UserController extends JSONController {
         }));
     }
 
-//    @PostMapping("/common/changePersonInfo.do")
-//    public Mono<JSONResponse> changePersonInfo(@NotBlank @RequestHeader(name = "jwt") String jwt) {
-//        ResultDto<CustomerBo> resultDto = customerService.findOne(jwt);
-//        return null;
-//    }
 }

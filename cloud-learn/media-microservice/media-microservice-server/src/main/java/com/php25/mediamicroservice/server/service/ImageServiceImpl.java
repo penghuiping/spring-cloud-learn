@@ -1,6 +1,7 @@
 package com.php25.mediamicroservice.server.service;
 
 import com.google.common.collect.Lists;
+import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
@@ -27,6 +28,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,14 +60,14 @@ public class ImageServiceImpl implements ImageService {
         return Mono.just(base64ImageReq1).map(base64ImageReq -> {
             String base64Image = base64ImageReq.getContent();
             //获取文件类型
-            var arr = DigestUtil.decodeBase64(base64Image);
-            var util = new ContentInfoUtil();
-            var info = util.findMatch(arr);
+            byte[] arr = DigestUtil.decodeBase64(base64Image);
+            ContentInfoUtil util = new ContentInfoUtil();
+            ContentInfo info = util.findMatch(arr);
             String name = DigestUtil.SHAStr(base64Image) + "." + info.getFileExtensions()[0];
             String absolutePath = resourcePath + "/" + name;
 
             //写入文件
-            var path1 = Paths.get(absolutePath);
+            Path path1 = Paths.get(absolutePath);
             try {
                 if (!Files.exists(path1)) {
                     Files.write(path1, arr);

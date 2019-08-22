@@ -21,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +53,7 @@ public class MailServiceImpl implements MailService {
             String sendTo = params.getSendTo();
             String title = params.getTitle();
             String content = params.getContent();
-            var message = new SimpleMailMessage();
+            SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(sender);
             //自己给自己发送邮件
             message.setTo(sendTo);
@@ -70,8 +73,8 @@ public class MailServiceImpl implements MailService {
     @PostMapping(value = "/sendAttachmentsMail")
     public Mono<BooleanRes> sendAttachmentsMail(@RequestBody Mono<SendAttachmentsMailReq> sendAttachmentsMailReqMono) {
         return sendAttachmentsMailReqMono.map(params -> {
-            var pairs = params.getAttachments().stream().map(stringStringPairBo -> {
-                var path = Paths.get(System.getProperty("java.io.tmpdir"), stringStringPairBo.getKey());
+            List<Pair<String, File>> pairs = params.getAttachments().stream().map(stringStringPairBo -> {
+                Path path = Paths.get(System.getProperty("java.io.tmpdir"), stringStringPairBo.getKey());
                 try {
                     path = Files.write(path, DigestUtil.decodeBase64(stringStringPairBo.getValue()));
                     Pair<String, File> pairDto = new Pair<>();
@@ -83,18 +86,18 @@ public class MailServiceImpl implements MailService {
                 }
             }).collect(Collectors.toList());
 
-            var mimeMessage = mailSender.createMimeMessage();
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
             try {
                 String sendTo = params.getSendTo();
                 String title = params.getTitle();
                 String content = params.getContent();
-                var helper = new MimeMessageHelper(mimeMessage, true);
+                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
                 helper.setFrom(sender);
                 helper.setTo(sendTo);
                 helper.setSubject(title);
                 helper.setText(content);
 
-                for (var pair : pairs) {
+                for (Pair<String, File> pair : pairs) {
                     helper.addAttachment(pair.getKey(), new FileSystemResource(pair.getValue()));
                 }
                 mailSender.send(mimeMessage);

@@ -1,10 +1,13 @@
 package com.php25.gateway.filter;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.util.AssertUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
@@ -39,8 +42,8 @@ public class JwtFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {
         log.info("进入JwtFilter");
 
-        var request = serverWebExchange.getRequest();
-        var response = serverWebExchange.getResponse();
+        ServerHttpRequest request = serverWebExchange.getRequest();
+        ServerHttpResponse response = serverWebExchange.getResponse();
         if (request.getURI().getPath().startsWith("/oauth")) {
             request = request.mutate().header("username", "anonymity").build();
             return webFilterChain.filter(serverWebExchange.mutate().request(request).build());
@@ -52,8 +55,8 @@ public class JwtFilter implements WebFilter {
             OAuth2Authentication oAuth2Authentication = resourceServerTokenServices.loadAuthentication(token);
             String jwt = generateJwt(oAuth2Authentication);
             request = request.mutate().headers(httpHeaders -> {
-                httpHeaders.put("Authorization", List.of("Bearer " + jwt));
-                httpHeaders.put("username", List.of(oAuth2Authentication.getName()));
+                httpHeaders.put("Authorization", Lists.newArrayList("Bearer " + jwt));
+                httpHeaders.put("username", Lists.newArrayList(oAuth2Authentication.getName()));
             }).build();
             //认证通过
             return webFilterChain.filter(serverWebExchange.mutate().request(request).build());

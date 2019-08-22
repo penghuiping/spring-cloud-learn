@@ -5,12 +5,9 @@ import com.php25.notifymicroservice.client.bo.req.SendSMSReq;
 import com.php25.notifymicroservice.client.bo.req.ValidateSMSReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
@@ -27,12 +24,12 @@ public class MobileMessageServiceTest {
     private WebTestClient webTestClient;
 
 
-//    @Test
+    //    @Test
     public void sendSMS() {
         SendSMSReq sendSMSReq = new SendSMSReq();
         sendSMSReq.setMobile("18812345678");
 
-        var result = webTestClient.post().uri("/mobileMsg/sendSMS")
+        WebTestClient.BodySpec result = webTestClient.post().uri("/mobileMsg/sendSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(sendSMSReq)
@@ -44,13 +41,13 @@ public class MobileMessageServiceTest {
         log.info("/mobileMsg/sendSMS:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
     }
 
-//    @Test
+    //    @Test
     public void validateSMS() {
         ValidateSMSReq validateSMSReq = new ValidateSMSReq();
         validateSMSReq.setMobile("18812345678");
         validateSMSReq.setMsgCode("1111");
 
-        var result = webTestClient.post().uri("/mobileMsg/validateSMS")
+        WebTestClient.BodySpec result = webTestClient.post().uri("/mobileMsg/validateSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(validateSMSReq)

@@ -24,10 +24,9 @@
         <commons-lang3.version>3.7</commons-lang3.version>
         <druid.version>1.1.2</druid.version>
         <easypoi.version>3.1.0</easypoi.version>
-        <redisson.version>2.8.2</redisson.version>
         <jmh.version>1.21</jmh.version>
-        <mybatis-plus.version>3.0.5</mybatis-plus.version>
         <jfairy.version>0.5.9</jfairy.version>
+        <javafaker>1.0.0</javafaker>
         <spring.boot.version>2.0.3.RELEASE</spring.boot.version>
         <simplemagic.version>1.12</simplemagic.version>
         <dubbo.starter.version>0.2.0</dubbo.starter.version>
@@ -39,7 +38,7 @@
         <beetl>2.8.5</beetl>
         <apollo>1.3.0</apollo>
         <jsms-client>1.2.0</jsms-client>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <php-common.es>2.1.3-SNAPSHOT</php-common.es>
         <php-common.db>2.1.3-SNAPSHOT</php-common.db>
         <php-common.jpa>2.1.3-SNAPSHOT</php-common.jpa>
@@ -168,12 +167,6 @@
                 <version>${php25.common}</version>
             </dependency>
             <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson</artifactId>
-                <version>${redisson.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.openjdk.jmh</groupId>
                 <artifactId>jmh-core</artifactId>
                 <version>${jmh.version}</version>
@@ -186,10 +179,10 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>${mybatis-plus.version}</version>
-                <scope>compile</scope>
+                <groupId>com.github.javafaker</groupId>
+                <artifactId>javafaker</artifactId>
+                <version>${javafaker}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.codearte.jfairy</groupId>
@@ -207,47 +200,20 @@
                 <artifactId>dubbo-spring-boot-starter</artifactId>
                 <version>${dubbo.starter.version}</version>
             </dependency>
-            <!--文件上传 -->
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons-fileupload}</version>
             </dependency>
-            <!--图片处理-->
             <dependency>
                 <groupId>net.coobird</groupId>
                 <artifactId>thumbnailator</artifactId>
                 <version>${thumbnailator}</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swaggerui}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swaggerui}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spring-webflux</artifactId>
-                <version>${swaggerui}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spring-integration-webflux</artifactId>
-                <version>${swaggerui}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.shardingjdbc</groupId>
                 <artifactId>sharding-jdbc-core</artifactId>
                 <version>${sharding-jdbc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.jpush.api</groupId>
-                <artifactId>jsms-client</artifactId>
-                <version>${jsms-client}</version>
             </dependency>
             <dependency>
                 <groupId>cn.jpush.api</groupId>

@@ -22,6 +22,7 @@ public class RedisConfig {
         return redisService;
     }
 
+
     @Bean
     public IdGeneratorService idGeneratorService() {
         return new IdGeneratorServiceImpl();

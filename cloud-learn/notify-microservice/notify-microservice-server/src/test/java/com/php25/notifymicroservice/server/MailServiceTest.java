@@ -6,6 +6,7 @@ import com.php25.notifymicroservice.client.bo.req.SendAttachmentsMailReq;
 import com.php25.notifymicroservice.client.bo.req.SendSimpleMailReq;
 import com.php25.notifymicroservice.client.bo.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class MailServiceTest {
         sendSimpleMailReq.setTitle("测试邮件");
         sendSimpleMailReq.setSendTo(mailAddress);
 
-        var result = webTestClient.post().uri("/mail/sendSimpleMail")
+        WebTestClient.BodySpec result = webTestClient.post().uri("/mail/sendSimpleMail")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(sendSimpleMailReq)
@@ -58,12 +59,12 @@ public class MailServiceTest {
         sendAttachmentsMailReq.setContent("你好");
         sendAttachmentsMailReq.setTitle("测试邮件");
         sendAttachmentsMailReq.setSendTo(mailAddress);
-        Pair pair = new Pair<>();
+        Pair<String,String> pair = new Pair<>();
         pair.setKey("附件1");
         pair.setValue("");
-        sendAttachmentsMailReq.setAttachments(List.of(pair));
+        sendAttachmentsMailReq.setAttachments(Lists.newArrayList(pair));
 
-        var result = webTestClient.post().uri("/mail/sendAttachmentsMail")
+        WebTestClient.BodySpec result = webTestClient.post().uri("/mail/sendAttachmentsMail")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(sendAttachmentsMailReq)

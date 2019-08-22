@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server;
+package com.php25.usermicroservice.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;

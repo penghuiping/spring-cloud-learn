@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -55,8 +54,8 @@ public class WebSecurityConfig {
                     }
                 }))
                 .and().and().build();
-
     }
+
 
     @Order(-100)
     @Bean

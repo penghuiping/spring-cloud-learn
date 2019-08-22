@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.config;
+package com.php25.usermicroservice.web.config;
 
 import com.php25.common.flux.web.LogFilter;
 import lombok.extern.slf4j.Slf4j;

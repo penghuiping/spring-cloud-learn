@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.service.impl;
+package com.php25.usermicroservice.web.service.impl;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.flux.web.ApiErrorCode;
@@ -8,8 +8,8 @@ import com.php25.usermicroservice.client.dto.res.Oauth2ClientDto;
 import com.php25.usermicroservice.client.dto.res.ResAppDto;
 import com.php25.usermicroservice.client.dto.res.ResBoolean;
 import com.php25.usermicroservice.client.service.Oauth2ClientService;
-import com.php25.usermicroservice.server.model.Oauth2Client;
-import com.php25.usermicroservice.server.repository.Oauth2ClientRepository;
+import com.php25.usermicroservice.web.model.Oauth2Client;
+import com.php25.usermicroservice.web.repository.Oauth2ClientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

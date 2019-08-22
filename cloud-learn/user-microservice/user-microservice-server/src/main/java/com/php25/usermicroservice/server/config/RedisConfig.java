@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.config;
+package com.php25.usermicroservice.web.config;
 
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.service.IdGeneratorServiceImpl;

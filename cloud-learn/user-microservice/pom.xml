@@ -15,8 +15,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>user-microservice-client</module>
-        <module>user-microservice-server</module>
+        <module>user-microservice-api</module>
     </modules>
 
     <packaging>pom</packaging>

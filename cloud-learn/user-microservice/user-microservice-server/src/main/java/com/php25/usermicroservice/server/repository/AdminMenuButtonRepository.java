@@ -1,6 +1,6 @@
-package com.php25.usermicroservice.server.repository;
+package com.php25.usermicroservice.web.repository;
 
-import com.php25.usermicroservice.server.model.AdminMenuButton;
+import com.php25.usermicroservice.web.model.AdminMenuButton;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;

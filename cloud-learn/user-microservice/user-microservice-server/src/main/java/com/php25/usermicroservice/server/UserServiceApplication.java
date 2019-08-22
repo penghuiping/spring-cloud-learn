@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server;
+package com.php25.usermicroservice.web;
 
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;

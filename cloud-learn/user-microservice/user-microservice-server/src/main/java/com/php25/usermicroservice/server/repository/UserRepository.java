@@ -1,6 +1,6 @@
-package com.php25.usermicroservice.server.repository;
+package com.php25.usermicroservice.web.repository;
 
-import com.php25.usermicroservice.server.model.User;
+import com.php25.usermicroservice.web.model.User;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

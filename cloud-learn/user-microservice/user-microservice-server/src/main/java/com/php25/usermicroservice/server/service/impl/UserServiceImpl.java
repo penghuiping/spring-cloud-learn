@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server.service.impl;
+package com.php25.usermicroservice.web.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
@@ -17,11 +17,11 @@ import com.php25.usermicroservice.client.dto.res.ResAdminUserDtoList;
 import com.php25.usermicroservice.client.dto.res.ResBoolean;
 import com.php25.usermicroservice.client.dto.res.RoleDto;
 import com.php25.usermicroservice.client.service.UserService;
-import com.php25.usermicroservice.server.model.Role;
-import com.php25.usermicroservice.server.model.RoleRef;
-import com.php25.usermicroservice.server.model.User;
-import com.php25.usermicroservice.server.repository.RoleRepository;
-import com.php25.usermicroservice.server.repository.UserRepository;
+import com.php25.usermicroservice.web.model.Role;
+import com.php25.usermicroservice.web.model.RoleRef;
+import com.php25.usermicroservice.web.model.User;
+import com.php25.usermicroservice.web.repository.RoleRepository;
+import com.php25.usermicroservice.web.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

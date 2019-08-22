@@ -15,8 +15,8 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>notify-microservice-server</module>
         <module>notify-microservice-client</module>
+        <module>notify-microservice-server</module>
     </modules>
     <packaging>pom</packaging>
 </project>

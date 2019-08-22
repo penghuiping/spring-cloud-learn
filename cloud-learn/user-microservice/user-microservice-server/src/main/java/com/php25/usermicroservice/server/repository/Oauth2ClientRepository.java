@@ -1,6 +1,6 @@
-package com.php25.usermicroservice.server.repository;
+package com.php25.usermicroservice.web.repository;
 
-import com.php25.usermicroservice.server.model.Oauth2Client;
+import com.php25.usermicroservice.web.model.Oauth2Client;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

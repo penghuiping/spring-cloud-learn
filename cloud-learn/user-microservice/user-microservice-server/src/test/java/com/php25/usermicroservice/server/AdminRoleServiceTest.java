@@ -1,4 +1,4 @@
-package com.php25.usermicroservice.server;
+package com.php25.usermicroservice.web;
 
 import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
