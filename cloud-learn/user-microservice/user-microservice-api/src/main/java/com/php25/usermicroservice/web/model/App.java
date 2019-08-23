@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 /**
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 public class App {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column("app_id")
     private String appId;
 

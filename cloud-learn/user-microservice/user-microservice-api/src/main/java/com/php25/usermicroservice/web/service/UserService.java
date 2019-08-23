@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.web.service;
 
 import com.php25.common.core.specification.SearchParam;
+import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.UserChangeDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
 import com.php25.usermicroservice.web.dto.UserPageDto;
@@ -28,6 +29,7 @@ public interface UserService extends UserDetailsService {
      * @return true:注册成功，false:注册失败
      */
     Boolean register(UserRegisterDto registerUserDto);
+
 
     /**
      * 修改某个用户密码

@@ -2,8 +2,8 @@ package com.php25.usermicroservice.web.service;
 
 import com.php25.common.core.specification.SearchParam;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
+import com.php25.usermicroservice.web.dto.GroupDetailDto;
 import com.php25.usermicroservice.web.dto.GroupPageDto;
-import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public interface GroupService {
      * @param direction    升序或者降序
      * @return 返回组分页列表
      */
-    GroupPageDto queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction);
+    List<GroupPageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction);
 
     /**
      * 根据appId,使某个组失效
@@ -36,7 +36,7 @@ public interface GroupService {
      * @param groupId 角色id
      * @return true:成功,false:失败
      */
-    Boolean unableGroup(Long appId, Long groupId);
+    Boolean unableGroup(String appId, Long groupId);
 
 
     /**
@@ -46,7 +46,7 @@ public interface GroupService {
      * @param groupCreateDto 角色信息
      * @return true:成功,false:失败
      */
-    Boolean create(Long appId, GroupCreateDto groupCreateDto);
+    Boolean create(String appId, GroupCreateDto groupCreateDto);
 
 
     /**
@@ -57,7 +57,7 @@ public interface GroupService {
      * @param groupDescription 组描述
      * @return true:成功,false:失败
      */
-    Boolean changeInfo(Long appId, Long groupId, String groupDescription);
+    Boolean changeInfo(String appId, Long groupId, String groupDescription);
 
 
     /**
@@ -66,5 +66,5 @@ public interface GroupService {
      * @param groupId
      * @return
      */
-    RoleDetailDto detailInfo(Long groupId);
+    GroupDetailDto detailInfo(Long groupId);
 }

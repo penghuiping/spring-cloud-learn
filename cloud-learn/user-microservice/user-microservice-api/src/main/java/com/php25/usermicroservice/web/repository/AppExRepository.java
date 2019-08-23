@@ -9,4 +9,7 @@ import com.php25.usermicroservice.web.model.App;
  * @description:
  */
 public interface AppExRepository extends JdbcDbRepository<App, String> {
+
+
+    boolean insert(App app);
 }

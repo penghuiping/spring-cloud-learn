@@ -12,7 +12,6 @@ import com.php25.usermicroservice.web.dto.RolePageDto;
 import com.php25.usermicroservice.web.service.RoleService;
 import com.php25.usermicroservice.web.vo.req.ReqCreateRoleVo;
 import com.php25.usermicroservice.web.vo.req.ReqRoleChangeInfoVo;
-import com.php25.usermicroservice.web.vo.req.ReqUnableRoleVo;
 import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import com.php25.usermicroservice.web.vo.res.ResRolePageVo;
@@ -74,8 +73,8 @@ public class RoleController extends JSONController {
     }
 
     @PostMapping("/unableRole")
-    public JSONResponse unableRole(@RequestAttribute String appId, @Valid @RequestBody ReqUnableRoleVo reqUnableRoleVo) {
-        Boolean result = roleService.unableRole(appId, reqUnableRoleVo.getRoleId());
+    public JSONResponse unableRole(@RequestAttribute String appId, @Min(0) Long roleId) {
+        Boolean result = roleService.unableRole(appId, roleId);
         return succeed(result);
     }
 

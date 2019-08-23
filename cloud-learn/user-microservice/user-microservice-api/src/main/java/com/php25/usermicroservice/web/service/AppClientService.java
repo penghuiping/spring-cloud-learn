@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.web.service;
 
 import com.php25.common.core.specification.SearchParam;
+import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppDetailDto;
 import com.php25.usermicroservice.web.dto.AppPageDto;
 import com.php25.usermicroservice.web.dto.AppRegisterDto;
@@ -31,9 +32,9 @@ public interface AppClientService extends ClientDetailsService, AuthorizationCod
      * 注册oauth2认证客户信息
      *
      * @param appRegisterDto 注册信息
-     * @return
+     * @return 返回管理员账号
      */
-    Boolean register(AppRegisterDto appRegisterDto);
+    AccountDto register(AppRegisterDto appRegisterDto);
 
     /**
      * 取消注册oauth2认证客户信息

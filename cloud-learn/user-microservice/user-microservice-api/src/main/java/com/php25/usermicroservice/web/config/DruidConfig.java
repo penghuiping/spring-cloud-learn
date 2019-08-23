@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
+import com.php25.usermicroservice.web.model.App;
 import com.php25.usermicroservice.web.model.Role;
 import com.php25.usermicroservice.web.model.User;
 import io.shardingjdbc.core.api.MasterSlaveDataSourceFactory;
@@ -204,6 +205,11 @@ public class DruidConfig {
                 if (null == ((Role) entity).getId()) {
                     Role adminRole = (Role) entity;
                     adminRole.setId(idGeneratorService.getSnowflakeId().longValue());
+                }
+            } else if (entity instanceof App) {
+                if (null == ((App) entity).getAppId()) {
+                    App app = (App) entity;
+                    app.setAppId(idGeneratorService.getJUID().toString());
                 }
             }
         };

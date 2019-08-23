@@ -43,7 +43,7 @@ public class Group {
     private Long lastModifiedUserId;
 
     @Column("app_id")
-    private Long appId;
+    private String appId;
 
     @Column
     private Integer enable;

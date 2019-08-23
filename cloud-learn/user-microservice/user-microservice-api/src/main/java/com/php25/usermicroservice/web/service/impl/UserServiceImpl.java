@@ -5,6 +5,8 @@ import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.usermicroservice.web.constant.Constants;
+import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.GroupRefDto;
 import com.php25.usermicroservice.web.dto.RoleRefDto;
@@ -90,7 +92,20 @@ public class UserServiceImpl implements UserService {
         appRef.setAppId(registerUserDto.getAppId());
         user.setApps(Sets.newHashSet(appRef));
 
+        //并且赋予用户,普通用户的权限
+        Role role;
+        Optional<Role> roleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER,registerUserDto.getAppId());
+        if(!roleOptional.isPresent()) {
+            throw Exceptions.throwIllegalStateException("系统初始化问题，无法找到普通用户权限");
+        }else {
+            role = roleOptional.get();
+        }
+
+        RoleRef roleRef = new RoleRef();
+        roleRef.setRoleId(role.getId());
+        user.setRoles(Sets.newHashSet(roleRef));
         User user1 = userRepository.save(user);
+
         if (user1.getId() > 0) {
             return true;
         } else {

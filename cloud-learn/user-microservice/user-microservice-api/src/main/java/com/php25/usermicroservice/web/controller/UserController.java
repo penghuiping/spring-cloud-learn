@@ -47,6 +47,7 @@ public class UserController extends JSONController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/register")
     public JSONResponse register(@Valid @RequestBody ReqRegisterUserVo reqRegisterUserVo) {
         UserRegisterDto userRegisterDto = new UserRegisterDto();

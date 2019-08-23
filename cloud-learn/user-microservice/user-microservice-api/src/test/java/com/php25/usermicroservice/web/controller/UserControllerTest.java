@@ -1,9 +1,10 @@
-package com.php25.usermicroservice.web;
+package com.php25.usermicroservice.web.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.usermicroservice.web.AllTest;
+import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.model.User;
 import com.php25.usermicroservice.web.repository.UserRepository;
 import com.php25.usermicroservice.web.vo.req.ReqChangePasswordVo;
@@ -11,36 +12,18 @@ import com.php25.usermicroservice.web.vo.req.ReqRegisterUserVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 /**
  * @author: penghuiping
@@ -48,80 +31,25 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
  * @description:
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@ActiveProfiles(value = "development")
-@SpringBootTest(classes = UserServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@FixMethodOrder(MethodSorters.DEFAULT)
+@Component
 public class UserControllerTest {
-
-    @Rule
-    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
-    private FilterChainProxy filterChainProxy;
-
-    private MockMvc mockMvc;
-
-    private static final String username = "jack";
-    private static final String nickname = "jack";
-    private static final String password = "123456";
-    private static final String newPassword = "654321";
-    private static final String mobile = "18812345678";
-    private static final String email = "123@qq.com";
-
-    private static final String appId = "#ajduund";
-
-
-
     @Autowired
     private UserRepository userRepository;
 
-    @Before
-    public void setUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-                .apply(documentationConfiguration(this.restDocumentation)
-                        .operationPreprocessors()
-                        .withRequestDefaults(prettyPrint())
-                        .withResponseDefaults(prettyPrint()))
-                .addFilter(filterChainProxy)
-                .build();
-
-    }
-
-    public void clean() {
-        Optional<User> userOptional = userRepository.findByUsername("jack");
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            userRepository.delete(user);
-        }
-    }
-
-    @Test
-    public void allTest() throws Exception {
-        clean();
-        register();
-        changePassword();
-        detailInfo();
-        clean();
-    }
-
-    public void register() throws Exception {
+    public void register(AllTest allTest) throws Exception {
         ReqRegisterUserVo reqRegisterUserVo = new ReqRegisterUserVo();
-        reqRegisterUserVo.setUsername(username);
-        reqRegisterUserVo.setNickname(nickname);
-        reqRegisterUserVo.setMobile(mobile);
-        reqRegisterUserVo.setEmail(email);
-        reqRegisterUserVo.setPassword(password);
-        reqRegisterUserVo.setAppId(appId);
-        String result = this.mockMvc.perform(
+        reqRegisterUserVo.setUsername(ConstantTest.Customer.username);
+        reqRegisterUserVo.setNickname(ConstantTest.Customer.nickname);
+        reqRegisterUserVo.setMobile(ConstantTest.Customer.mobile);
+        reqRegisterUserVo.setEmail(ConstantTest.Customer.email);
+        reqRegisterUserVo.setPassword(ConstantTest.Customer.password);
+        reqRegisterUserVo.setAppId(ConstantTest.Customer.appId);
+        String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/user/register")
                         .content(JsonUtil.toJson(reqRegisterUserVo))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         )
-                .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("register",
+                .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("user_register",
                         requestFields(
                                 fieldWithPath("username").description("用户名"),
                                 fieldWithPath("nickname").description("昵称"),
@@ -142,17 +70,18 @@ public class UserControllerTest {
     }
 
 
-    public void changePassword() throws Exception {
+    public void changePassword(AllTest allTest) throws Exception {
         ReqChangePasswordVo reqChangePasswordVo = new ReqChangePasswordVo();
-        reqChangePasswordVo.setNewPassword(newPassword);
-        reqChangePasswordVo.setOriginPassword(password);
+        reqChangePasswordVo.setNewPassword(ConstantTest.Customer.newPassword);
+        reqChangePasswordVo.setOriginPassword(ConstantTest.Customer.password);
 
-        String result = this.mockMvc.perform(
+        String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/user/changePassword")
+                        .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqChangePasswordVo))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(document("changePassword",
+                .andDo(document("user_changePassword",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
                         requestFields(
                                 fieldWithPath("originPassword").description("原始密码"),
@@ -168,19 +97,19 @@ public class UserControllerTest {
         Assertions.assertThat(jsonResponse.getReturnObject()).isEqualTo(true);
         log.info("/user/changePassword:{}", result);
 
-        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<User> userOptional = userRepository.findByUsername(ConstantTest.Customer.username);
         User user = userOptional.get();
-        Assertions.assertThat(user.getPassword()).isEqualTo(newPassword);
+        Assertions.assertThat(user.getPassword()).isEqualTo(ConstantTest.Customer.newPassword);
     }
 
 
-    public void detailInfo() throws Exception {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        User user = userOptional.get();
-        String result = this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/user/detailInfo")
+    public void detailInfo(AllTest allTest) throws Exception {
+        String result = allTest.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/user/detailInfo")
+                        .header("Authorization", "Bearer " + allTest.accessToken)
         ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(document("detailInfo",
+                .andDo(document("user_detailInfo",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token"))
                         , responseFields(
                                 beneathPath("returnObject"),
@@ -194,40 +123,45 @@ public class UserControllerTest {
                                 fieldWithPath("roles").description("角色列表"),
                                 fieldWithPath("groups").description("组列表"),
                                 fieldWithPath("apps").description("所属应用列表"))
-//                                .andWithPrefix("roles[].",
-//                                        fieldWithPath("roleId").description("角色id").optional(),
-//                                        fieldWithPath("name").description("角色名").optional()
-//                                ).andWithPrefix("groups[].",
-//                                        fieldWithPath("groupId").description("组id").optional(),
-//                                        fieldWithPath("name").description("组名").optional()
-//                                ).andWithPrefix("apps[].",
-//                                        fieldWithPath("appId").description("应用id").optional(),
-//                                        fieldWithPath("appName").description("应用名").optional()
-//                                )
+                                .andWithPrefix("roles[].",
+                                        fieldWithPath("roleId").description("角色id").optional().type(Long.class),
+                                        fieldWithPath("name").description("角色名").optional().type(String.class)
+                                ).andWithPrefix("groups[].",
+                                        fieldWithPath("groupId").description("组id").optional().type(Long.class),
+                                        fieldWithPath("name").description("组名").optional().type(String.class)
+                                ).andWithPrefix("apps[].",
+                                        fieldWithPath("appId").description("应用id").optional().type(String.class),
+                                        fieldWithPath("appName").description("应用名").optional().type(String.class)
+                                )
                 )).andReturn().getResponse().getContentAsString();
+
+        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
+        Assertions.assertThat(jsonResponse.getReturnObject()).isNotNull();
         log.info("/user/detailInfo:{}", result);
     }
 
 
-    public void query() throws Exception {
+    public void query(AllTest allTest) throws Exception {
         SearchVo searchVo = new SearchVo();
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
 
-        String result = this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/user/queryPage")
+        String result = allTest.mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/admin/queryPage")
+                        .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(searchVo))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(document("queryPage",
+                .andDo(document("user_admin_queryPage",
                         requestFields(
                                 fieldWithPath("pageNum").description("当前第几页"),
                                 fieldWithPath("pageSize").description("每页的数量"),
                                 fieldWithPath("searchParamVoList").description("搜索参数")
                         ).andWithPrefix("searchParamVoList[].",
-                                fieldWithPath("fieldName").description("搜索字段名,支持username,mobile,id"),
-                                fieldWithPath("value").description("字段值"),
-                                fieldWithPath("operator").description("操作支持:EQ,NE,LIKE,GT,LT,GTE,LTE,IN,NIN")
+                                fieldWithPath("fieldName").description("搜索字段名,支持username,mobile,id").optional().type(String.class),
+                                fieldWithPath("value").description("字段值").optional().type(String.class),
+                                fieldWithPath("operator").description("操作支持:EQ,NE,LIKE,GT,LT,GTE,LTE,IN,NIN").optional().type(String.class)
                         ), responseFields(
                                 beneathPath("returnObject"),
                                 fieldWithPath("id").description("用户id"),
@@ -240,6 +174,9 @@ public class UserControllerTest {
                                 fieldWithPath("enable").description("0:无效,1:有效,2:软删除")
                         )))
                 .andReturn().getResponse().getContentAsString();
+        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
+        Assertions.assertThat(jsonResponse.getReturnObject()).isNotNull();
         log.info("/user/queryPage:{}", result);
     }
 

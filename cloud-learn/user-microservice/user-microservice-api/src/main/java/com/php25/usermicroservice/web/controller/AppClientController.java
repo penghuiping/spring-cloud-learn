@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppDetailDto;
 import com.php25.usermicroservice.web.dto.AppPageDto;
 import com.php25.usermicroservice.web.dto.AppRegisterDto;
@@ -11,8 +12,10 @@ import com.php25.usermicroservice.web.service.AppClientService;
 import com.php25.usermicroservice.web.vo.req.ReqRegisterAppVo;
 import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
+import com.php25.usermicroservice.web.vo.res.ResAccountVo;
 import com.php25.usermicroservice.web.vo.res.ResAppDetailVo;
 import com.php25.usermicroservice.web.vo.res.ResAppPageVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -34,6 +38,7 @@ import java.util.stream.Collectors;
  * @date: 2019/8/15 18:12
  * @description:
  */
+@Slf4j
 @RestController
 @RequestMapping("/appClient")
 public class AppClientController extends JSONController {
@@ -52,7 +57,7 @@ public class AppClientController extends JSONController {
 
     @PostMapping
     @RequestMapping("/detailInfo")
-    public JSONResponse detailInfo(@NotBlank String appId) {
+    public JSONResponse detailInfo(@NotBlank @RequestParam String appId) {
         AppDetailDto appDetailDto = appClientService.detailInfo(appId);
         ResAppDetailVo resAppDetailVo = new ResAppDetailVo();
         BeanUtils.copyProperties(appDetailDto, resAppDetailVo);
@@ -66,13 +71,15 @@ public class AppClientController extends JSONController {
         appRegisterDto.setAppId(reqRegisterAppVo.getAppId());
         appRegisterDto.setAppSecret(reqRegisterAppVo.getAppSecret());
         appRegisterDto.setRegisteredRedirectUri(reqRegisterAppVo.getRegisteredRedirectUri());
-        Boolean result = appClientService.register(appRegisterDto);
-        return succeed(result);
+        AccountDto accountDto = appClientService.register(appRegisterDto);
+        ResAccountVo resAccountVo = new ResAccountVo();
+        BeanUtils.copyProperties(accountDto, resAccountVo);
+        return succeed(resAccountVo);
     }
 
     @PostMapping
     @RequestMapping("/unregister")
-    public JSONResponse unregister(@NotBlank String appId) {
+    public JSONResponse unregister(@NotBlank @RequestParam String appId) {
         Boolean result = appClientService.unregister(appId);
         return succeed(result);
     }
@@ -92,7 +99,7 @@ public class AppClientController extends JSONController {
         }
         List<AppPageDto> appPageDtos = appClientService.queryPage(searchVo.getPageNum(),
                 searchVo.getPageSize(), searchParams,
-                "id", Sort.Direction.ASC);
+                "register_date", Sort.Direction.DESC);
 
         if (null == appPageDtos || appPageDtos.isEmpty()) {
             return succeed(Lists.newArrayList());
