@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Table("t_role")
 public class Role implements GrantedAuthority {
+
+    @Transient
+    private static final long serialVersionUID = 5501309192222374044L;
 
     /**
      * 主键id
@@ -45,24 +49,20 @@ public class Role implements GrantedAuthority {
     /**
      * 创建时间
      */
-    @CreatedDate
     @Column("create_date")
     private LocalDateTime createDate;
 
-    @CreatedBy
     @Column("create_user_id")
-    private Long createUserId;
+    private String createUserId;
 
     /**
      * 更新时间
      */
-    @LastModifiedDate
     @Column("last_modified_date")
     private LocalDateTime lastModifiedDate;
 
-    @LastModifiedBy
     @Column("last_modified_user_id")
-    private Long lastModifiedUserId;
+    private String lastModifiedUserId;
 
     /**
      * 是否有效 0:无效 1:有效 2:软删除

@@ -124,11 +124,9 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
             Role role1 = new Role();
             role1.setName(Constants.Role.ADMIN);
             role1.setAppId(app.getAppId());
-            role1.setCreateUserId(user.getId());
+            role1.setCreateUserId(user.getUsername());
             role1.setCreateDate(LocalDateTime.now());
             role1.setDescription("管理员权限");
-            role1.setLastModifiedUserId(user.getId());
-            role1.setLastModifiedDate(LocalDateTime.now());
             role1.setEnable(1);
             adminRole = roleRepository.save(role1);
         }else {
@@ -141,11 +139,9 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
             Role role2 = new Role();
             role2.setName(Constants.Role.CUSTOMER);
             role2.setAppId(app.getAppId());
-            role2.setCreateUserId(user.getId());
+            role2.setCreateUserId(user.getUsername());
             role2.setCreateDate(LocalDateTime.now());
             role2.setDescription("普通用户权限");
-            role2.setLastModifiedUserId(user.getId());
-            role2.setLastModifiedDate(LocalDateTime.now());
             role2.setEnable(1);
             roleRepository.save(role2);
         }

@@ -126,6 +126,12 @@ public class AllTest {
         oauthControllerTest.oauth2CodeAdmin(this);
         oauthControllerTest.oauth2TokenAdmin(this);
         userControllerTest.query(this);
+        roleControllerTest.create(this);
+        roleControllerTest.queryPage(this);
+        roleControllerTest.changeInfo(this);
+        roleControllerTest.detailInfo(this);
+        roleControllerTest.unableRole(this);
+
 
         //注销app应用,使用super_admin账号
         oauthControllerTest.oauth2CodeSuperAdmin(this);

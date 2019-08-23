@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Setter
 @Getter
-public class ResGroupPageVo {
+public class ResGroupDetailVo {
 
     private Long id;
 

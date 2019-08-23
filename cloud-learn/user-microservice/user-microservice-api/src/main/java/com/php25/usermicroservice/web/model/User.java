@@ -61,14 +61,12 @@ public class User {
     /**
      * 创建时间
      */
-    @CreatedDate
     @Column("create_date")
     private LocalDateTime createDate;
 
     /**
      * 更新时间
      */
-    @LastModifiedDate
     @Column("last_modified_date")
     private LocalDateTime lastModifiedDate;
 

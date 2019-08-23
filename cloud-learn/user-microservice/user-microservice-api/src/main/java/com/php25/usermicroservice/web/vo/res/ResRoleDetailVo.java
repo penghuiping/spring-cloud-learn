@@ -12,13 +12,12 @@ import java.time.LocalDateTime;
 
 /**
  * @author: penghuiping
- * @date: 2019/8/22 15:18
+ * @date: 2019/8/23 17:22
  * @description:
  */
 @Setter
 @Getter
-public class ResGroupPageVo {
-
+public class ResRoleDetailVo {
     private Long id;
 
     private String name;

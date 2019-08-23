@@ -33,7 +33,7 @@ public class ConstantTest {
         public static final String appSecret = "123456";
         public static final String appName = "customer";
         public static final String appRedirectUrl = "http://www.customer.com/callback";
-        public static final String roleName = "customer";
+        public static final String roleName = "selfDefineRole";
     }
 
 

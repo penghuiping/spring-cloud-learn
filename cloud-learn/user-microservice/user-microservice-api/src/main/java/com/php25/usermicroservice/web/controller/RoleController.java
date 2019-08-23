@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class RoleController extends JSONController {
     private RoleService roleService;
 
     @PostMapping("/queryPage")
-    public JSONResponse queryPage(@RequestAttribute String appId, @Valid @RequestBody SearchVo searchVo) {
+    public JSONResponse queryPage(@NotBlank @RequestAttribute String appId, @Valid @RequestBody SearchVo searchVo) {
         List<SearchParamVo> searchParamVoList = searchVo.getSearchParamVoList();
         List<SearchParam> searchParams;
         if (null == searchParamVoList || searchParamVoList.isEmpty()) {
@@ -54,11 +55,13 @@ public class RoleController extends JSONController {
                             searchParamVo.getOperator(),
                             searchParamVo.getValue())).collect(Collectors.toList());
 
-            searchParams = searchParams.stream().filter(searchParam -> !"appId".equals(searchParam.getFieldName())).collect(Collectors.toList());
-            searchParams.add(SearchParam.of("appId", Operator.EQ, appId));
-
+            searchParams = searchParams.stream()
+                    .filter(searchParam -> !"app_id".equals(searchParam.getFieldName()))
+                    .collect(Collectors.toList());
         }
-        List<RolePageDto> rolePageDtos = roleService.queryPage(searchVo.getPageNum(), searchVo.getPageSize(), searchParams, "id", Sort.Direction.ASC);
+        searchParams.add(SearchParam.of("app_id", Operator.EQ, appId));
+        List<RolePageDto> rolePageDtos = roleService.queryPage(searchVo.getPageNum(),
+                searchVo.getPageSize(), searchParams, "id", Sort.Direction.ASC);
 
         if (rolePageDtos == null || rolePageDtos.isEmpty()) {
             return succeed(Lists.newArrayList());
@@ -73,23 +76,30 @@ public class RoleController extends JSONController {
     }
 
     @PostMapping("/unableRole")
-    public JSONResponse unableRole(@RequestAttribute String appId, @Min(0) Long roleId) {
-        Boolean result = roleService.unableRole(appId, roleId);
+    public JSONResponse unableRole(@NotBlank @RequestAttribute String appId,
+                                   @NotBlank @RequestAttribute String username,
+                                   @Min(0) Long roleId) {
+        Boolean result = roleService.unableRole(appId, username, roleId);
         return succeed(result);
     }
 
     @PostMapping("/create")
-    public JSONResponse createRole(@RequestAttribute String appId, @Valid @RequestBody ReqCreateRoleVo reqCreateRoleVo) {
+    public JSONResponse createRole(@NotBlank @RequestAttribute String appId,
+                                   @NotBlank @RequestAttribute String username,
+                                   @Valid @RequestBody ReqCreateRoleVo reqCreateRoleVo) {
         RoleCreateDto roleCreateDto = new RoleCreateDto();
         roleCreateDto.setName(reqCreateRoleVo.getName());
         roleCreateDto.setDescription(reqCreateRoleVo.getDescription());
-        Boolean result = roleService.create(appId, roleCreateDto);
+        Boolean result = roleService.create(appId, username, roleCreateDto);
         return succeed(result);
     }
 
     @PostMapping("/changeInfo")
-    public JSONResponse changeInfo(@RequestAttribute String appId, @Valid @RequestBody ReqRoleChangeInfoVo reqRoleChangeInfoVo) {
-        Boolean result = roleService.changeInfo(appId, reqRoleChangeInfoVo.getRoleId(), reqRoleChangeInfoVo.getDescription());
+    public JSONResponse changeInfo(@NotBlank @RequestAttribute String appId,
+                                   @NotBlank @RequestAttribute String username,
+                                   @Valid @RequestBody ReqRoleChangeInfoVo reqRoleChangeInfoVo) {
+        Boolean result = roleService.changeInfo(appId, username, reqRoleChangeInfoVo.getRoleId(),
+                reqRoleChangeInfoVo.getDescription());
         return succeed(result);
     }
 

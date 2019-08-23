@@ -14,9 +14,9 @@ CREATE TABLE `t_group` (
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
-  `create_user_id` bigint(20) DEFAULT NULL,
+  `create_user_id` varchar(255) DEFAULT NULL,
   `last_modified_date` datetime DEFAULT NULL,
-  `last_modified_user_id` bigint(20) DEFAULT NULL,
+  `last_modified_user_id` varchar(255) DEFAULT NULL,
   `app_id` varchar(255) DEFAULT NULL,
   `enable` int(11) DEFAULT NULL
 );
@@ -29,8 +29,8 @@ CREATE TABLE `t_role` (
   `create_date` datetime NOT NULL,
   `last_modified_date` datetime DEFAULT NULL,
   `enable` int(11) NOT NULL,
-  `create_user_id` bigint(20) DEFAULT NULL,
-  `last_modified_user_id` bigint(20) DEFAULT NULL,
+  `create_user_id` varchar(255) DEFAULT NULL,
+  `last_modified_user_id` varchar(255) DEFAULT NULL,
   `app_id` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
 );

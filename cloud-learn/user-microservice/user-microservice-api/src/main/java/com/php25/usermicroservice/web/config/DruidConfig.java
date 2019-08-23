@@ -203,8 +203,8 @@ public class DruidConfig {
                 }
             } else if (entity instanceof Role) {
                 if (null == ((Role) entity).getId()) {
-                    Role adminRole = (Role) entity;
-                    adminRole.setId(idGeneratorService.getSnowflakeId().longValue());
+                    Role role = (Role) entity;
+                    role.setId(idGeneratorService.getSnowflakeId().longValue());
                 }
             } else if (entity instanceof App) {
                 if (null == ((App) entity).getAppId()) {

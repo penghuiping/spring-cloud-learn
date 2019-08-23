@@ -5,7 +5,6 @@ import com.php25.usermicroservice.web.dto.RoleCreateDto;
 import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
 import org.springframework.data.domain.Sort;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -33,32 +32,35 @@ public interface RoleService {
     /**
      * 根据appId,使某个角色失效
      *
-     * @param appId  应用客户端id
-     * @param roleId 角色id
+     * @param appId    应用客户端id
+     * @param username 创建者用户名
+     * @param roleId   角色id
      * @return true:成功,false:失败
      */
-    Boolean unableRole(String appId, Long roleId);
+    Boolean unableRole(String appId, String username, Long roleId);
 
 
     /**
      * 根据appId,创建角色
      *
      * @param appId         应用客户端id
+     * @param username      创建者用户名
      * @param roleCreateDto 角色信息
      * @return true:成功,false:失败
      */
-    Boolean create(String appId, RoleCreateDto roleCreateDto);
+    Boolean create(String appId, String username, RoleCreateDto roleCreateDto);
 
 
     /**
      * 根据appId,修改角色描述
      *
      * @param appId           应用id
+     * @param username        创建者用户名
      * @param roleId          角色id
      * @param roleDescription 角色描述
      * @return true:成功,false:失败
      */
-    Boolean changeInfo(String appId, Long roleId, String roleDescription);
+    Boolean changeInfo(String appId, String username, Long roleId, String roleDescription);
 
 
     /**

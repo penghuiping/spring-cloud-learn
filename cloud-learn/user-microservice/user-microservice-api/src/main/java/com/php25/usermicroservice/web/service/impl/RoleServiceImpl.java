@@ -9,6 +9,7 @@ import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
 import com.php25.usermicroservice.web.model.Role;
 import com.php25.usermicroservice.web.repository.RoleRepository;
+import com.php25.usermicroservice.web.repository.UserRepository;
 import com.php25.usermicroservice.web.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -18,10 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,24 +57,54 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Boolean unableRole(String appId, Long roleId) {
-        boolean result = roleRepository.softDelete(Lists.newArrayList(roleId), appId);
-        return result;
-    }
+    public Boolean unableRole(String appId, String username, Long roleId) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        if (!roleOptional.isPresent()) {
+            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的数据");
+        }
+        Role role = roleOptional.get();
+        //判断role是否是appId下的角色
+        if (!role.getAppId().equals(appId)) {
+            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId + "的应用");
+        }
 
-    @Override
-    public Boolean create(String appId, RoleCreateDto roleCreateDto) {
-        Role role = new Role();
-        BeanUtils.copyProperties(roleCreateDto, role);
-        role.setAppId(appId);
+        role.setLastModifiedUserId(username);
+        role.setLastModifiedDate(LocalDateTime.now());
+        role.setEnable(2);
+
         roleRepository.save(role);
         return true;
     }
 
     @Override
-    public Boolean changeInfo(String appId, Long roleId, String roleDescription) {
-        boolean result = roleRepository.changeInfo(roleDescription, roleId, appId);
-        return result;
+    public Boolean create(String appId, String username, RoleCreateDto roleCreateDto) {
+        Role role = new Role();
+        BeanUtils.copyProperties(roleCreateDto, role);
+        role.setAppId(appId);
+        role.setCreateDate(LocalDateTime.now());
+        role.setCreateUserId(username);
+        role.setEnable(1);
+        roleRepository.save(role);
+        return true;
+    }
+
+    @Override
+    public Boolean changeInfo(String appId, String username, Long roleId, String roleDescription) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        if (!roleOptional.isPresent()) {
+            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的数据");
+        }
+        Role role = roleOptional.get();
+        //判断role是否是appId下的角色
+        if (!role.getAppId().equals(appId)) {
+            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId + "的应用");
+        }
+
+        role.setDescription(roleDescription);
+        role.setLastModifiedUserId(username);
+        role.setLastModifiedDate(LocalDateTime.now());
+        roleRepository.save(role);
+        return true;
     }
 
     @Override

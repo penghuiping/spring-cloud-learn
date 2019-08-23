@@ -30,16 +30,16 @@ public class ResRolePageVo {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 
-    private Long createUserId;
+    private String createUserId;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
 
-    private Long lastModifiedUserId;
+    private String lastModifiedUserId;
 
     private Integer enable;
 
-    private Long appId;
+    private String appId;
 }

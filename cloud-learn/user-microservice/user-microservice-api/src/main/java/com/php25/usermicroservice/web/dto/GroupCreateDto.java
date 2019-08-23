@@ -13,22 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class GroupCreateDto {
-
-    private Long id;
-
     private String name;
 
     private String description;
-
-    private LocalDateTime createDate;
-
-    private Long createUserId;
-
-    private LocalDateTime lastModifiedDate;
-
-    private Long lastModifiedUserId;
-
-    private Long appId;
-
-    private Integer enable;
 }

@@ -3,6 +3,7 @@ package com.php25.usermicroservice.web.vo.req;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class ReqRoleChangeInfoVo {
 
-    @NotBlank
+    @Min(0)
     Long roleId;
 
     @NotBlank

@@ -22,11 +22,11 @@ public class GroupPageDto {
 
     private LocalDateTime createDate;
 
-    private Long createUserId;
+    private String createUserId;
 
     private LocalDateTime lastModifiedDate;
 
-    private Long lastModifiedUserId;
+    private String lastModifiedUserId;
 
     private Long appId;
 

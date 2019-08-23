@@ -34,13 +34,13 @@ public class Group {
     private LocalDateTime createDate;
 
     @Column("create_user_id")
-    private Long createUserId;
+    private String createUserId;
 
     @Column("last_modified_date")
     private LocalDateTime lastModifiedDate;
 
     @Column("last_modified_user_id")
-    private Long lastModifiedUserId;
+    private String lastModifiedUserId;
 
     @Column("app_id")
     private String appId;
