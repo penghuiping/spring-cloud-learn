@@ -1,0 +1,25 @@
+:keywords: adoc, example
+:author: penghuiping
+:email: 575813261@qq.com
+:revnumber: v1.0
+:revdate: 2019-08-08
+:toc: left
+:toc-title: 用户微服务
+:toclevels: 3
+
+= 用户微服务
+
+== app应用
+include::./api-app-client.adoc[]
+
+== oauth2授权
+include::./api-oauth2.adoc[]
+
+== user用户
+include::./api-user.adoc[]
+
+== role角色
+include::./api-role.adoc[]
+
+== group组
+include::./api-group.adoc[]
