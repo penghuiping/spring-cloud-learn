@@ -4,12 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.php25</groupId>
-    <artifactId>java-spring-boot-learn</artifactId>
+    <artifactId>spring-cloud-learn</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
         <module>common-parent</module>
-        <module>cloud-learn</module>
+        <module>user-microservice</module>
+        <module>notify-microservice</module>
+        <module>media-microservice</module>
+        <module>gateway</module>
+        <module>h5-api</module>
+        <module>eureka</module>
     </modules>
 
     <packaging>pom</packaging>

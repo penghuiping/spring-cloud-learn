@@ -1,0 +1,32 @@
+:keywords: adoc, example
+:author: penghuiping
+:email: penghuiping@.ihandy.com
+:revnumber: v1.0
+:revdate: 2019-09-10
+:toc: left
+:toc-title: rcs短信
+:toclevels: 3
+
+include::./env.adoc[]
+
+= rcs短信
+
+=== 登入
+
+通过用户名与密码登入，返回jwt令牌
+
+.请求体参数说明
+include::{snippets}/rcs_login/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/rcs_login/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/rcs_login/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/rcs_login/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/rcs_login/curl-request.adoc[]
+
