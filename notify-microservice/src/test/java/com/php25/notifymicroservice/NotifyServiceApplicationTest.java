@@ -1,6 +1,9 @@
 package com.php25.notifymicroservice;
 
 
+import com.php25.notifymicroservice.server.MailServiceTest;
+import com.php25.notifymicroservice.server.MobileMessageServiceTest;
+import com.php25.notifymicroservice.server.NotifyserviceApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +23,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 @Slf4j
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = "development")
-@SpringBootTest(classes = NotifyServiceApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = NotifyserviceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class NotifyServiceApplicationTest {
 
     @Autowired
@@ -43,9 +46,17 @@ public class NotifyServiceApplicationTest {
     }
 
 
+    @Autowired
+    private MailServiceTest mailServiceTest;
+
+    @Autowired
+    private MobileMessageServiceTest mobileMessageServiceTest;
 
     @Test
     public void test() throws Exception {
-
+        mobileMessageServiceTest.sendSMS(this);
+        mobileMessageServiceTest.validateSMS(this);
+        mailServiceTest.sendSimpleMail(this);
+        mailServiceTest.sendAttachmentsMail(this);
     }
 }

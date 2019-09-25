@@ -30,5 +30,5 @@ public class SendAttachmentsMailReq {
 
     @NotNull
     @Size(min = 1)
-    private List<PairVo<String, String>> attachments;
+    private List<PairVo<String,String>> attachments;
 }

@@ -1,4 +1,4 @@
-package com.php25.notifymicroservice.server.config;
+package com.php25.mediamicroservice.server.config;
 
 import com.php25.common.core.util.AssertUtil;
 import com.php25.common.flux.web.LogFilter;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author: penghuiping
- * @date: 2019/7/30 21:22
+ * @date: 2019/7/30 18:31
  * @description:
  */
 @Slf4j
@@ -34,13 +34,14 @@ import java.util.stream.Collectors;
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
 
+
     private static final String publicKeyStr = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKukbuhLJhDG2vrJVSEOPMViaA2dyhKmuuJh44SJvdZ5GlLJALce/pgDg2bc6r5MBxZVA6Tjx0mfwUDI9vz0ypkCAwEAAQ==";
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
                 .authorizeExchange()
-                .pathMatchers("/mail/**","/mobile/**").hasAuthority("customer")
+                .pathMatchers("/image/**").hasAuthority("customer")
                 .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()

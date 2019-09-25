@@ -26,6 +26,10 @@
             <artifactId>db</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
@@ -67,7 +71,7 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.shardingjdbc</groupId>
+            <groupId>io.shardingsphere</groupId>
             <artifactId>sharding-jdbc-core</artifactId>
         </dependency>
         <dependency>

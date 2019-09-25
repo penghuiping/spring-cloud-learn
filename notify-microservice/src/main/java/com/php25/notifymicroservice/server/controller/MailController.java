@@ -2,6 +2,7 @@ package com.php25.notifymicroservice.server.controller;
 
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.notifymicroservice.server.dto.PairDto;
 import com.php25.notifymicroservice.server.dto.SendAttachmentsMailDto;
 import com.php25.notifymicroservice.server.dto.SendSimpleMailDto;
 import com.php25.notifymicroservice.server.service.MailService;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
@@ -43,6 +46,14 @@ public class MailController extends JSONController {
     @PostMapping("/sendAttachmentsMail")
     public JSONResponse sendAttachmentsMail(@Valid @RequestBody SendAttachmentsMailReq sendAttachmentsMailReq) {
         SendAttachmentsMailDto sendAttachmentsMailDto = new SendAttachmentsMailDto();
+        BeanUtils.copyProperties(sendAttachmentsMailReq, sendAttachmentsMailDto);
+        List<PairDto<String, String>> pairDtoList = sendAttachmentsMailReq.getAttachments().stream().map(stringStringPairVo -> {
+            PairDto<String, String> pairDto = new PairDto<>();
+            pairDto.setKey(stringStringPairVo.getKey());
+            pairDto.setValue(stringStringPairVo.getValue());
+            return pairDto;
+        }).collect(Collectors.toList());
+        sendAttachmentsMailDto.setAttachments(pairDtoList);
         return succeed(mailService.sendAttachmentsMail(sendAttachmentsMailDto));
     }
 }

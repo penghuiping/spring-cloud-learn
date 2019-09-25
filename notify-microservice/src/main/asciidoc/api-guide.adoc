@@ -1,32 +1,81 @@
 :keywords: adoc, example
 :author: penghuiping
-:email: penghuiping@.ihandy.com
+:email: penghuiping@ihandy.com
 :revnumber: v1.0
 :revdate: 2019-09-10
 :toc: left
-:toc-title: rcs短信
+:toc-title: 通知微服务
 :toclevels: 3
 
 include::./env.adoc[]
 
-= rcs短信
+= 通知微服务
 
-=== 登入
-
-通过用户名与密码登入，返回jwt令牌
+=== 发送简单邮件
 
 .请求体参数说明
-include::{snippets}/rcs_login/request-fields.adoc[]
+include::{snippets}/mail_sendSimpleMail/request-fields.adoc[]
 
 .请求参数样例
-include::{snippets}/rcs_login/http-request.adoc[]
+include::{snippets}/mail_sendSimpleMail/http-request.adoc[]
 
 .返回参数说明
-include::{snippets}/rcs_login/response-fields.adoc[]
+include::{snippets}/mail_sendSimpleMail/response-fields.adoc[]
 
 .返回参数样例
-include::{snippets}/rcs_login/http-response.adoc[]
+include::{snippets}/mail_sendSimpleMail/http-response.adoc[]
 
 .Curl命令
-include::{snippets}/rcs_login/curl-request.adoc[]
+include::{snippets}/mail_sendSimpleMail/curl-request.adoc[]
 
+=== 发送带附件的邮件
+
+.请求体参数说明
+include::{snippets}/mail_sendAttachmentsMail/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/mail_sendAttachmentsMail/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/mail_sendAttachmentsMail/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/mail_sendAttachmentsMail/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/mail_sendAttachmentsMail/curl-request.adoc[]
+
+=== 发送手机短信
+
+.请求体参数说明
+include::{snippets}/mobileMsg_sendSMS/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/mobileMsg_sendSMS/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/mobileMsg_sendSMS/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/mobileMsg_sendSMS/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/mobileMsg_sendSMS/curl-request.adoc[]
+
+
+=== 验证手机短信
+
+.请求体参数说明
+include::{snippets}/mobileMsg_validateSMS/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/mobileMsg_validateSMS/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/mobileMsg_validateSMS/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/mobileMsg_validateSMS/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/mobileMsg_validateSMS/curl-request.adoc[]

@@ -1,4 +1,4 @@
-package com.php25.notifymicroservice.server.config;
+package com.php25.mediamicroservice.server.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.php25.common.db.Db;

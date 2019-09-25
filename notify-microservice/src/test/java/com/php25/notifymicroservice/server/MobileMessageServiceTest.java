@@ -1,14 +1,18 @@
 package com.php25.notifymicroservice.server;
 
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.flux.web.ApiErrorCode;
+import com.php25.common.flux.web.JSONResponse;
+import com.php25.notifymicroservice.NotifyServiceApplicationTest;
 import com.php25.notifymicroservice.server.vo.req.SendSMSReq;
 import com.php25.notifymicroservice.server.vo.req.ValidateSMSReq;
-import com.php25.notifymicroservice.server.vo.res.BooleanRes;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.assertj.core.api.Assertions;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.stereotype.Component;
+
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
 /**
  * @author: penghuiping
@@ -16,47 +20,61 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  * @description:
  */
 @Slf4j
-//@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Component
 public class MobileMessageServiceTest {
 
-    @Autowired
-    private WebTestClient webTestClient;
-
-
-    //    @Test
-    public void sendSMS() {
+    public void sendSMS(NotifyServiceApplicationTest notifyServiceApplicationTest) {
         SendSMSReq sendSMSReq = new SendSMSReq();
         sendSMSReq.setMobile("18812345678");
 
-        WebTestClient.BodySpec result = webTestClient.post().uri("/mobileMsg/sendSMS")
+        String result = notifyServiceApplicationTest.webTestClient.post().uri("/mobile/sendSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(sendSMSReq)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(String.class).consumeWith(document("mobileMsg_sendSMS", requestFields(
+                        fieldWithPath("mobile").description("手机")
+                        ), responseFields(
+                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
+                        fieldWithPath("returnObject").description("true:成功,false:失败"),
+                        fieldWithPath("message").description("错误描述").type("String"))
+                )).returnResult().getResponseBody();
 
-        log.info("/mobileMsg/sendSMS:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
+        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
+        Assertions.assertThat(jsonResponse.getReturnObject()).isEqualTo(true);
+
+        log.info("/mobileMsg/sendSMS:{}", result);
     }
 
-    //    @Test
-    public void validateSMS() {
+    public void validateSMS(NotifyServiceApplicationTest notifyServiceApplicationTest) {
         ValidateSMSReq validateSMSReq = new ValidateSMSReq();
         validateSMSReq.setMobile("18812345678");
         validateSMSReq.setMsgCode("1111");
 
-        WebTestClient.BodySpec result = webTestClient.post().uri("/mobileMsg/validateSMS")
+        String result = notifyServiceApplicationTest.webTestClient.post().uri("/mobile/validateSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(validateSMSReq)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(BooleanRes.class);
+                .expectBody(String.class).consumeWith(document("mobileMsg_validateSMS", requestFields(
+                        fieldWithPath("mobile").description("手机"),
+                        fieldWithPath("msgCode").description("短信")
+                        ), responseFields(
+                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
+                        fieldWithPath("returnObject").description("true:成功,false:失败"),
+                        fieldWithPath("message").description("错误描述").type("String"))
+                )).returnResult().getResponseBody();
 
-        log.info("/mobileMsg/validateSMS:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
+        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
+        Assertions.assertThat(jsonResponse.getReturnObject()).isEqualTo(true);
+
+        log.info("/mobileMsg/validateSMS:{}", result);
 
     }
 

@@ -68,18 +68,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.php25.user-microservice.client</groupId>
-            <artifactId>user-microservice-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.notify-microservice.client</groupId>
-            <artifactId>notify-microservice-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.media-microservice.client</groupId>
-            <artifactId>media-microservice-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
