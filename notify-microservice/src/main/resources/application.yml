@@ -19,6 +19,14 @@ spring:
       client:
         enabled: true
     enabled: true
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: false
+    inetutils:
+      ignoredInterfaces:
+      - docker0
+      - veth.*
   main:
     allow-bean-definition-overriding: true
   mvc:

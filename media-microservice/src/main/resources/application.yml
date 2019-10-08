@@ -17,9 +17,16 @@ spring:
     web:
       client:
         enabled: true
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: false
+    inetutils:
+      ignoredInterfaces:
+      - docker0
+      - veth.*
 server:
   port: 8100
-  type: provider
 ###############################################
 ## apollo配置
 ###############################################

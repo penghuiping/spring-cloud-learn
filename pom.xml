@@ -13,7 +13,6 @@
         <module>notify-microservice</module>
         <module>media-microservice</module>
         <module>gateway</module>
-        <module>h5-api</module>
         <module>eureka</module>
     </modules>
 
