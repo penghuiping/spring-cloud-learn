@@ -14,11 +14,11 @@ public interface MailService {
     /**
      * 发送简单邮件
      */
-    public Boolean sendSimpleMail(SendSimpleMailDto sendSimpleMailDto);
+    public Mono<Boolean> sendSimpleMail(SendSimpleMailDto sendSimpleMailDto);
 
     /**
      * 发送简单邮件+附件
      */
-    public Boolean sendAttachmentsMail(SendAttachmentsMailDto sendAttachmentsMailDto);
+    public Mono<Boolean> sendAttachmentsMail(SendAttachmentsMailDto sendAttachmentsMailDto);
 
 }

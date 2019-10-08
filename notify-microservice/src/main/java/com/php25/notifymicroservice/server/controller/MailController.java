@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,17 +35,17 @@ public class MailController extends JSONController {
      * 发送简单邮件
      */
     @PostMapping("/sendSimpleMail")
-    public JSONResponse sendSimpleMail(@Valid @RequestBody SendSimpleMailReq sendSimpleMailReq) {
+    public Mono<JSONResponse> sendSimpleMail(@Valid @RequestBody SendSimpleMailReq sendSimpleMailReq) {
         SendSimpleMailDto sendSimpleMailDto = new SendSimpleMailDto();
         BeanUtils.copyProperties(sendSimpleMailReq, sendSimpleMailDto);
-        return succeed(mailService.sendSimpleMail(sendSimpleMailDto));
+        return mailService.sendSimpleMail(sendSimpleMailDto).map(this::succeed);
     }
 
     /**
      * 发送简单邮件+附件
      */
     @PostMapping("/sendAttachmentsMail")
-    public JSONResponse sendAttachmentsMail(@Valid @RequestBody SendAttachmentsMailReq sendAttachmentsMailReq) {
+    public Mono<JSONResponse> sendAttachmentsMail(@Valid @RequestBody SendAttachmentsMailReq sendAttachmentsMailReq) {
         SendAttachmentsMailDto sendAttachmentsMailDto = new SendAttachmentsMailDto();
         BeanUtils.copyProperties(sendAttachmentsMailReq, sendAttachmentsMailDto);
         List<PairDto<String, String>> pairDtoList = sendAttachmentsMailReq.getAttachments().stream().map(stringStringPairVo -> {
@@ -54,6 +55,6 @@ public class MailController extends JSONController {
             return pairDto;
         }).collect(Collectors.toList());
         sendAttachmentsMailDto.setAttachments(pairDtoList);
-        return succeed(mailService.sendAttachmentsMail(sendAttachmentsMailDto));
+        return mailService.sendAttachmentsMail(sendAttachmentsMailDto).map(this::succeed);
     }
 }

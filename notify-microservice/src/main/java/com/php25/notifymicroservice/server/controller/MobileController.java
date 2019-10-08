@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
@@ -31,20 +32,20 @@ public class MobileController extends JSONController {
      * 插入\修改一条验证码信息
      */
     @PostMapping("/sendSMS")
-    public JSONResponse sendSMS(@Valid @RequestBody SendSMSReq sendSMSReq) {
+    public Mono<JSONResponse> sendSMS(@Valid @RequestBody SendSMSReq sendSMSReq) {
         SendSMSDto sendSMSDto = new SendSMSDto();
         BeanUtils.copyProperties(sendSMSReq, sendSMSDto);
-        return succeed(mobileMessageService.sendSMS(sendSMSDto));
+        return mobileMessageService.sendSMS(sendSMSDto).map(this::succeed);
     }
 
     /**
      * 通过电话号码查询有效验证码数据
      */
     @PostMapping("/validateSMS")
-    public JSONResponse validateSMS(@Valid @RequestBody ValidateSMSReq validateSMSReq) {
+    public Mono<JSONResponse> validateSMS(@Valid @RequestBody ValidateSMSReq validateSMSReq) {
         ValidateSMSDto validateSMSDto = new ValidateSMSDto();
         BeanUtils.copyProperties(validateSMSReq, validateSMSDto);
-        return succeed(mobileMessageService.validateSMS(validateSMSDto));
+        return mobileMessageService.validateSMS(validateSMSDto).map(this::succeed);
     }
 
 }

@@ -40,7 +40,7 @@ public class WebSecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
                 .authorizeExchange()
-                .pathMatchers("/mail/**","/mobile/**").hasAuthority("customer")
+                .pathMatchers("/mail/**","/mobile/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()

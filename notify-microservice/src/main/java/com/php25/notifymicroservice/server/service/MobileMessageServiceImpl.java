@@ -9,6 +9,8 @@ import com.php25.notifymicroservice.server.dto.ValidateSMSDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * @author: penghuiping
@@ -31,30 +33,35 @@ public class MobileMessageServiceImpl implements MobileMessageService {
      * 发送验证码
      */
     @Override
-    public Boolean sendSMS(SendSMSDto sendSMSDto) {
-        return tracedWrapper.wrap("selfDefinedSpan", () -> {
-            String mobile = sendSMSDto.getMobile();
-            log.info("手机号为:{}", mobile);
-            String message = "1111";
-            redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
-            return true;
-        });
+    public Mono<Boolean> sendSMS(SendSMSDto sendSMSDto) {
+        return Mono.fromCallable(() -> {
+            return tracedWrapper.wrap("selfDefinedSpan", () -> {
+                String mobile = sendSMSDto.getMobile();
+                log.info("手机号为:{}", mobile);
+                String message = "1111";
+                redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+                return true;
+            });
+        }).subscribeOn(Schedulers.elastic());
     }
 
     /**
      * 通过电话号码查询有效验证码数据
      */
     @Override
-    public Boolean validateSMS(ValidateSMSDto validateSMSDto) {
+    public Mono<Boolean> validateSMS(ValidateSMSDto validateSMSDto) {
         String mobile = validateSMSDto.getMobile();
         String code = validateSMSDto.getMsgCode();
 
-        String mobileCode = redisService.get("sms" + mobile, String.class);
-        if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
-            redisService.remove("sms" + mobile);
-            return true;
-        } else {
-            return false;
-        }
+        return Mono.fromCallable(() -> {
+            String mobileCode = redisService.get("sms" + mobile, String.class);
+            if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
+                redisService.remove("sms" + mobile);
+                return true;
+            } else {
+                return false;
+            }
+        }).subscribeOn(Schedulers.elastic());
+
     }
 }
