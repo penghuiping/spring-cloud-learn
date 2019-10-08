@@ -1,6 +1,6 @@
 :keywords: adoc, example
 :author: penghuiping
-:email: penghuiping@ihandy.com
+:email: 575813261@qq.com
 :revnumber: v1.0
 :revdate: 2019-09-10
 :toc: left

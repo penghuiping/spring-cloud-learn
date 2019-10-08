@@ -2,6 +2,7 @@ package com.php25.mediamicroservice.server.service;
 
 import com.php25.mediamicroservice.server.dto.ImgDto;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.awt.image.DataBuffer;
 import java.nio.file.Path;
@@ -17,12 +18,12 @@ public interface ImageService {
     /**
      * 保存base64Image图片，并返回保存的文件名
      */
-    public String save(String base64StringContent);
+    public Mono<String> save(String base64StringContent);
 
 
     /**
      * 通过图片id查询图片信息
      */
-    public Path findOne(String id);
+    public Mono<Path> findOne(String id);
 
 }

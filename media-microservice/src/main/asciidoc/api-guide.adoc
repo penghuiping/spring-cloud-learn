@@ -1,0 +1,30 @@
+:keywords: adoc, example
+:author: penghuiping
+:email: 575813261@qq.com
+:revnumber: v1.0
+:revdate: 2019-09-10
+:toc: left
+:toc-title: 多媒体微服务
+:toclevels: 3
+
+include::./env.adoc[]
+
+= 通知微服务
+
+=== 保存图片
+
+.请求体参数说明
+include::{snippets}/mediaservice_save/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/mediaservice_save/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/mediaservice_save/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/mediaservice_save/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/mediaservice_save/curl-request.adoc[]
+
