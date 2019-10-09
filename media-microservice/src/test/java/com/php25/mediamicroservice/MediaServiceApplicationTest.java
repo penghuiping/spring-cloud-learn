@@ -37,6 +37,8 @@ public class MediaServiceApplicationTest {
     @Autowired
     private ReactiveWebApplicationContext context;
 
+    public String imageId;
+
     @Before
     public void setUp() {
         this.webTestClient = WebTestClient.bindToApplicationContext(this.context)

@@ -14,17 +14,34 @@ include::./env.adoc[]
 === 保存图片
 
 .请求体参数说明
-include::{snippets}/mediaservice_save/request-fields.adoc[]
+include::{snippets}/mediaService_save/request-fields.adoc[]
 
 .请求参数样例
-include::{snippets}/mediaservice_save/http-request.adoc[]
+include::{snippets}/mediaService_save/http-request.adoc[]
 
 .返回参数说明
-include::{snippets}/mediaservice_save/response-fields.adoc[]
+include::{snippets}/mediaService_save/response-fields.adoc[]
 
 .返回参数样例
-include::{snippets}/mediaservice_save/http-response.adoc[]
+include::{snippets}/mediaService_save/http-response.adoc[]
 
 .Curl命令
-include::{snippets}/mediaservice_save/curl-request.adoc[]
+include::{snippets}/mediaService_save/curl-request.adoc[]
 
+
+=== 获取图片
+
+.请求体参数说明
+include::{snippets}/mediaService_findOne/request-fields.adoc[]
+
+.请求参数样例
+include::{snippets}/mediaService_findOne/http-request.adoc[]
+
+.返回参数说明
+include::{snippets}/mediaService_findOne/response-fields.adoc[]
+
+.返回参数样例
+include::{snippets}/mediaService_findOne/http-response.adoc[]
+
+.Curl命令
+include::{snippets}/mediaService_findOne/curl-request.adoc[]

@@ -34,7 +34,7 @@ public class ImageServiceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(String.class).consumeWith(document("mediaservice_save", requestFields(
+                .expectBody(String.class).consumeWith(document("mediaService_save", requestFields(
                         fieldWithPath("content").description("base64形式的图片内容")
                         ), responseFields(
                         fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
@@ -46,24 +46,28 @@ public class ImageServiceTest {
         Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
         Assertions.assertThat(jsonResponse.getReturnObject()).isNotNull();
         log.info("/image/save:{}", result);
+        mediaServiceApplicationTest.imageId = result;
     }
 
-//    @Test
-//    public void findOne(MediaServiceApplicationTest mediaServiceApplicationTest) {
-//        ReqIdString idStringReq = new ReqIdString();
-//        idStringReq.setId("1");
-//
-//        WebTestClient.BodySpec result = mediaServiceApplicationTest.webTestClient.post().uri("/img/findOne")
-//                .contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .accept(MediaType.APPLICATION_JSON_UTF8)
-//                .syncBody(idStringReq)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .expectBody(String.class);
-//
-//        log.info("/img/findOne:{}", JsonUtil.toJson(result.returnResult().getResponseBody()));
-//    }
+    public void findOne(MediaServiceApplicationTest mediaServiceApplicationTest) {
+        String result = mediaServiceApplicationTest.webTestClient.get().uri("/image/" + mediaServiceApplicationTest.imageId)
+                .accept(MediaType.IMAGE_JPEG)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.IMAGE_JPEG)
+                .expectBody(String.class).consumeWith(document("mediaService_findOne", requestFields(
+                        fieldWithPath("content").description("base64形式的图片内容")
+                        ), responseFields(
+                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
+                        fieldWithPath("returnObject").description("true:成功,false:失败"),
+                        fieldWithPath("message").description("错误描述").type("String"))
+                )).returnResult().getResponseBody();
+
+        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
+        Assertions.assertThat(jsonResponse.getReturnObject()).isNotNull();
+        log.info("/image/findOne:{}", result);
+    }
 
 
 }
