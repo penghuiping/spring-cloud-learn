@@ -3,7 +3,6 @@ package com.php25.usermicroservice.web.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baidu.fsg.uid.UidGenerator;
 import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.service.SnowflakeIdWorker;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
 import com.php25.usermicroservice.web.model.App;
@@ -108,7 +107,7 @@ public class DruidConfig {
 
     @Bean
     public Db db(JdbcTemplate jdbcTemplate) {
-        return new Db(jdbcTemplate, DbType.MYSQL);
+        return new Db(jdbcTemplate, DbType.POSTGRES);
     }
 
     @Bean

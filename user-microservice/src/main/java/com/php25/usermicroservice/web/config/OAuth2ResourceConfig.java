@@ -2,8 +2,6 @@ package com.php25.usermicroservice.web.config;
 
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.filter.SecurityPostProcessFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -28,5 +26,6 @@ public class OAuth2ResourceConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/user/admin/**").hasAnyAuthority(Constants.Role.ADMIN)
                 .antMatchers("/user/**").hasAnyAuthority(Constants.Role.CUSTOMER)
                 .antMatchers("/actuator/**").permitAll().and().addFilterAfter(new SecurityPostProcessFilter(), AnonymousAuthenticationFilter.class);
+
     }
 }

@@ -1,13 +1,10 @@
 package com.php25.gateway.config;
 
 import com.php25.common.core.service.SnowflakeIdWorker;
-import com.php25.common.flux.web.LogFilter;
-import com.php25.gateway.filter.JwtFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
