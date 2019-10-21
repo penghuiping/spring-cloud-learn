@@ -46,10 +46,10 @@ spring:
   ########################################################
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-#    driverClassName: com.mysql.cj.jdbc.Driver
+    #    driverClassName: com.mysql.cj.jdbc.Driver
     driverClassName: org.postgresql.Driver
-#    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${db_name}?currentSchema=userservice
+    #    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${db_name}?currentSchema=${app.db.name}
     username: ${app.db.username}
     password: ${app.db.password}
     initSize: 5
@@ -69,32 +69,28 @@ spring:
   ########################################################
   ### spring cloud stream
   ########################################################
+  rabbitmq:
+    addresses: ${app.rabbitmq.ip}
+    port: ${app.rabbitmq.port}
+    username: ${app.rabbitmq.username}
+    password: ${app.rabbitmq.password}
+    virtual-host: ${app.rabbitmq.virtualHost}
   cloud:
     stream:
-      binders:
-        local_rabbit:
-          type: rabbit
-          environment:
-            spring:
-              rabbitmq:
-                host: ${app.rabbitmq.ip}
-                port: ${app.rabbitmq.port}
-                username: ${app.rabbitmq.username}
-                password: ${app.rabbitmq.password}
-                virtual-host: ${app.rabbitmq.virtualHost}
       bindings:
         input:
+          group: one
           destination: data-exchange
           contentType: application/json
-          binder: local_rabbit
           consumer:
+            acknowledgeMode: AUTO
             auto-bind-dlq: true
             republish-to-dlq: true
             max-attempts: 3
         output:
           destination: data-exchange
           contentType: application/json
-          binder: local_rabbit
+      instance-count: 3
   ########################################################
   ### redis
   ########################################################
