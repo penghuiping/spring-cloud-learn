@@ -25,6 +25,8 @@ spring:
       ignoredInterfaces:
       - docker0
       - veth.*
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: 8100
 ###############################################
