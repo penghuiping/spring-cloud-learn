@@ -13,6 +13,7 @@ import com.php25.usermicroservice.web.repository.RoleRepository;
 import com.php25.usermicroservice.web.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -39,6 +40,8 @@ public class DataInitConfig {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostConstruct
     private void initData() {
@@ -51,7 +54,7 @@ public class DataInitConfig {
             App app;
             if (!appOptional.isPresent()) {
                 app = new App();
-                app.setAppSecret(Constants.SuperAdmin.appSecret);
+                app.setAppSecret(passwordEncoder.encode(Constants.SuperAdmin.appSecret));
                 app.setAppName(Constants.SuperAdmin.appName);
                 app.setRegisterDate(LocalDateTime.now());
                 app.setRegisteredRedirectUri(Constants.SuperAdmin.appRedirectUrl);
@@ -68,7 +71,7 @@ public class DataInitConfig {
             if (!userOptional.isPresent()) {
                 user = new User();
                 user.setUsername(Constants.SuperAdmin.username);
-                user.setPassword(Constants.SuperAdmin.password);
+                user.setPassword(passwordEncoder.encode(Constants.SuperAdmin.password));
                 user.setEmail(Constants.SuperAdmin.email);
                 user.setNickname(Constants.SuperAdmin.nickname);
                 user.setMobile(Constants.SuperAdmin.mobile);

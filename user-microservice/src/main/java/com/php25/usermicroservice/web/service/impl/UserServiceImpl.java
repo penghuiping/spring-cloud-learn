@@ -6,7 +6,6 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.Constants;
-import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.GroupRefDto;
 import com.php25.usermicroservice.web.dto.RoleRefDto;
@@ -35,6 +34,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -64,6 +64,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public Boolean register(UserRegisterDto registerUserDto) {
         Optional<User> userOptional = userRepository.findByMobile(registerUserDto.getMobile());
@@ -87,6 +90,7 @@ public class UserServiceImpl implements UserService {
         user.setEnable(1);
         user.setCreateDate(LocalDateTime.now());
         user.setLastModifiedDate(LocalDateTime.now());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         AppRef appRef = new AppRef();
         appRef.setAppId(registerUserDto.getAppId());
@@ -94,10 +98,10 @@ public class UserServiceImpl implements UserService {
 
         //并且赋予用户,普通用户的权限
         Role role;
-        Optional<Role> roleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER,registerUserDto.getAppId());
-        if(!roleOptional.isPresent()) {
+        Optional<Role> roleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER, registerUserDto.getAppId());
+        if (!roleOptional.isPresent()) {
             throw Exceptions.throwIllegalStateException("系统初始化问题，无法找到普通用户权限");
-        }else {
+        } else {
             role = roleOptional.get();
         }
 
@@ -134,7 +138,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if(user.getEnable()!=1) {
+            if (user.getEnable() != 1) {
                 throw Exceptions.throwIllegalStateException("无法通过username:" + username + "找到对应的用户");
             }
             UserDetailDto userDetailDto = new UserDetailDto();

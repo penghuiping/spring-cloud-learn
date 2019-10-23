@@ -7,7 +7,7 @@ spring:
   application:
     name: springcloudlearn-userservice
   zipkin:
-    base-url: http://localhost:9411
+    base-url: http://${zipkin_host}:${zipkin_port}
     service.name: springcloudlearn-userservice
     sender.type: web
   sleuth:

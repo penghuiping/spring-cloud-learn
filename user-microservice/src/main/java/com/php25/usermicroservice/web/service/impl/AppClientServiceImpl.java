@@ -31,6 +31,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.util.SerializationUtils;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -66,6 +67,9 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
 
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private static final String OAUTH_CODE_REDIS_PREFIX = "oauth2_code:";
 
@@ -103,9 +107,12 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         app.setEnable(1);
         appRepository.insert(app);
 
+
+        String password = RandomUtil.getRandomNumbersAndLetters(8);
+
         User user = new User();
         user.setUsername(app.getAppId() + RandomUtil.getRandomNumbersAndLetters(6));
-        user.setPassword(RandomUtil.getRandomNumbersAndLetters(8));
+        user.setPassword(passwordEncoder.encode(password));
         user.setCreateDate(LocalDateTime.now());
         user.setLastModifiedDate(LocalDateTime.now());
         user.setEnable(1);
@@ -153,7 +160,7 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
 
         AccountDto accountDto = new AccountDto();
         accountDto.setUsername(user.getUsername());
-        accountDto.setPassword(user.getPassword());
+        accountDto.setPassword(password);
         return accountDto;
     }
 

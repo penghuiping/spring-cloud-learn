@@ -7,7 +7,7 @@ spring:
   application:
     name: springbootlearn-gateway
   zipkin:
-    base-url: http://localhost:9411
+    base-url: http://${zipkin_host}:${zipkin_port}
     service.name: springbootlearn-gateway
     sender.type: web
   sleuth:

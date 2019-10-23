@@ -44,7 +44,7 @@ CREATE TABLE `t_user` (
   `mobile` varchar(11)  DEFAULT NULL,
   `create_date` datetime NOT NULL,
   `last_modified_date` datetime DEFAULT NULL,
-  `password` varchar(32)  NOT NULL,
+  `password` varchar(255)  NOT NULL,
   `enable` int(11) NOT NULL,
   `head_image_id` char(32)  DEFAULT NULL,
   PRIMARY KEY (`id`)

@@ -11,7 +11,7 @@ spring微服务学习项目
     4. 微服务接口聚合
 2. 注册中心:eureka ok
 3. 配置中心:apollo ok
-4. 调用链监控 zipkin+spring cloud sleuth ok(后面替换成skywalking)
+4. 调用链监控 zipkin+spring cloud sleuth+skywalking ok
 5. metrics监控 spring boot acuator+Prometheus+Grafana
 6. 集中日志 elk+logstash ok
 7. 事件消息与异步消息: rabbitmq+spring cloud stream ok
