@@ -20,5 +20,7 @@ public class UserServiceApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(UserServiceApplication.class);
         app.run(args);
+
+
     }
 }

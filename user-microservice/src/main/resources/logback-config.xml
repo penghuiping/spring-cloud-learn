@@ -67,8 +67,12 @@
         </encoder>
     </appender>
 
+
+    <springProperty scope="context" name="log_stash_ip" source="logstash.ip"/>
+    <springProperty scope="context" name="log_stash_port" source="logstash.port"/>
+
     <appender name="LOG_STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>127.0.0.1:4560</destination>
+        <destination>${log_stash_ip}:${log_stash_port}</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
@@ -102,11 +106,35 @@
         <appender-ref ref="LOG_STASH"/>
     </appender>
 
-    <root level="INFO">
-        <!-- 生产的话，请移除CONSOLE-->
-        <appender-ref ref="CONSOLE"/>
-        <!--<appender-ref ref="ASYNC-FILE"/>-->
-        <!--<appender-ref ref="ASYNC-FILE-ERROR"/>-->
-        <appender-ref ref="ASYNC-LOG_STASH"/>
-    </root>
+    <!-- 开发环境日志-->
+    <springProfile name="development">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <!--<appender-ref ref="ASYNC-FILE"/>-->
+            <!--<appender-ref ref="ASYNC-FILE-ERROR"/>-->
+            <appender-ref ref="ASYNC-LOG_STASH"/>
+        </root>
+    </springProfile>
+
+    <!-- 测试环境日志 -->
+    <springProfile name="test">
+        <root level="INFO">
+            <!--<appender-ref ref="CONSOLE"/>-->
+            <!--<appender-ref ref="ASYNC-FILE"/>-->
+            <!--<appender-ref ref="ASYNC-FILE-ERROR"/>-->
+            <appender-ref ref="ASYNC-LOG_STASH"/>
+        </root>
+    </springProfile>
+
+    <!-- 生产环境日志 -->
+    <springProfile name="pro">
+        <root level="INFO">
+            <!-- 生产的话，请移除CONSOLE-->
+            <!--<appender-ref ref="CONSOLE"/>-->
+            <appender-ref ref="ASYNC-FILE"/>
+            <appender-ref ref="ASYNC-FILE-ERROR"/>
+            <appender-ref ref="ASYNC-LOG_STASH"/>
+        </root>
+    </springProfile>
+
 </configuration>

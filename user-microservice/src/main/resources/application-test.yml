@@ -45,6 +45,7 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     com.php25: INFO
+  config: classpath:logback-config.xml
 spring:
   ########################################################
   ###datasource

@@ -23,23 +23,6 @@ app:
   filesever:
     host: ${fileServer_host}
     path: ${fileServer_path}
-########################################################
-### static resources and upload load file
-########################################################
-base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
-base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
-base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
-########################################################
-### LOG
-########################################################
-logging:
-  file: logs/userservice.log
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.jdbc: debug
-    org.hibernate: INFO
-    com.php25: INFO
 spring:
   ########################################################
   ###datasource
@@ -119,8 +102,22 @@ spring:
   #      master: master
   #      nodes: 10.182.175.63:26380,10.182.175.64:26380
   #    password: ${app.redis.password}
+  ########################################################
+  ### 调用链监控
+  ########################################################
+  zipkin:
+    base-url: http://${zipkin_host}:${zipkin_port}
+    service.name: springcloudlearn-userservice
+    sender.type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
+    web:
+      client:
+        enabled: true
 ########################################################
-### metrics
+### metrics监控
 ########################################################
 management:
   endpoints:
@@ -129,8 +126,48 @@ management:
         include: "*"
   server:
     port: 8102
-
-
-
-
-
+########################################################
+### logstash 集中日志
+########################################################
+logstash:
+  ip: ${log_stash_host}
+  port: ${log_stash_port}
+########################################################
+### LOG
+########################################################
+logging:
+  file: logs/userservice.log
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.jdbc: debug
+    org.hibernate: INFO
+    com.php25: INFO
+  config: classpath:logback-config.xml
+###############################################
+## apollo配置中心
+###############################################
+apollo:
+  bootstrap:
+    enabled: true
+    eagerLoad.enabled: true
+  cacheDir: /data/apollo-cache
+  meta: http://localhost:8080
+###############################################
+## eureka注册中心配置
+##############################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    enabled: true
+    healthcheck:
+      enabled: true
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+########################################################
+### static resources and upload load file
+########################################################
+base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
+base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
+base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
