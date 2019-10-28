@@ -107,12 +107,21 @@
     </appender>
 
     <!-- 开发环境日志-->
-    <springProfile name="development">
+    <springProfile name="dev">
+        <root level="INFO">
+            <!--<appender-ref ref="CONSOLE"/>-->
+            <appender-ref ref="ASYNC-FILE"/>
+            <!--<appender-ref ref="ASYNC-FILE-ERROR"/>-->
+            <appender-ref ref="ASYNC-LOG_STASH"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev-postgres">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <!--<appender-ref ref="ASYNC-FILE"/>-->
             <!--<appender-ref ref="ASYNC-FILE-ERROR"/>-->
-            <appender-ref ref="ASYNC-LOG_STASH"/>
+            <!--<appender-ref ref="ASYNC-LOG_STASH"/>-->
         </root>
     </springProfile>
 

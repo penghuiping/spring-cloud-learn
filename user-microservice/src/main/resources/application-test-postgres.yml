@@ -1,0 +1,175 @@
+########################################################
+###common
+########################################################
+app:
+  db:
+    ip: localhost
+    port: 5432
+    username: admin
+    password: admin
+    name: test
+  rabbitmq:
+    ip: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtualHost: /
+  redis:
+    host: localhost
+    port: 6379
+    nodes:
+    password:
+    database: 0
+  filesever:
+    host: /
+    path: /
+spring:
+  ########################################################
+  ###datasource
+  ########################################################
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${app.db.name}?currentSchema=public
+    schema: classpath:schema-postgres.sql
+    sql-script-encoding: utf-8
+    initialization-mode: ALWAYS
+    username: ${app.db.username}
+    password: ${app.db.password}
+    initSize: 1
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select version();
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    publicKey:
+    decrypt: false
+  ########################################################
+  ### spring cloud stream
+  ########################################################
+  rabbitmq:
+    addresses: ${app.rabbitmq.ip}
+    port: ${app.rabbitmq.port}
+    username: ${app.rabbitmq.username}
+    password: ${app.rabbitmq.password}
+    virtual-host: ${app.rabbitmq.virtualHost}
+  cloud:
+    stream:
+      bindings:
+        input:
+          group: one
+          destination: data-exchange
+          contentType: application/json
+          consumer:
+            acknowledgeMode: AUTO
+            auto-bind-dlq: true
+            republish-to-dlq: true
+            max-attempts: 3
+        output:
+          destination: data-exchange
+          contentType: application/json
+      instance-count: 3
+  ########################################################
+  ### redis
+  ########################################################
+  redis:
+    host: ${app.redis.host}
+    port: ${app.redis.port}
+    database: ${app.redis.database}
+    ssl: false
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1s
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1s
+        min-idle: 0
+    timeout: 5s
+  #    cluster:
+  #      max-redirects: 3
+  #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
+  #    sentinel:
+  #      master: master
+  #      nodes: 10.182.175.63:26380,10.182.175.64:26380
+  #    password: ${app.redis.password}
+  ########################################################
+  ### 调用链监控
+  ########################################################
+  zipkin:
+    base-url: http://${zipkin_host}:${zipkin_port}
+    service.name: springcloudlearn-userservice
+    sender.type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+    traceId128: true
+    web:
+      client:
+        enabled: true
+########################################################
+### metrics监控
+########################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  server:
+    port: 8102
+########################################################
+### logstash 集中日志
+########################################################
+logstash:
+  ip: ${log_stash_host}
+  port: ${log_stash_port}
+########################################################
+### LOG
+########################################################
+logging:
+  file: logs/userservice.log
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.jdbc: debug
+    org.hibernate: INFO
+    com.php25: INFO
+  config: classpath:logback-test.xml
+###############################################
+## apollo配置中心
+###############################################
+apollo:
+  bootstrap:
+    enabled: true
+    eagerLoad.enabled: true
+    namespaces: application-test
+  cacheDir: /data/apollo-cache
+  meta: http://localhost:8080
+###############################################
+## eureka注册中心配置
+##############################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    enabled: true
+    healthcheck:
+      enabled: true
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+########################################################
+### static resources and upload load file
+########################################################
+base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
+base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
+base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/

@@ -1,7 +1,6 @@
 package com.php25.usermicroservice.web.service;
 
 import com.php25.common.core.specification.SearchParam;
-import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.UserChangeDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
 import com.php25.usermicroservice.web.dto.UserPageDto;
@@ -47,6 +46,7 @@ public interface UserService extends UserDetailsService {
      * @param username 用户名
      * @return 用户详情信息
      */
+
     UserDetailDto detailInfo(String username);
 
     /**

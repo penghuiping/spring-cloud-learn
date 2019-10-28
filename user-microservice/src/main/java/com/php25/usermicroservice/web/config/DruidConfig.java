@@ -11,7 +11,6 @@ import com.php25.usermicroservice.web.model.Role;
 import com.php25.usermicroservice.web.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +41,6 @@ public class DruidConfig {
     private DbSlave0Properties dbSlave0Properties;
 
     @Bean
-    @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
     public DataSource druidDataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(dbProperties.getDriverClassName());
@@ -62,7 +60,7 @@ public class DruidConfig {
         druidDataSource.setPoolPreparedStatements(dbProperties.getPoolPreparedStatements());
         druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(dbProperties.getMaxPoolPreparedStatementPerConnectionSize());
         try {
-            //druidDataSource.setFilters("stat, wall");
+//            druidDataSource.setFilters("stat, wall");
             druidDataSource.setFilters("config");
         } catch (SQLException e) {
             log.error("druid设置过滤器失败", e);
@@ -75,13 +73,6 @@ public class DruidConfig {
         properties.setProperty("config.decrypt.key", dbProperties.getPublicKey());
         druidDataSource.setConnectProperties(properties);
         return druidDataSource;
-    }
-
-    @Bean
-    @ConditionalOnExpression("!'${spring.profiles.active}'.contains('development')")
-    public DataSource shareingJdbcDataSource() {
-        // Configure actual data sources
-        return null;
     }
 
 
