@@ -1,7 +1,6 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.flux.trace.TracedWrapper;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
 import com.php25.usermicroservice.web.service.UserService;
@@ -39,16 +38,10 @@ public class OauthController {
     @Autowired
     private TokenEndpoint tokenEndpoint;
 
-    @Autowired
-    private TracedWrapper tracedWrapper;
-
     @PostMapping(value = "/authorize")
     public ModelAndView authorize(Map<String, Object> model, @RequestParam Map<String, String> parameters,
                                   SessionStatus sessionStatus, Principal principal) {
-        UserDetailDto userDetailDto = tracedWrapper.wrap("userService.detailInfo",() -> {
-            return userService.detailInfo(principal.getName());
-        });
-
+        UserDetailDto userDetailDto = userService.detailInfo(principal.getName());
         if (null != userDetailDto.getApps() && !userDetailDto.getApps().isEmpty()) {
             try {
                 ModelAndView modelAndView = authorizationEndpoint.authorize(model, parameters, sessionStatus, principal);

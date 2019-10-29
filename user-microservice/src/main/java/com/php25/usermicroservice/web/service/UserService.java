@@ -46,7 +46,6 @@ public interface UserService extends UserDetailsService {
      * @param username 用户名
      * @return 用户详情信息
      */
-
     UserDetailDto detailInfo(String username);
 
     /**

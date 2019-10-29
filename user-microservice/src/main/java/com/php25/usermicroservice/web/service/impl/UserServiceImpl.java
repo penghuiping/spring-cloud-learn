@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.flux.trace.annotation.Traced;
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.GroupRefDto;
@@ -133,6 +134,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Traced
     @Override
     public UserDetailDto detailInfo(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
