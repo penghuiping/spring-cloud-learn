@@ -149,6 +149,7 @@ apollo:
   bootstrap:
     enabled: true
     eagerLoad.enabled: true
+    namespaces: application
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
 ###############################################
@@ -157,12 +158,12 @@ apollo:
 eureka:
   client:
     serviceUrl:
-#      defaultZone: http://localhost:8761/eureka/
-      defaultZone: http://121.36.133.130:8080/eureka/
+      defaultZone: http://${eureka_ip}:${eureka_port}/eureka/
     enabled: true
     healthcheck:
       enabled: true
   instance:
+    prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 5
 ########################################################
 ### static resources and upload load file

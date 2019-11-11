@@ -34,7 +34,7 @@
         <thumbnailator>0.4.8</thumbnailator>
         <swaggerui>3.0.0-SNAPSHOT</swaggerui>
         <sharding-jdbc.version>3.1.0</sharding-jdbc.version>
-        <jjwt>0.9.1</jjwt>
+        <jjwt>0.10.7</jjwt>
         <beetl>2.8.5</beetl>
         <apollo>1.3.0</apollo>
         <jsms-client>1.2.0</jsms-client>
@@ -191,8 +191,20 @@
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt</artifactId>
+                <artifactId>jjwt-api</artifactId>
                 <version>${jjwt}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.ibeetl</groupId>

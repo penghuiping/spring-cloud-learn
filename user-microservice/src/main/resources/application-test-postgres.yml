@@ -165,7 +165,9 @@ eureka:
     enabled: true
     healthcheck:
       enabled: true
+    registerWithEureka: false
   instance:
+    prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 5
 ########################################################
 ### static resources and upload load file

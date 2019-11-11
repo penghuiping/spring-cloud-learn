@@ -20,7 +20,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+        http.requiresChannel().requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
+                .and().csrf().disable().authorizeRequests()
                 .antMatchers("/oauth2/authorize").permitAll().and().httpBasic().and().authorizeRequests()
                 .antMatchers("/oauth2/token").permitAll();
     }

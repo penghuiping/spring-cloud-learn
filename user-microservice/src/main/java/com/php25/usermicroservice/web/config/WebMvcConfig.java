@@ -2,8 +2,6 @@ package com.php25.usermicroservice.web.config;
 
 import com.php25.usermicroservice.web.interceptor.LogInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,8 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @Date: 2018/5/17 11:04
  * @Description:拦截器文件的配置
  */
-@EnableWebMvc
-@Configuration
+//@EnableWebMvc
+//@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -32,7 +30,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     }
 
-//    @Override
+
+
+    //    @Override
 //    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 //        converters.add(new MappingJackson2HttpMessageConverter());
 //    }

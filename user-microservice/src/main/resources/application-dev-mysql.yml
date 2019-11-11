@@ -93,13 +93,13 @@ spring:
         max-wait: -1s
         min-idle: 0
     timeout: 5s
-  #    cluster:
-  #      max-redirects: 3
-  #      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
-  #    sentinel:
-  #      master: master
-  #      nodes: 10.182.175.63:26380,10.182.175.64:26380
-  #    password: ${app.redis.password}
+#    cluster:
+#      max-redirects: 3
+#      nodes: 10.186.123.159:7380,10.186.123.159:7381,10.186.123.188:7380
+#    sentinel:
+#      master: master
+#      nodes: 10.182.175.63:26380,10.182.175.64:26380
+#    password: ${app.redis.password}
   ########################################################
   ### 调用链监控
   ########################################################
@@ -158,11 +158,12 @@ apollo:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${eureka_ip}:${eureka_port}/eureka/
     enabled: true
     healthcheck:
       enabled: true
   instance:
+    prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 5
 ########################################################
 ### static resources and upload load file
