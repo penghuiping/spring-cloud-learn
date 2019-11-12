@@ -7,7 +7,7 @@ app:
     port: ${db_port}
     username: ${db_username}
     password: ${db_password}
-    name: ${db_notifyservice_name}
+    name: ${db_mediaservice_name}
   rabbitmq:
     ip: ${rabbitmq_ip}
     port: ${rabbitmq_port}
@@ -23,44 +23,23 @@ app:
   filesever:
     host: ${fileServer_host}
     path: ${fileServer_path}
-  mail:
-    host: ${mail_host}
-    username: ${mail_username}
-    password: ${mail_password}
-########################################################
-### static resources and upload load file
-########################################################
-base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
-base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
-base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
-########################################################
-### LOG
-########################################################
-logging:
-  file: logs/notifyservice.log
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.hibernate: INFO
-    com.php25: INFO
-    org.springframework.cloud.sleuth: debug
 spring:
   ########################################################
   ###datasource
   ########################################################
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${db_name}?currentSchema=${app.db.name}
     username: ${app.db.username}
     password: ${app.db.password}
-    initSize: 5
+    initSize: 1
     minIdle: 1
-    maxActive: 20
+    maxActive: 500
     maxWait: 60000
     timeBetweenEvictionRunsMillis: 60000
     minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 'x' FROM DUAL
+    validationQuery: select version();
     testWhileIdle: true
     testOnBorrow: false
     testOnReturn: false
@@ -69,7 +48,7 @@ spring:
     publicKey:
     decrypt: false
   ########################################################
-  ### JMS Rabbitmq
+  ### spring cloud stream
   ########################################################
   rabbitmq:
     addresses: ${app.rabbitmq.ip}
@@ -122,28 +101,25 @@ spring:
   #      nodes: 10.182.175.63:26380,10.182.175.64:26380
   #    password: ${app.redis.password}
   ########################################################
-  ### fileupload
+  ### 调用链监控
   ########################################################
-  servlet:
-    multipart:
-      max-file-size: 10000
-      max-request-size: 1000000
-  ########################################################
-  ### mail
-  ########################################################
-  mail:
-    host: ${app.mail.host}
-    username: ${app.mail.username}
-    password: ${app.mail.password}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
+  zipkin:
+    base-url: http://${zipkin_host}:${zipkin_port}
+    service.name: springcloudlearn-mediaservice
+    sender.type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+      rate: 50
+    traceId128: true
+    opentracing:
+      enabled: true
+    web:
+      client:
+        enabled: true
+    enabled: true
 ########################################################
-### metrics
+### metrics监控
 ########################################################
 management:
   endpoints:
@@ -151,11 +127,51 @@ management:
       exposure:
         include: "*"
   server:
-    port: 8101
-
-
-
-
-
-
-
+    port: 8100
+########################################################
+### logstash 集中日志
+########################################################
+logstash:
+  ip: ${log_stash_host}
+  port: ${log_stash_port}
+########################################################
+### LOG
+########################################################
+logging:
+  file: logs/mediaservice.log
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.jdbc: debug
+    org.hibernate: INFO
+    com.php25: INFO
+  config: classpath:logback-dev.xml
+###############################################
+## apollo配置中心
+###############################################
+apollo:
+  bootstrap:
+    enabled: true
+    eagerLoad.enabled: true
+    namespaces: application
+  cacheDir: /data/apollo-cache
+  meta: http://localhost:8080
+###############################################
+## eureka注册中心配置
+##############################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka_ip}:${eureka_port}/eureka/
+    enabled: true
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 5
+########################################################
+### static resources and upload load file
+########################################################
+base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
+base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
+base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/

@@ -126,8 +126,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userOptional.get();
-        if (!user.getPassword().equals(oldPassword)) {
-            throw Exceptions.throwIllegalStateException(String.format("输入的原密码:%s与数据库的密码不一样", oldPassword));
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw Exceptions.throwIllegalStateException(String.format("输入的原密码:%s与数据库的密码:%s不一样", oldPassword, user.getPassword()));
         }
         user.setPassword(newPassword);
         userRepository.save(user);

@@ -1,11 +1,8 @@
 package com.php25.usermicroservice.web.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -18,7 +15,6 @@ import java.util.Set;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @Table("t_user")
 public class User {
     /**

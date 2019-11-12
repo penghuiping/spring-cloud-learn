@@ -1,6 +1,5 @@
 package com.php25.usermicroservice.web.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Column;
@@ -13,7 +12,6 @@ import org.springframework.data.relational.core.mapping.Table;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @Table("t_user_role")
 public class RoleRef {
 

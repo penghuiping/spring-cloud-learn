@@ -3,26 +3,26 @@
 ########################################################
 app:
   db:
-    ip: ${db_ip}
-    port: ${db_port}
-    username: ${db_username}
-    password: ${db_password}
-    name: ${db_userservice_name}
+    ip: localhost
+    port: 5432
+    username: admin
+    password: admin
+    name: test
   rabbitmq:
-    ip: ${rabbitmq_ip}
-    port: ${rabbitmq_port}
-    username: ${rabbitmq_username}
-    password: ${rabbitmq_password}
-    virtualHost: ${rabbitmq_virtualHost}
+    ip: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtualHost: /
   redis:
-    host: ${redis_host}
-    port: ${redis_port}
-    nodes: ${redis_nodes}
-    password: ${redis_password}
-    database: ${redis_database}
+    host: localhost
+    port: 6379
+    nodes:
+    password:
+    database: 0
   filesever:
-    host: ${fileServer_host}
-    path: ${fileServer_path}
+    host: /
+    path: /
 spring:
   ########################################################
   ###datasource
@@ -30,12 +30,15 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${db_name}?currentSchema=${app.db.name}
+    url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${app.db.name}?currentSchema=public
+    schema: classpath:schema-postgres.sql
+    sql-script-encoding: utf-8
+    initialization-mode: ALWAYS
     username: ${app.db.username}
     password: ${app.db.password}
     initSize: 1
     minIdle: 1
-    maxActive: 500
+    maxActive: 20
     maxWait: 60000
     timeBetweenEvictionRunsMillis: 60000
     minEvictableIdleTimeMillis: 300000
@@ -105,15 +108,19 @@ spring:
   ########################################################
   zipkin:
     base-url: http://${zipkin_host}:${zipkin_port}
-    service.name: springcloudlearn-userservice
+    service.name: springcloudlearn-mediaservice
     sender.type: web
   sleuth:
     sampler:
       probability: 1.0
+      rate: 50
     traceId128: true
+    opentracing:
+      enabled: true
     web:
       client:
         enabled: true
+    enabled: true
 ########################################################
 ### metrics监控
 ########################################################
@@ -123,7 +130,7 @@ management:
       exposure:
         include: "*"
   server:
-    port: 8102
+    port: 8100
 ########################################################
 ### logstash 集中日志
 ########################################################
@@ -134,15 +141,14 @@ logstash:
 ### LOG
 ########################################################
 logging:
-  file: logs/userservice.log
+  file: logs/mediaservice.log
   level:
     root: INFO
     org.springframework.web: INFO
     org.springframework.jdbc: debug
-    org.springframework.security.web: debug
     org.hibernate: INFO
     com.php25: INFO
-  config: classpath:logback-dev.xml
+  config: classpath:logback-test.xml
 ###############################################
 ## apollo配置中心
 ###############################################
@@ -150,7 +156,7 @@ apollo:
   bootstrap:
     enabled: true
     eagerLoad.enabled: true
-    namespaces: application
+    namespaces: application-test
   cacheDir: /data/apollo-cache
   meta: http://localhost:8080
 ###############################################
@@ -159,10 +165,11 @@ apollo:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${eureka_ip}:${eureka_port}/eureka/
+      defaultZone: http://localhost:8761/eureka/
     enabled: true
     healthcheck:
       enabled: true
+    registerWithEureka: false
   instance:
     prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 5

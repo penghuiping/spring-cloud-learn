@@ -1,18 +1,13 @@
 package com.php25.usermicroservice.web.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -21,12 +16,8 @@ import java.time.LocalDateTime;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @Table("t_role")
-public class Role implements GrantedAuthority {
-
-    @Transient
-    private static final long serialVersionUID = 5501309192222374044L;
+public class Role implements GrantedAuthority,Serializable {
 
     /**
      * 主键id

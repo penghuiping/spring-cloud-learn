@@ -51,6 +51,7 @@
         <maven-source>3.0.0</maven-source>
         <maven-compiler-plugin>3.8.1</maven-compiler-plugin>
         <spring-boot-maven-plugin>2.1.6.RELEASE</spring-boot-maven-plugin>
+        <spring-cloud-dependencies>Greenwich.SR3</spring-cloud-dependencies>
     </properties>
 
     <dependencyManagement>
@@ -65,7 +66,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Greenwich.RELEASE</version>
+                <version>${spring-cloud-dependencies}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -1,9 +1,11 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.util.JsonUtil;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
 import com.php25.usermicroservice.web.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -25,6 +27,7 @@ import java.util.Optional;
  * @date: 2019/8/21 18:22
  * @description:
  */
+@Slf4j
 @Controller
 @RequestMapping("/oauth2")
 public class OauthController {
@@ -50,6 +53,7 @@ public class OauthController {
                 if (!appRefDtoOptional.isPresent()) {
                     throw Exceptions.throwIllegalStateException("无法再此appId下找到对应用户");
                 }
+                log.info("返回值为:{}", JsonUtil.toJson(modelAndView));
                 return modelAndView;
             } catch (Exception e) {
                 throw Exceptions.throwIllegalStateException(e.getMessage());

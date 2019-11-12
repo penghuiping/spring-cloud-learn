@@ -6,7 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -21,9 +21,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.requiresChannel().requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
-                .and().csrf().disable().authorizeRequests()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/oauth2/authorize").permitAll().and().httpBasic().and().authorizeRequests()
-                .antMatchers("/oauth2/token").permitAll();
+                .antMatchers("/oauth2/token").permitAll()
+                .and().csrf()
+                .disable();
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
 
@@ -35,8 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-//        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
 }

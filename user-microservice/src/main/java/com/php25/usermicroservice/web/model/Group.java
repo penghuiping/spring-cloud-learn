@@ -1,6 +1,5 @@
 package com.php25.usermicroservice.web.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @Table("t_group")
 public class Group {
 

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -92,6 +93,9 @@ public class AllTest {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
     public String code;
 

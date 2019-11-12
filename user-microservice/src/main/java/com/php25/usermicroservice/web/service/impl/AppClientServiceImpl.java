@@ -32,7 +32,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.common.util.SerializationUtils;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -41,6 +40,10 @@ import org.springframework.security.oauth2.provider.code.RandomValueAuthorizatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -104,6 +107,7 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         BeanUtils.copyProperties(appRegisterDto, app);
         app.setRegisterDate(LocalDateTime.now());
         app.setAppName(appRegisterDto.getAppName());
+        app.setAppSecret(passwordEncoder.encode(app.getAppSecret()));
         app.setEnable(1);
         appRepository.insert(app);
 
@@ -125,7 +129,7 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         user = userRepository.save(user);
 
         //初始化管理员权限
-        Optional<Role> adminRoleOptional = roleRepository.findByNameAndAppId(Constants.Role.ADMIN,app.getAppId());
+        Optional<Role> adminRoleOptional = roleRepository.findByNameAndAppId(Constants.Role.ADMIN, app.getAppId());
         Role adminRole;
         if (!adminRoleOptional.isPresent()) {
             Role role1 = new Role();
@@ -136,12 +140,12 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
             role1.setDescription("管理员权限");
             role1.setEnable(1);
             adminRole = roleRepository.save(role1);
-        }else {
+        } else {
             adminRole = adminRoleOptional.get();
         }
 
         //初始化普通用户权限
-        Optional<Role> customerRoleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER,app.getAppId());
+        Optional<Role> customerRoleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER, app.getAppId());
         if (!customerRoleOptional.isPresent()) {
             Role role2 = new Role();
             role2.setName(Constants.Role.CUSTOMER);
@@ -213,10 +217,11 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         }
     }
 
+
     @Override
     protected void store(String code, OAuth2Authentication authentication) {
         String key = OAUTH_CODE_REDIS_PREFIX + code;
-        redisTemplate1.opsForValue().set(key, SerializationUtils.serialize(authentication), 30, TimeUnit.MINUTES);
+        redisTemplate1.opsForValue().set(key, serialize(authentication), 30, TimeUnit.MINUTES);
     }
 
     @Override
@@ -224,11 +229,33 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         String key = OAUTH_CODE_REDIS_PREFIX + code;
         byte[] value = redisTemplate1.opsForValue().get(key);
         if (null != value) {
-            OAuth2Authentication auth2Authentication = SerializationUtils.deserialize(value);
+            OAuth2Authentication auth2Authentication = (OAuth2Authentication) deserialize(value);
             redisTemplate1.delete(key);
             return auth2Authentication;
         } else {
             return null;
+        }
+    }
+
+    private byte[] serialize(Object object) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(object);
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw Exceptions.throwIllegalStateException("序列化对象失败", e);
+        }
+    }
+
+    private Object deserialize(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            return ois.readObject();
+        } catch (Exception e) {
+            throw Exceptions.throwIllegalStateException("反序列化对象失败", e);
         }
     }
 }

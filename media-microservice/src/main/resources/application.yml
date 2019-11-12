@@ -3,20 +3,16 @@
 ###############################################
 spring:
   profiles:
-    active: development
+    active: dev-postgres
   application:
     name: springbootlearn-mediaservice
-  zipkin:
-    base-url: http://${zipkin_host}:${zipkin_port}
-    service.name: springbootlearn-mediaservice
-    sender.type: web
-  sleuth:
-    sampler:
-      probability: 1.0
-    traceId128: true
-    web:
-      client:
-        enabled: true
+  data:
+    redis:
+      repositories:
+        enabled: false
+    elasticsearch:
+      repositories:
+        enabled: false
   cloud:
     loadbalancer:
       retry:
@@ -29,27 +25,6 @@ spring:
     allow-bean-definition-overriding: true
 server:
   port: 8100
-###############################################
-## apollo配置
-###############################################
-app:
-  id: java_spring_boot_learn_api
-apollo:
-  bootstrap:
-    enabled: true
-  cacheDir: /data/apollo-cache
-  meta: http://localhost:8080
-###############################################
-## eureka配置
-##############################################
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-    enabled: true
-    healthcheck:
-      enabled: true
-  instance:
-    leaseRenewalIntervalInSeconds: 5
+
 
 
