@@ -23,6 +23,19 @@ app:
   filesever:
     host: ${fileServer_host}
     path: ${fileServer_path}
+  mail:
+    host: ${mail_host}
+    username: ${mail_username}
+    password: ${mail_password}
+  zipkin:
+    host: ${zipkin_host}
+    port: ${zipkin_port}
+  eureka:
+    host: ${eureka_ip}
+    port: ${eureka_port}
+  logstash:
+    host: ${log_stash_host}
+    port: ${log_stash_port}
 spring:
   ########################################################
   ###datasource
@@ -104,7 +117,7 @@ spring:
   ### 调用链监控
   ########################################################
   zipkin:
-    base-url: http://${zipkin_host}:${zipkin_port}
+    base-url: http://${app.zipkin.host}:${app.zipkin.port}
     service.name: springcloudlearn-notifyservice
     sender.type: web
   sleuth:
@@ -118,6 +131,27 @@ spring:
       client:
         enabled: true
     enabled: true
+  ########################################################
+  ### fileupload
+  ########################################################
+  servlet:
+    multipart:
+      max-file-size: 10000
+      max-request-size: 1000000
+  ########################################################
+  ### mail
+  ########################################################
+  mail:
+    host: ${app.mail.host}
+    username: ${app.mail.username}
+    password: ${app.mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 ########################################################
 ### metrics监控
 ########################################################
@@ -132,8 +166,8 @@ management:
 ### logstash 集中日志
 ########################################################
 logstash:
-  ip: ${log_stash_host}
-  port: ${log_stash_port}
+  ip: ${app.logstash.host}
+  port: ${app.logstash.port}
 ########################################################
 ### LOG
 ########################################################
@@ -162,7 +196,7 @@ apollo:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${eureka_ip}:${eureka_port}/eureka/
+      defaultZone: http://${app.eureka.host}:${app.eureka.port}/eureka/
     enabled: true
     healthcheck:
       enabled: true
@@ -175,3 +209,9 @@ eureka:
 base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
 base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
 base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
+########################################################
+### jwt rsa
+########################################################
+jwt:
+  publicKey: ${jwt_public_key}
+  privateKey: ${jwt_private_key}

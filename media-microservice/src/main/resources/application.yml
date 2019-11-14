@@ -23,8 +23,13 @@ spring:
       - veth.*
   main:
     allow-bean-definition-overriding: true
+  mvc:
+    static-path-pattern: /static/*
+  webflux:
+    static-path-pattern: /static/*
 server:
   port: 8100
-
+app:
+  id: java_spring_boot_learn_api
 
 

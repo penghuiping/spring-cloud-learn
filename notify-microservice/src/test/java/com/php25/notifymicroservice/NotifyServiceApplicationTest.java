@@ -1,9 +1,16 @@
 package com.php25.notifymicroservice;
 
 
+import com.google.common.collect.Maps;
+import com.php25.common.core.util.DigestUtil;
+import com.php25.common.core.util.crypto.constant.RsaAlgorithm;
+import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.notifymicroservice.server.MailServiceTest;
 import com.php25.notifymicroservice.server.MobileMessageServiceTest;
 import com.php25.notifymicroservice.server.NotifyserviceApplication;
+import com.php25.notifymicroservice.server.constant.Role;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -12,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.reactive.context.ReactiveWebApplicationContext;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -19,6 +27,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.GenericContainer;
+
+import java.security.PrivateKey;
+import java.util.Date;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
@@ -55,10 +66,20 @@ public class NotifyServiceApplicationTest {
             .withEnv("POSTGRES_PASSWORD", "admin")
             .withEnv("POSTGRES_DB", "test");
 
+    @ClassRule
+    public static GenericContainer zipkin = new GenericContainer<>("openzipkin/zipkin")
+            .withExposedPorts(9411);
+
+    @ClassRule
+    public static GenericContainer eureka = new GenericContainer<>("springcloud/eureka")
+            .withExposedPorts(8761);
+
     static {
         redis.setPortBindings(Lists.newArrayList("6379:6379"));
         rabbitmq.setPortBindings(Lists.newArrayList("5672:5672"));
         postgres.setPortBindings(Lists.newArrayList("5432:5432"));
+        zipkin.setPortBindings(Lists.newArrayList("9411:9411"));
+        eureka.setPortBindings(Lists.newArrayList("8761:8761"));
     }
 
 
@@ -79,11 +100,32 @@ public class NotifyServiceApplicationTest {
     @Autowired
     private MobileMessageServiceTest mobileMessageServiceTest;
 
+    public String jwt;
+
     @Test
     public void test() throws Exception {
+        jwt = generateJwt();
         mobileMessageServiceTest.sendSMS(this);
         mobileMessageServiceTest.validateSMS(this);
         mailServiceTest.sendSimpleMail(this);
         mailServiceTest.sendAttachmentsMail(this);
+    }
+
+    @Value("${jwt.privateKey}")
+    private String privateKey;
+
+    @Value("${jwt.publicKey}")
+    private String publicKey;
+
+
+    private String generateJwt() throws Exception {
+        PrivateKey privateKey1 = SecretKeyUtil.generatePrivateKey(RsaAlgorithm.RSA.getValue(), DigestUtil.decodeBase64(privateKey));
+        return Jwts.builder().signWith(privateKey1, SignatureAlgorithm.RS256)
+                .setIssuer("www.php25.com")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
+                .setClaims(Maps.toMap(Lists.newArrayList("authorities"), s -> Lists.newArrayList(Role.NOTIFY_SERVICE_MAIL.name(), Role.NOTIFY_SERVICE_MOBILE.name())))
+                .setSubject("test")
+                .compact();
     }
 }

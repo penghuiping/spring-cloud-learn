@@ -22,7 +22,16 @@ app:
     database: 0
   filesever:
     host: /
-    path: /
+    path: /Users/penghuiping/Desktop/joinsoft-docker/html/
+  zipkin:
+    host: localhost
+    port: 9411
+  eureka:
+    host: localhost
+    port: 8761
+  logstash:
+    host: localhost
+    port: 1111
 spring:
   ########################################################
   ###datasource
@@ -31,7 +40,6 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${app.db.name}?currentSchema=public
-    schema: classpath:schema-postgres.sql
     sql-script-encoding: utf-8
     initialization-mode: ALWAYS
     username: ${app.db.username}
@@ -107,7 +115,7 @@ spring:
   ### 调用链监控
   ########################################################
   zipkin:
-    base-url: http://${zipkin_host}:${zipkin_port}
+    base-url: http://${app.zipkin.host}:${app.zipkin.port}
     service.name: springcloudlearn-mediaservice
     sender.type: web
   sleuth:
@@ -135,8 +143,8 @@ management:
 ### logstash 集中日志
 ########################################################
 logstash:
-  ip: ${log_stash_host}
-  port: ${log_stash_port}
+  ip: ${app.logstash.host}
+  port: ${app.logstash.port}
 ########################################################
 ### LOG
 ########################################################
@@ -146,6 +154,7 @@ logging:
     root: INFO
     org.springframework.web: INFO
     org.springframework.jdbc: debug
+    org.springframework.security.web: debug
     org.hibernate: INFO
     com.php25: INFO
   config: classpath:logback-test.xml
@@ -165,7 +174,7 @@ apollo:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${app.eureka.host}:${app.eureka.port}/eureka/
     enabled: true
     healthcheck:
       enabled: true
@@ -179,3 +188,9 @@ eureka:
 base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
 base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
 base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
+########################################################
+### jwt rsa
+########################################################
+jwt:
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyEt5T3Y9SFqA1HY0Wo1aHgnHekd1+KHz1pQVS4NHH2i/PpYbg/1DKz+U1V9oLB2gnAb5WUq5Qksf24evxl4zbhCldARjJ/xFNxkXAFDSD2IEa96DLoM3btkdoSey64UYNvDr6pLpB+9oVhipws21WQY6vqdmmBdc+4O3lwiYH0H4psNra0Px2ZqwGPoO3j78xbT9gAJfBDMwjVxYYJ/5O7wPIF1kOdw3yiL/40zOGUrYOxM1x4ZGovAw92R5trMHqn4J+AJTafRPirAOYT0a9RVXnMF0racXPiYn89plppsonxd2aGPikbKDaSi4jxwqed3Y61VR8KIgWRMVLeVlYQIDAQAB
+  privateKey: MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDIS3lPdj1IWoDUdjRajVoeCcd6R3X4ofPWlBVLg0cfaL8+lhuD/UMrP5TVX2gsHaCcBvlZSrlCSx/bh6/GXjNuEKV0BGMn/EU3GRcAUNIPYgRr3oMugzdu2R2hJ7LrhRg28OvqkukH72hWGKnCzbVZBjq+p2aYF1z7g7eXCJgfQfimw2trQ/HZmrAY+g7ePvzFtP2AAl8EMzCNXFhgn/k7vA8gXWQ53DfKIv/jTM4ZStg7EzXHhkai8DD3ZHm2sweqfgn4AlNp9E+KsA5hPRr1FVecwXStpxc+Jifz2mWmmyifF3ZoY+KRsoNpKLiPHCp53djrVVHwoiBZExUt5WVhAgMBAAECggEABaEKIgiqUc62Fh6DM7grNCrZgO0qJoJn8MfrMirQnmxEW24W3HCLPS9zi4R7oCmGH3tyUZs0Gh30EYiKeQNhy/Qen8RNrHiKchEv2mTTFf7G3biYeIe0WKaUPrCvxn7oXIcsZKyTvTLyLGEDoJ2FFTEjuJLqIyAtNzX7PGzP0GlGniGpHMUvalYtbdoWvWVbSiPh/17yd3ykwoNSdOv5l3AXb2sqOH/8cWMaYXwVn8mRHNONbFe4Y9dpGBC8jFn5yPcwWwo7FQ/uRIkFde9gDFtcPqDiOMCGEMqqpmYN42UjIh56MjxrLagcS0wiIeAypgI+DnzaNe6F5sLCVP/tQQKBgQD14eyzH5gVjrvVvbZUS9mq3r+jEA5o0qgR4aGszwxBbSZItkcmzf5H1E+Kz8g3IPZlNCCn+h/4QnME60Wpy7NgRvr/iQ8IAeKX+6faSqBdEgSXiw0RwSuYCIne0ArdJhkxOuHAGsae8u4EIej+3KHmRJWTUzW+w3Yqk/z/MIoUoQKBgQDQiVaBeSL0WRHIR3tdWHz7w0q6ESsveucD4DneYkF0gQHDRLBNCyt7CvoHe4gViPMfI5vc0gOhEonNnEyp2STFhw3GQb+1HuWxiOKLznbDxUF++Z6e0ZsK+A6oUE6nIoY+vsKdMKG4K9IhJpHtPE59Unj7x5fAwsR+4UQhleTYwQKBgBtHiIJLBA2IO3C4To1FqQ2bDvnhYyfgD0OEm/JXOk3b9T5l8rjsa8S+WmDVMqpjHtMVmHXqezeI78fg7marMeiBl4FYTHGf++rOwc2nL+mDgTzq8XVB0Dta3yj4PexROMRMexVcIyMpYpzUwkvcYJ3yiAHDXpgeiXKp3ozVbsxhAoGAIVJQqE+a7kBtPvttEvVYw0HpZuHnbKbO0ye5F3fLzbnvdiw7n5PxVq/iU9/BVu+TKZ6fASHtwocbzebzuRAheA6kfNF0uJQ/T6b3zC8pew7B8HAikG4dwBry/KIYb0xs9wm0PznOHYejA/kNyEKiqBPNkS3Ladm1XDDSmitBbgECgYBs23UgDPkKKEj9TH6G4H8yBoRZkZcBOZWKo+xrrQRw6lXpvVCiuqwDoWRZDYriwFC4/ifsBlj/EtnlWZHxZaCQQpNIC/ZZ/LuBumA42XWH8ieSu6FRNw43GHHQ8rV19DXqO4vIZa51een8migtdd0lWoZxKXHNxMnmxUFjHbxpHw==

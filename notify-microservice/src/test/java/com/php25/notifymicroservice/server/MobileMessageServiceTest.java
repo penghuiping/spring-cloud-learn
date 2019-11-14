@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
@@ -29,17 +31,20 @@ public class MobileMessageServiceTest {
 
         String result = notifyServiceApplicationTest.webTestClient.post().uri("/mobile/sendSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + notifyServiceApplicationTest.jwt)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(sendSMSReq)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(String.class).consumeWith(document("mobileMsg_sendSMS", requestFields(
-                        fieldWithPath("mobile").description("手机")
+                .expectBody(String.class).consumeWith(document("mobileMsg_sendSMS",
+                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestFields(
+                                fieldWithPath("mobile").description("手机")
                         ), responseFields(
-                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
-                        fieldWithPath("returnObject").description("true:成功,false:失败"),
-                        fieldWithPath("message").description("错误描述").type("String"))
+                                fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
+                                fieldWithPath("returnObject").description("true:成功,false:失败"),
+                                fieldWithPath("message").description("错误描述").type("String"))
                 )).returnResult().getResponseBody();
 
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
@@ -56,18 +61,21 @@ public class MobileMessageServiceTest {
 
         String result = notifyServiceApplicationTest.webTestClient.post().uri("/mobile/validateSMS")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header("Authorization", "Bearer " + notifyServiceApplicationTest.jwt)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(validateSMSReq)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(String.class).consumeWith(document("mobileMsg_validateSMS", requestFields(
-                        fieldWithPath("mobile").description("手机"),
-                        fieldWithPath("msgCode").description("短信")
+                .expectBody(String.class).consumeWith(document("mobileMsg_validateSMS",
+                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestFields(
+                                fieldWithPath("mobile").description("手机"),
+                                fieldWithPath("msgCode").description("短信")
                         ), responseFields(
-                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
-                        fieldWithPath("returnObject").description("true:成功,false:失败"),
-                        fieldWithPath("message").description("错误描述").type("String"))
+                                fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
+                                fieldWithPath("returnObject").description("true:成功,false:失败"),
+                                fieldWithPath("message").description("错误描述").type("String"))
                 )).returnResult().getResponseBody();
 
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);

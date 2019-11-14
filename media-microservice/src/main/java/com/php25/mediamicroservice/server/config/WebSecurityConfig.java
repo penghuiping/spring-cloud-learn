@@ -1,8 +1,12 @@
 package com.php25.mediamicroservice.server.config;
 
-import com.php25.common.core.util.AssertUtil;
+import com.php25.common.core.util.DigestUtil;
+import com.php25.common.core.util.crypto.constant.SignAlgorithm;
+import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.common.flux.web.LogFilter;
+import com.php25.mediamicroservice.server.constant.Role;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,11 +20,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -35,13 +36,14 @@ import java.util.stream.Collectors;
 public class WebSecurityConfig {
 
 
-    private static final String publicKeyStr = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKukbuhLJhDG2vrJVSEOPMViaA2dyhKmuuJh44SJvdZ5GlLJALce/pgDg2bc6r5MBxZVA6Tjx0mfwUDI9vz0ypkCAwEAAQ==";
+    @Value("${jwt.publicKey}")
+    private String jwtPublicKey;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
                 .authorizeExchange()
-                .pathMatchers("/image/**").permitAll()
+                .pathMatchers("/image/**").hasAuthority(Role.MEDIA_SERVICE_IMAGE.name())
                 .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
@@ -64,21 +66,10 @@ public class WebSecurityConfig {
         return new LogFilter();
     }
 
+
     @Bean
     public NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder() {
-        RSAPublicKey publicKey = (RSAPublicKey) loadPublicKey(publicKeyStr);
-        return new NimbusReactiveJwtDecoder(publicKey);
-    }
-
-    private PublicKey loadPublicKey(String pubStr) {
-        AssertUtil.hasText(pubStr, "pubStr不能为空");
-        try {
-            byte[] keyBytes = Base64.getDecoder().decode(pubStr);
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePublic(keySpec);
-        } catch (Exception var4) {
-            throw new RuntimeException("出错啦!", var4);
-        }
+        PublicKey publicKey = SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPublicKey));
+        return new NimbusReactiveJwtDecoder((RSAPublicKey) publicKey);
     }
 }

@@ -1,11 +1,15 @@
 package com.php25.usermicroservice.web.config;
 
-import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.util.DigestUtil;
+import com.php25.common.core.util.crypto.constant.SignAlgorithm;
+import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.usermicroservice.web.service.AppClientService;
 import com.php25.usermicroservice.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +20,12 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.redis.JdkSerializationStrategy;
-import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 /**
  * 授权服务器配置
@@ -46,6 +49,12 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private AppClientService appClientService;
 
+    @Value("${jwt.publicKey}")
+    private String jwtPublicKey;
+
+    @Value("${jwt.privateKey}")
+    private String jwtPrivateKey;
+
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -57,53 +66,40 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         oauthServer.allowFormAuthenticationForClients();
     }
 
+
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
+        PrivateKey privateKey = SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPrivateKey));
+        PublicKey publicKey = SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPublicKey));
+        KeyPair keyPair = new KeyPair(publicKey, privateKey);
+        accessTokenConverter.setKeyPair(keyPair);
+        return accessTokenConverter;
+    }
+
+
     @Bean
     TokenStore tokenStore() {
-        RedisTokenStore tokenStore = new RedisTokenStore(redisTemplate.getConnectionFactory());
-        tokenStore.setSerializationStrategy(new JdkSerializationStrategy() {
-            @Override
-            protected <T> T deserializeInternal(byte[] bytes, Class<T> clazz) {
-                return clazz.cast(OAuth2AuthorizationConfig.this.deserialize(bytes));
-            }
-
-            @Override
-            protected byte[] serializeInternal(Object object) {
-                return OAuth2AuthorizationConfig.this.serialize(object);
-            }
-        });
-        return tokenStore;
+        return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
-    private byte[] serialize(Object object) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(object);
-            return baos.toByteArray();
-        } catch (Exception e) {
-            throw Exceptions.throwIllegalStateException("序列化对象失败", e);
-        }
+    @Bean
+    @Primary
+    public DefaultTokenServices tokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setSupportRefreshToken(true);
+        return defaultTokenServices;
     }
 
-    private Object deserialize(byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(bais)) {
-            return ois.readObject();
-        } catch (Exception e) {
-            throw Exceptions.throwIllegalStateException("反序列化对象失败", e);
-        }
-    }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        DefaultTokenServices myTokenServices = new DefaultTokenServices();
-        myTokenServices.setTokenStore(tokenStore());
-        endpoints.tokenStore(tokenStore())
+        endpoints
+                .tokenStore(tokenStore())
+                .accessTokenConverter(jwtAccessTokenConverter())
                 .authenticationManager(authenticationManager)
                 .authorizationCodeServices(appClientService)
-                .tokenServices(myTokenServices)
                 .allowedTokenEndpointRequestMethods(HttpMethod.POST)
                 .userDetailsService(userService)
                 .pathMapping("/oauth/authorize", "/oauth2/authorize")

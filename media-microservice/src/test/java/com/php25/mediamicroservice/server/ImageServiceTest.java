@@ -7,7 +7,6 @@ import com.php25.mediamicroservice.MediaServiceApplicationTest;
 import com.php25.mediamicroservice.server.vo.ReqImageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +27,7 @@ public class ImageServiceTest {
     public void save(MediaServiceApplicationTest mediaServiceApplicationTest) {
         ReqImageVo reqImageVo = new ReqImageVo(imageBase64);
         String result = mediaServiceApplicationTest.webTestClient.post().uri("/image/save")
+                .header("Authorization", "Bearer " + mediaServiceApplicationTest.jwt)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .syncBody(reqImageVo)
@@ -50,23 +50,13 @@ public class ImageServiceTest {
     }
 
     public void findOne(MediaServiceApplicationTest mediaServiceApplicationTest) {
-        String result = mediaServiceApplicationTest.webTestClient.get().uri("/image/" + mediaServiceApplicationTest.imageId)
-                .accept(MediaType.IMAGE_JPEG)
+        mediaServiceApplicationTest.webTestClient.get().uri("/image/pic@300x600.jpg")
+                .header("Authorization", "Bearer " + mediaServiceApplicationTest.jwt)
+                .accept(MediaType.IMAGE_PNG)
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().contentType(MediaType.IMAGE_JPEG)
-                .expectBody(String.class).consumeWith(document("mediaService_findOne", requestFields(
-                        fieldWithPath("content").description("base64形式的图片内容")
-                        ), responseFields(
-                        fieldWithPath("errorCode").description("错误码:0为正常;0以外都是非正常"),
-                        fieldWithPath("returnObject").description("true:成功,false:失败"),
-                        fieldWithPath("message").description("错误描述").type("String"))
-                )).returnResult().getResponseBody();
-
-        JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
-        Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
-        Assertions.assertThat(jsonResponse.getReturnObject()).isNotNull();
-        log.info("/image/findOne:{}", result);
+                .expectHeader().contentType(MediaType.IMAGE_PNG).expectBody(byte[].class)
+                .consumeWith(document("mediaService_findOne"));
     }
 
 

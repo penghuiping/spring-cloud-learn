@@ -67,10 +67,21 @@ public class AllTest {
             .withEnv("POSTGRES_PASSWORD", "admin")
             .withEnv("POSTGRES_DB", "test");
 
+    @ClassRule
+    public static GenericContainer zipkin = new GenericContainer<>("openzipkin/zipkin")
+            .withExposedPorts(9411);
+
+    @ClassRule
+    public static GenericContainer eureka = new GenericContainer<>("springcloud/eureka")
+            .withExposedPorts(8761);
+
+
     static {
         redis.setPortBindings(Lists.newArrayList("6379:6379"));
         rabbitmq.setPortBindings(Lists.newArrayList("5672:5672"));
         postgres.setPortBindings(Lists.newArrayList("5432:5432"));
+        zipkin.setPortBindings(Lists.newArrayList("9411:9411"));
+        eureka.setPortBindings(Lists.newArrayList("8761:8761"));
     }
 
 

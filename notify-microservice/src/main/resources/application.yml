@@ -29,3 +29,5 @@ spring:
     static-path-pattern: /static/*
 server:
   port: 8101
+app:
+  id: java_spring_boot_learn_api

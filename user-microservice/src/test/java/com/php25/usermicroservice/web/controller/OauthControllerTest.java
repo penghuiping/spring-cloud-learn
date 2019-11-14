@@ -132,7 +132,8 @@ public class OauthControllerTest {
                                 fieldWithPath("access_token").description("oauth2的token,此令牌在请求接口数据需要用到"),
                                 fieldWithPath("token_type").description("令牌类型"),
                                 fieldWithPath("expires_in").description("令牌过期时间"),
-                                fieldWithPath("scope").description("固定填写authentication")
+                                fieldWithPath("scope").description("固定填写authentication"),
+                                fieldWithPath("jti").description("jwt的唯一标识")
                         ))).andReturn().getResponse().getContentAsString();
 
         Map<String, String> map = JsonUtil.fromJson(result, new TypeReference<Map<String, String>>() {

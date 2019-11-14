@@ -5,7 +5,6 @@ import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,7 +30,6 @@ public class DruidConfig {
     private DbSlave0Properties dbSlave0Properties;
 
     @Bean
-    @ConditionalOnExpression("'${spring.profiles.active}'.contains('development')")
     public DataSource druidDataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(dbProperties.getDriverClassName());
@@ -67,12 +65,6 @@ public class DruidConfig {
     }
 
     @Bean
-    @ConditionalOnExpression("!'${spring.profiles.active}'.contains('development')")
-    public DataSource shareingJdbcDataSource() {
-        return null;
-    }
-
-    @Bean
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
@@ -89,6 +81,6 @@ public class DruidConfig {
 
     @Bean
     public Db db(JdbcTemplate jdbcTemplate) {
-        return new Db(jdbcTemplate, DbType.MYSQL);
+        return new Db(jdbcTemplate, DbType.POSTGRES);
     }
 }

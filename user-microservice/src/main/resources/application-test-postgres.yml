@@ -23,6 +23,15 @@ app:
   filesever:
     host: /
     path: /
+  zipkin:
+    host: localhost
+    port: 9411
+  eureka:
+    host: localhost
+    port: 8761
+  logstash:
+    host: localhost
+    port: 1111
 spring:
   ########################################################
   ###datasource
@@ -107,7 +116,7 @@ spring:
   ### 调用链监控
   ########################################################
   zipkin:
-    base-url: http://${zipkin_host}:${zipkin_port}
+    base-url: http://${app.zipkin.host}:${app.zipkin.port}
     service.name: springcloudlearn-userservice
     sender.type: web
   sleuth:
@@ -131,8 +140,8 @@ management:
 ### logstash 集中日志
 ########################################################
 logstash:
-  ip: ${log_stash_host}
-  port: ${log_stash_port}
+  ip: ${app.logstash.host}
+  port: ${app.logstash.port}
 ########################################################
 ### LOG
 ########################################################
@@ -161,7 +170,7 @@ apollo:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${app.eureka.host}:${app.eureka.port}/eureka/
     enabled: true
     healthcheck:
       enabled: true
@@ -175,3 +184,9 @@ eureka:
 base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
 base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
 base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
+########################################################
+### jwt rsa
+########################################################
+jwt:
+  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClD9RbMh9hNWErxbYWW8uAO3xPwhi9cmaxAMwH+09XfKEya4g4YSR/tSJj1UHAc4lUmDFB0k2w7ifHcgDmMxBGCz0Vu5K9AEqE72hSu4qhgGXCUlqpBVR+nlbMzvv7L7l2L4m9kJTmS/W7Qn9u0T7iWaAYXQ9ccTF31oP2SP7IkQIDAQAB
+  privateKey: MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKUP1FsyH2E1YSvFthZby4A7fE/CGL1yZrEAzAf7T1d8oTJriDhhJH+1ImPVQcBziVSYMUHSTbDuJ8dyAOYzEEYLPRW7kr0ASoTvaFK7iqGAZcJSWqkFVH6eVszO+/svuXYvib2QlOZL9btCf27RPuJZoBhdD1xxMXfWg/ZI/siRAgMBAAECgYAUUDpmGWkF4Y0v1zPC1KaFWszAVAwPZIDWz65MXSqKgxVOIIWxyo1fWhSoDJqm6zu/ZBYhGkHiwFcM6IQhJa+e0cO8WBK5HvAcBH2w9c3C1l2sEovzVdXjEibRXJ+jV9wZsOGC3d0+5WZT/VntJavnGTsyMsupcdxqI2ov/OVU8QJBANrn2MVeEgZz0RDQaVjkdsHocp7je2jtIYSyZmoq4jp8euge1aZvHHK3oXzoOHrnjp8FY6T0wJ8uA0C4ax4T6ZMCQQDBCDtGZDLmlfwM1qCxnlE1u+lRya/RhSvWVYdsBZ50WJFnJDIJ4oQlgjGGLN1kJZNNLIUhIMeosQOX5psRL8vLAkB5lgcH8O0QGmoH7cplrlfr8iEf8XgNWpCgdLp/w5vuIk/d96pxjAuACFCw4Qbl9RF5b/PdnngSserqmsQca7DzAkA/xUtn1uRl/zjUuPc/lrD3kovjREE8c8VmurzReA3AHB51N6T8VQQZLCjWTe4aDrvaLBITPrQXS9uHDF1AUUz/AkBZr5wlbgr8RoUG0+MYM3QbbkyO0b6zLT2Fdcqpa3rZg+QVpN0YuuG9t4tC6EJ99CbmHNjv4rnO3lhCWfZP9BkS
