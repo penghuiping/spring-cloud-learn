@@ -25,6 +25,8 @@ spring:
     allow-bean-definition-overriding: true
   mvc:
     static-path-pattern: /static/*
+  webflux:
+    static-path-pattern: /static/*
 
 server:
   port: 8102

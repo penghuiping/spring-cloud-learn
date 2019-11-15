@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
+        return http
                 .authorizeExchange()
                 .pathMatchers("/image/**").hasAuthority(Role.MEDIA_SERVICE_IMAGE.name())
                 .pathMatchers("/actuator/**").permitAll()
@@ -57,7 +57,11 @@ public class WebSecurityConfig {
                                 .collect(Collectors.toList());
                     }
                 }))
-                .and().and().build();
+                .and()
+                .and().csrf().disable()
+//                .and().csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+//                .and().headers().contentSecurityPolicy("script-src 'self' https://trustedscripts.example.com; object-src https://trustedplugins.example.com; report-uri /csp-report-endpoint/")
+                .build();
     }
 
     @Order(-100)

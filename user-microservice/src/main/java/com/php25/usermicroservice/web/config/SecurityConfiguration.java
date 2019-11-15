@@ -25,9 +25,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/oauth2/authorize").permitAll().and().httpBasic().and().authorizeRequests()
                 .antMatchers("/oauth2/token").permitAll()
-                .and().csrf()
-                .disable();
+                .and().csrf().disable();
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+//          .and().headers().contentSecurityPolicy("script-src 'self' https://trustedscripts.example.com; object-src https://trustedplugins.example.com; report-uri /csp-report-endpoint/");
     }
 
 
