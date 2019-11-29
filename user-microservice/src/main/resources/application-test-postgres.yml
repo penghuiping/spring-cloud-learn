@@ -40,9 +40,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://${app.db.ip}:${app.db.port}/${app.db.name}?currentSchema=public
-    schema: classpath:schema-postgres.sql
-    sql-script-encoding: utf-8
-    initialization-mode: ALWAYS
+#    schema: classpath:schema-postgres.sql
+#    sql-script-encoding: utf-8
+#    initialization-mode: ALWAYS
     username: ${app.db.username}
     password: ${app.db.password}
     initSize: 1

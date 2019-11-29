@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -61,11 +63,22 @@ public class AllTest {
             .withEnv("RABBITMQ_DEFAULT_PASS", "admin");
 
     @ClassRule
-    public static GenericContainer postgres = new GenericContainer<>("postgres:12.0-alpine")
+    public static PostgreSQLContainer postgres = new PostgreSQLContainer<>("postgres:12.0-alpine")
             .withExposedPorts(5432)
+            .withInitScript("schema-postgres.sql")
             .withEnv("POSTGRES_USER", "admin")
             .withEnv("POSTGRES_PASSWORD", "admin")
             .withEnv("POSTGRES_DB", "test");
+
+    @BeforeClass
+    public static void init() {
+        System.setProperty("spring.datasource.url", postgres.getJdbcUrl());
+        System.setProperty("spring.datasource.driver-class-name", postgres.getDriverClassName());
+        System.setProperty("spring.datasource.username", postgres.getUsername());
+        System.setProperty("spring.datasource.password", postgres.getPassword());
+    }
+
+
 
     @ClassRule
     public static GenericContainer zipkin = new GenericContainer<>("openzipkin/zipkin")

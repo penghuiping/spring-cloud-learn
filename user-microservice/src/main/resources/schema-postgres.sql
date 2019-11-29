@@ -58,8 +58,44 @@ CREATE TABLE "t_role" (
 -- ----------------------------
 -- Table structure for t_user
 -- ----------------------------
-DROP TABLE IF EXISTS "t_user";
-CREATE TABLE "t_user" (
+DROP TABLE IF EXISTS "t_user0";
+CREATE TABLE "t_user0" (
+  "create_date" timestamptz(4),
+  "email" varchar(255) COLLATE "pg_catalog"."default",
+  "id" int8 NOT NULL,
+  "mobile" varchar(255) COLLATE "pg_catalog"."default",
+  "nickname" varchar(255) COLLATE "pg_catalog"."default",
+  "password" varchar(255) COLLATE "pg_catalog"."default",
+  "username" varchar(255) COLLATE "pg_catalog"."default",
+  "last_modified_date" timestamptz(4),
+  "enable" int4,
+  "head_image_id" varchar(255) COLLATE "pg_catalog"."default"
+)
+;
+
+-- ----------------------------
+-- Table structure for t_user
+-- ----------------------------
+DROP TABLE IF EXISTS "t_user1";
+CREATE TABLE "t_user1" (
+  "create_date" timestamptz(4),
+  "email" varchar(255) COLLATE "pg_catalog"."default",
+  "id" int8 NOT NULL,
+  "mobile" varchar(255) COLLATE "pg_catalog"."default",
+  "nickname" varchar(255) COLLATE "pg_catalog"."default",
+  "password" varchar(255) COLLATE "pg_catalog"."default",
+  "username" varchar(255) COLLATE "pg_catalog"."default",
+  "last_modified_date" timestamptz(4),
+  "enable" int4,
+  "head_image_id" varchar(255) COLLATE "pg_catalog"."default"
+)
+;
+
+-- ----------------------------
+-- Table structure for t_user
+-- ----------------------------
+DROP TABLE IF EXISTS "t_user2";
+CREATE TABLE "t_user2" (
   "create_date" timestamptz(4),
   "email" varchar(255) COLLATE "pg_catalog"."default",
   "id" int8 NOT NULL,
@@ -141,7 +177,17 @@ ALTER TABLE "t_role" ADD CONSTRAINT "pk_role_id" PRIMARY KEY ("id");
 -- ----------------------------
 -- Primary Key structure for table t_user
 -- ----------------------------
-ALTER TABLE "t_user" ADD CONSTRAINT "pk_user_id" PRIMARY KEY ("id");
+ALTER TABLE "t_user0" ADD CONSTRAINT "pk_user0_id" PRIMARY KEY ("id");
+
+-- ----------------------------
+-- Primary Key structure for table t_user
+-- ----------------------------
+ALTER TABLE "t_user1" ADD CONSTRAINT "pk_user1_id" PRIMARY KEY ("id");
+
+-- ----------------------------
+-- Primary Key structure for table t_user
+-- ----------------------------
+ALTER TABLE "t_user2" ADD CONSTRAINT "pk_user2_id" PRIMARY KEY ("id");
 
 -- ----------------------------
 -- Primary Key structure for table t_user_app
