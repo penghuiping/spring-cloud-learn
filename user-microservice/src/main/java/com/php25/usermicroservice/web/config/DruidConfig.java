@@ -10,6 +10,10 @@ import com.php25.usermicroservice.web.model.Group;
 import com.php25.usermicroservice.web.model.Role;
 import com.php25.usermicroservice.web.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
+import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
+import org.apache.shardingsphere.api.config.sharding.strategy.InlineShardingStrategyConfiguration;
+import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +28,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -37,10 +43,6 @@ public class DruidConfig {
     @Autowired
     private DbProperties dbProperties;
 
-    @Autowired
-    private DbSlave0Properties dbSlave0Properties;
-
-    @Bean
     public DataSource druidDataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(dbProperties.getDriverClassName());
@@ -77,6 +79,17 @@ public class DruidConfig {
 
 
     @Bean
+    public DataSource shardDatasource() throws SQLException {
+        ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
+        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("t_user", "ds0.t_user${0..2}"));
+        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new InlineShardingStrategyConfiguration("id", "t_user${id % 3}"));
+        Map<String, DataSource> result = new HashMap<>();
+        result.put("ds0", druidDataSource());
+        return ShardingDataSourceFactory.createDataSource(result, shardingRuleConfig, new Properties());
+    }
+
+
+    @Bean
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
@@ -109,9 +122,8 @@ public class DruidConfig {
             Object entity = event.getEntity();
             if (entity instanceof User) {
                 if (null == ((User) entity).getId()) {
-                    log.info("adminUser save...");
-                    User adminUser = (User) entity;
-                    adminUser.setId(uidGenerator.getUID());
+                    User user = (User) entity;
+                    user.setId(uidGenerator.getUID());
                 }
             } else if (entity instanceof Role) {
                 if (null == ((Role) entity).getId()) {
@@ -121,7 +133,7 @@ public class DruidConfig {
             } else if (entity instanceof App) {
                 if (null == ((App) entity).getAppId()) {
                     App app = (App) entity;
-                    app.setAppId(idGeneratorService.getJUID().toString());
+                    app.setAppId(idGeneratorService.getJUID());
                 }
             } else if (entity instanceof Group) {
                 if (null == ((Group) entity).getId()) {
