@@ -1,0 +1,36 @@
+###############################################
+## common配置
+###############################################
+spring:
+  profiles:
+    active: dev-postgres
+  application:
+    name: springcloudlearn-userservice
+  data:
+    redis:
+      repositories:
+        enabled: false
+    elasticsearch:
+      repositories:
+        enabled: false
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: false
+    inetutils:
+      ignoredInterfaces:
+      - docker0
+      - veth.*
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    static-path-pattern: /static/*
+  webflux:
+    static-path-pattern: /static/*
+
+server:
+  port: 8102
+app:
+  id: java_spring_boot_learn_api
+
+

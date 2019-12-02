@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: userservice
+  name: userservice
+spec:
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    spec:
+      volumes:
+        - name: userservice-config
+          configMap:
+            name: userservice-config-map
+      containers:
+        - name:  user-microservice
+          args:
+            - --spring.config.location=/etc/config/application.yml,/etc/config/application-dev-postgres.yml
+          volumeMounts:
+            - mountPath: /etc/config
+              name: userservice-config

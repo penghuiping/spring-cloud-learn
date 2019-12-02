@@ -44,7 +44,7 @@ public class WebSecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/mail/**").hasAuthority(Role.NOTIFY_SERVICE_MAIL.name())
                 .pathMatchers("/mobile/**").hasAuthority(Role.NOTIFY_SERVICE_MOBILE.name())
-                .pathMatchers("/actuator/**").permitAll()
+                .pathMatchers("/actuator/**","/static/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {

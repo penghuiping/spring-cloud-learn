@@ -22,6 +22,7 @@ spring微服务学习项目
 10. ShardingSphere 分库分表
 11. mongodb 记录审计日志
 12. 使用工作流完成注册流程
+13. 配置k8s支持 (完成)
 
 
 

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: notifyservice
+  name: notifyservice
+spec:
+  ports:
+  - name: 8101-8101
+    port: 8101
+    protocol: TCP
+    targetPort: 8101
+  selector:
+    app: notifyservice
+  type: ClusterIP
+status:
+  loadBalancer: {}
+

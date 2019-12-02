@@ -146,7 +146,7 @@ logstash:
 ### LOG
 ########################################################
 logging:
-  file: logs/userservice.log
+  file: /tmp/logs/userservice.log
   level:
     root: INFO
     org.springframework.web: INFO

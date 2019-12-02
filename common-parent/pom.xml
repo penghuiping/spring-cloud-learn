@@ -451,7 +451,7 @@
                     <version>1.7.0</version>
                     <configuration>
                         <from>
-                            <image>openjdk:8-jdk-alpine</image>
+                            <image>openjdk:8u222-slim</image>
                         </from>
                         <to>
                             <image>docker.io/penghuiping/${project.artifactId}</image>
@@ -463,13 +463,16 @@
                         </to>
                         <container>
                             <jvmFlags>
+                                <!--suppress UnresolvedMavenProperty -->
                                 <jvmFlag>${env.apollo_server}</jvmFlag>
                             </jvmFlags>
+                            <!--非root用户启动容器-->
+                            <user>nobody:nogroup</user>
                         </container>
                     </configuration>
                     <executions>
                         <execution>
-                            <phase>package</phase>
+                            <phase>install</phase>
                             <goals>
                                 <goal>dockerBuild</goal>
                             </goals>

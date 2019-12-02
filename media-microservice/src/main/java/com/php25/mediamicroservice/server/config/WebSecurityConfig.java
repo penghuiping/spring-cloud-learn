@@ -44,7 +44,7 @@ public class WebSecurityConfig {
         return http
                 .authorizeExchange()
                 .pathMatchers("/image/**").hasAuthority(Role.MEDIA_SERVICE_IMAGE.name())
-                .pathMatchers("/actuator/**").permitAll()
+                .pathMatchers("/actuator/**","/static/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {
