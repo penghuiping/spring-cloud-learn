@@ -17,7 +17,7 @@
     <properties>
         <java.version>8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.1.8.RELEASE</spring.boot.version>
+        <spring.boot.version>2.2.0.RELEASE</spring.boot.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <guava.version>24.1.1-android</guava.version>
         <jackson.version>2.10.1</jackson.version>
@@ -39,19 +39,20 @@
         <apollo>1.3.0</apollo>
         <jsms-client>1.2.0</jsms-client>
 
-        <php-common.es>2.1.8-SNAPSHOT</php-common.es>
-        <php-common.db>2.1.8-SNAPSHOT</php-common.db>
-        <php-common.jpa>2.1.8-SNAPSHOT</php-common.jpa>
-        <php-common.core>2.1.8-SNAPSHOT</php-common.core>
-        <php-common.mvc>2.1.8-SNAPSHOT</php-common.mvc>
-        <php-common.redis>2.1.8-SNAPSHOT</php-common.redis>
-        <php-common.validation>2.1.8-SNAPSHOT</php-common.validation>
-        <php25.common>2.1.8-SNAPSHOT</php25.common>
+        <php-common.es>2.2.0-SNAPSHOT</php-common.es>
+        <php-common.db>2.2.0-SNAPSHOT</php-common.db>
+        <php-common.jpa>2.2.0-SNAPSHOT</php-common.jpa>
+        <php-common.core>2.2.0-SNAPSHOT</php-common.core>
+        <php-common.mvc>2.2.0-SNAPSHOT</php-common.mvc>
+        <php-common.redis>2.2.0-SNAPSHOT</php-common.redis>
+        <php-common.validation>2.2.0-SNAPSHOT</php-common.validation>
+        <php25.common>2.2.0-SNAPSHOT</php25.common>
+        <uid-generator>2.2.0-SNAPSHOT</uid-generator>
 
         <maven-source>3.0.0</maven-source>
         <maven-compiler-plugin>3.8.1</maven-compiler-plugin>
         <spring-boot-maven-plugin>2.1.6.RELEASE</spring-boot-maven-plugin>
-        <spring-cloud-dependencies>Greenwich.SR3</spring-cloud-dependencies>
+        <spring-cloud-dependencies>Hoxton.RELEASE</spring-cloud-dependencies>
     </properties>
 
     <dependencyManagement>
@@ -319,7 +320,7 @@
             <dependency>
                 <groupId>com.baidu.fsg</groupId>
                 <artifactId>uid-generator</artifactId>
-                <version>2.1.8-SNAPSHOT</version>
+                <version>${uid-generator}</version>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
