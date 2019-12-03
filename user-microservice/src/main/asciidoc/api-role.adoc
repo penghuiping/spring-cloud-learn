@@ -1,10 +1,9 @@
 include::./env.adoc[]
-
 === 角色创建
 
 app应用可以通过此接口创建自定义的角色权限
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求参数说明
 include::{snippets}/role_create/request-fields.adoc[]
@@ -25,7 +24,7 @@ include::{snippets}/role_create/curl-request.adoc[]
 
 app应用可以通过此接口删除自定义创建的角色权限
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/role_unableRole/request-headers.adoc[]
@@ -47,7 +46,7 @@ include::{snippets}/role_unableRole/curl-request.adoc[]
 
 === 修改角色信息
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/role_changeInfo/request-headers.adoc[]
@@ -70,7 +69,7 @@ include::{snippets}/role_changeInfo/curl-request.adoc[]
 
 === 角色详细信息
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/role_detailInfo/request-headers.adoc[]
@@ -92,7 +91,7 @@ include::{snippets}/role_detailInfo/curl-request.adoc[]
 
 === 角色分页查询
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/role_queryPage/request-headers.adoc[]

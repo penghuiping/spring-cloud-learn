@@ -16,7 +16,6 @@ include::{snippets}/user_register/http-response.adoc[]
 .Curl命令
 include::{snippets}/user_register/curl-request.adoc[]
 
-
 === 用户修改密码
 
 .请求头参数说明
@@ -60,7 +59,7 @@ include::{snippets}/user_detailInfo/curl-request.adoc[]
 
 通过此接口可以查询系统中的所有用户信息
 
-注意:调用此接口的用户，需要具有管理员级别的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/user_admin_queryPage/request-headers.adoc[]
@@ -84,7 +83,7 @@ include::{snippets}/user_admin_queryPage/curl-request.adoc[]
 
 调用此接口可以用来给某个用户赋予相应的角色
 
-注意:调用此接口的用户，需要具有管理员级别的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/user_admin_authorizeRole/request-headers.adoc[]
@@ -108,7 +107,7 @@ include::{snippets}/user_admin_authorizeRole/curl-request.adoc[]
 
 通过此接口可以吊销某个用户的角色授权
 
-注意:调用此接口的用户，需要具有管理员级别的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/user_admin_revokeRole/request-headers.adoc[]
@@ -130,7 +129,7 @@ include::{snippets}/user_admin_revokeRole/curl-request.adoc[]
 
 === 使某个用户加入某个组
 
-注意:调用此接口的用户，需要具有管理员级别的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/user_admin_joinGroup/request-headers.adoc[]
@@ -152,8 +151,7 @@ include::{snippets}/user_admin_joinGroup/curl-request.adoc[]
 
 === 使某个用户离开某个组
 
-
-注意:调用此接口的用户，需要具有管理员级别的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/user_admin_leaveGroup/request-headers.adoc[]

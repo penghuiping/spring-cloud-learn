@@ -46,7 +46,7 @@ public class RoleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_create",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("name").description("名字"),
                                 fieldWithPath("description").description("描述")
@@ -74,7 +74,7 @@ public class RoleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_queryPage",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("pageNum").description("当前第几页"),
                                 fieldWithPath("pageSize").description("每页的数量"),
@@ -118,7 +118,7 @@ public class RoleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_changeInfo",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("roleId").description("角色id"),
                                 fieldWithPath("description").description("描述")
@@ -143,7 +143,7 @@ public class RoleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_detailInfo",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("roleId").description("角色id")
                         ), responseFields(
@@ -173,7 +173,7 @@ public class RoleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_unableRole",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("roleId").description("角色id")
                         ), responseFields(

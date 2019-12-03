@@ -1,8 +1,7 @@
 include::./env.adoc[]
-
 === 组创建
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求参数说明
 include::{snippets}/group_create/request-fields.adoc[]
@@ -21,7 +20,7 @@ include::{snippets}/group_create/curl-request.adoc[]
 
 === 组删除
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/group_unableGroup/request-headers.adoc[]
@@ -41,9 +40,9 @@ include::{snippets}/group_unableGroup/http-response.adoc[]
 .Curl命令
 include::{snippets}/group_unableGroup/curl-request.adoc[]
 
-=== 修改角色信息
+=== 修改组信息
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/group_changeInfo/request-headers.adoc[]
@@ -64,9 +63,9 @@ include::{snippets}/group_changeInfo/http-response.adoc[]
 include::{snippets}/group_changeInfo/curl-request.adoc[]
 
 
-=== 角色详细信息
+=== 组详细信息
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/group_detailInfo/request-headers.adoc[]
@@ -86,9 +85,9 @@ include::{snippets}/group_detailInfo/http-response.adoc[]
 .Curl命令
 include::{snippets}/group_detailInfo/curl-request.adoc[]
 
-=== 角色分页查询
+=== 组分页查询
 
-注意:调用此接口的用户需要据有系统管理员基本的权限
+NOTE: {note_admin_desc}
 
 .请求头参数说明
 include::{snippets}/group_queryPage/request-headers.adoc[]

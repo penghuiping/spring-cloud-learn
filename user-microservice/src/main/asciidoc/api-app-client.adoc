@@ -1,10 +1,9 @@
 include::./env.adoc[]
-
 === 注册app应用
 
 对于想要接入oauth2认证服务器的app应用，可以调用此接口首先进行注册
 
-注意:调用次接口需要使用具有超级管理员权限的用户
+NOTE: {note_super_admin_desc}
 
 .请求头参数说明
 include::{snippets}/appClient_register/request-headers.adoc[]
@@ -25,10 +24,9 @@ include::{snippets}/appClient_register/http-response.adoc[]
 include::{snippets}/appClient_register/curl-request.adoc[]
 
 === 注销app应用
-
 调用此接口可以，注销已经注册的app应用
 
-注意:调用次接口需要使用具有超级管理员权限的用户
+note: {note_super_admin_desc}
 
 .请求头参数说明
 include::{snippets}/appClient_unregister/request-headers.adoc[]
@@ -48,7 +46,7 @@ include::{snippets}/appClient_unregister/curl-request.adoc[]
 
 === 查询app应用详细信息
 
-注意:调用次接口需要使用具有超级管理员权限的用户
+NOTE: {note_super_admin_desc}
 
 .请求头参数说明
 include::{snippets}/appClient_detailInfo/request-headers.adoc[]
@@ -71,7 +69,7 @@ include::{snippets}/appClient_detailInfo/curl-request.adoc[]
 
 === 分页查询app应用信息
 
-注意:调用次接口需要使用具有超级管理员权限的用户
+NOTE: {note_super_admin_desc}
 
 .请求头参数说明
 include::{snippets}/appClient_queryPage/request-headers.adoc[]

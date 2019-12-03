@@ -1,8 +1,10 @@
 include::./env.adoc[]
-
 === 获取oauth2授权码
 
 调用此接口可以获取oauth2的授权码，这个接口需要传入用户名与密码，相当于登入接口
+
+.请求头参数说明
+include::{snippets}/oauth2Code/request-headers.adoc[]
 
 .请求体参数说明
 include::{snippets}/oauth2Code/request-parameters.adoc[]

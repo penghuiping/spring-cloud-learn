@@ -46,7 +46,7 @@ public class GroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_create",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("name").description("名字"),
                                 fieldWithPath("description").description("描述")
@@ -74,7 +74,7 @@ public class GroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_queryPage",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("pageNum").description("当前第几页"),
                                 fieldWithPath("pageSize").description("每页的数量"),
@@ -118,7 +118,7 @@ public class GroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_changeInfo",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("groupId").description("组id"),
                                 fieldWithPath("description").description("描述")
@@ -143,7 +143,7 @@ public class GroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_detailInfo",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("groupId").description("组id")
                         ), responseFields(
@@ -173,7 +173,7 @@ public class GroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_unableGroup",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("groupId").description("组id")
                         ), responseFields(

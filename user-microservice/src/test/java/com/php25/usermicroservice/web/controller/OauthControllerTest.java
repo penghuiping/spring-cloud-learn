@@ -101,7 +101,7 @@ public class OauthControllerTest {
         ).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrlPattern(ConstantTest.Customer.appRedirectUrl + "?code=*"))
                 .andDo(document("oauth2Code",
-                        requestHeaders(headerWithName("Authorization").description("Http基本认证,对应用户在认证服务器注册的用户名与密码")),
+                        requestHeaders(headerWithName("Authorization").description("Http基本认证,内容对应用户在认证服务器注册的用户名与密码,例如:base64(${username}:${password})")),
                         requestParameters(
                                 parameterWithName("client_id").description("在认证服务器注册时分配的appId"),
                                 parameterWithName("response_type").description("固定填写code")

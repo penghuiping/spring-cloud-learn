@@ -38,4 +38,6 @@ public class ConstantTest {
     }
 
 
+    public final static String AUTHORIZATION_DESC = "内容为:\"Bearer ${access_token}\",access_token可以通过\"获取oauth2的token\"接口获取";
+
 }

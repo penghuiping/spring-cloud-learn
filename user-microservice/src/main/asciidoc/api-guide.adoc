@@ -9,6 +9,18 @@
 
 = 用户微服务
 
+== 前置说明
+
+=== 系统初始化的超级用户
+
+superAdmin/123456
+
+=== 系统中存在的内置角色
+
+* 超级管理员: super_admin
+* 管理员: admin
+* 普通用户: customer
+
 == app应用
 include::./api-app-client.adoc[]
 

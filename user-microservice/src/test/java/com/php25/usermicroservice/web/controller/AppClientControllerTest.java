@@ -44,7 +44,7 @@ public class AppClientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_register",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("appId").description("应用id"),
                                 fieldWithPath("appSecret").description("应用秘钥"),
@@ -84,7 +84,7 @@ public class AppClientControllerTest {
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("appClient_queryPage",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("pageNum").description("当前第几页"),
                                 fieldWithPath("pageSize").description("每页的数量"),
@@ -117,7 +117,7 @@ public class AppClientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_detailInfo",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("appId").description("应用id")
                         ), responseFields(
@@ -142,7 +142,7 @@ public class AppClientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_unregister",
-                        requestHeaders(headerWithName("Authorization").description("放入/oauth2/token接口拿到的access_token")),
+                        requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestParameters(
                                 parameterWithName("appId").description("应用id")
                         ), responseFields(
