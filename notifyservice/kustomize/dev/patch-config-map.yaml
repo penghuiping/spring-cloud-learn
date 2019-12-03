@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: notifyservice
+  name: notifyservice
+spec:
+  selector:
+    matchLabels:
+      app: notifyservice
+  template:
+    spec:
+      volumes:
+        - name: notifyservice-config
+          configMap:
+            name: notifyservice-config-map
+      containers:
+        - name:  notifyservice
+          args:
+            - --spring.config.location=/etc/config/application.yml,/etc/config/application-dev-postgres.yml
+          volumeMounts:
+            - mountPath: /etc/config
+              name: notifyservice-config

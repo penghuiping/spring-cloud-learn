@@ -9,9 +9,9 @@
 
     <modules>
         <module>common-parent</module>
-        <module>user-microservice</module>
-        <module>notify-microservice</module>
-        <module>media-microservice</module>
+        <module>userservice</module>
+        <module>notifyservice</module>
+        <module>mediaservice</module>
         <module>gateway</module>
     </modules>
 

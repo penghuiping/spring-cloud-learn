@@ -1,0 +1,16 @@
+apiVersion: skaffold/v1
+kind: Config
+build:
+  artifacts:
+    - image: penghuiping/userservice
+      jib: {}
+
+deploy:
+  kustomize:
+    path: kustomize/base
+
+profiles:
+  - name: dev
+    deploy:
+      kustomize:
+        path: kustomize/dev
