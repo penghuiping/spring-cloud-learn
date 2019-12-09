@@ -12,6 +12,7 @@
         <module>userservice</module>
         <module>notifyservice</module>
         <module>mediaservice</module>
+        <module>workflowservice</module>
         <module>gateway</module>
     </modules>
 

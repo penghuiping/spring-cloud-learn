@@ -2,7 +2,7 @@ package com.php25.notifymicroservice.server.service;
 
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.trace.TracedWrapper;
-import com.php25.common.redis.RedisService;
+import com.php25.common.redis.RedisManager;
 import com.php25.notifymicroservice.server.constant.Constant;
 import com.php25.notifymicroservice.server.dto.SendSMSDto;
 import com.php25.notifymicroservice.server.dto.ValidateSMSDto;
@@ -23,7 +23,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
 
 
     @Autowired
-    private RedisService redisService;
+    private RedisManager redisManager;
 
 
     @Autowired
@@ -39,7 +39,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
                 String mobile = sendSMSDto.getMobile();
                 log.info("手机号为:{}", mobile);
                 String message = "1111";
-                redisService.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+                redisManager.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
                 return true;
             });
         }).subscribeOn(Schedulers.elastic());
@@ -54,9 +54,9 @@ public class MobileMessageServiceImpl implements MobileMessageService {
         String code = validateSMSDto.getMsgCode();
 
         return Mono.fromCallable(() -> {
-            String mobileCode = redisService.get("sms" + mobile, String.class);
+            String mobileCode = redisManager.get("sms" + mobile, String.class);
             if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
-                redisService.remove("sms" + mobile);
+                redisManager.remove("sms" + mobile);
                 return true;
             } else {
                 return false;
