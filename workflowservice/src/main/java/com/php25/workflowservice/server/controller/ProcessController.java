@@ -3,10 +3,13 @@ package com.php25.workflowservice.server.controller;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.ProcessEngine;
+import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -41,8 +44,8 @@ public class ProcessController extends JSONController {
     private RepositoryService repositoryService;
 
 
-    @GetMapping("/test")
-    public JSONResponse test() {
+    @GetMapping("/holidayRequest")
+    public JSONResponse holidayRequest() {
 //        RepositoryService repositoryService = processEngine.getRepositoryService();
 //        Deployment deployment = repositoryService.createDeployment()
 //                .addClasspathResource("holiday-request.bpmn20.xml")
@@ -86,12 +89,73 @@ public class ProcessController extends JSONController {
 
         //jack查看请假申请结果
         List<Task> tasks1 = taskService.createTaskQuery().taskAssignee("jack").list();
-        for(int i=0;i<tasks1.size();i++) {
+        for (int i = 0; i < tasks1.size(); i++) {
             Task task = tasks1.get(i);
             log.info(task.getName());
             taskService.complete(task.getId());
         }
 
+        return succeed(true);
+    }
+
+    @GetMapping("/financialReportProcess")
+    public JSONResponse financialReportProcess() {
+        // Create Flowable process engine
+        ProcessEngine processEngine = ProcessEngineConfiguration
+                .createStandaloneProcessEngineConfiguration()
+                .buildProcessEngine();
+
+        // Get Flowable services
+        RepositoryService repositoryService = processEngine.getRepositoryService();
+        RuntimeService runtimeService = processEngine.getRuntimeService();
+
+        // Deploy the process definition
+        repositoryService.createDeployment()
+                .addClasspathResource("FinancialReportProcess.bpmn20.xml")
+                .deploy();
+
+        // Start a process instance
+        String procId = runtimeService.startProcessInstanceByKey("financialReport").getId();
+
+        // Get the first task
+        TaskService taskService = processEngine.getTaskService();
+        List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("accountancy").list();
+        for (Task task : tasks) {
+            System.out.println("Following task is available for accountancy group: " + task.getName());
+
+            // claim it
+            taskService.claim(task.getId(), "fozzie");
+        }
+
+        // Verify Fozzie can now retrieve the task
+        tasks = taskService.createTaskQuery().taskAssignee("fozzie").list();
+        for (Task task : tasks) {
+            System.out.println("Task for fozzie: " + task.getName());
+
+            // Complete the task
+            taskService.complete(task.getId());
+        }
+
+        System.out.println("Number of tasks for fozzie: "
+                + taskService.createTaskQuery().taskAssignee("fozzie").count());
+
+        // Retrieve and claim the second task
+        tasks = taskService.createTaskQuery().taskCandidateGroup("management").list();
+        for (Task task : tasks) {
+            System.out.println("Following task is available for management group: " + task.getName());
+            taskService.claim(task.getId(), "kermit");
+        }
+
+        // Completing the second task ends the process
+        for (Task task : tasks) {
+            taskService.complete(task.getId());
+        }
+
+        // verify that the process is actually finished
+        HistoryService historyService = processEngine.getHistoryService();
+        HistoricProcessInstance historicProcessInstance =
+                historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult();
+        System.out.println("Process instance end time: " + historicProcessInstance.getEndTime());
         return succeed(true);
     }
 

@@ -1,5 +1,7 @@
 package com.php25.usermicroservice.web.vo.req;
 
+import com.php25.common.validation.annotation.Email;
+import com.php25.common.validation.annotation.Mobile;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +29,7 @@ public class ReqRegisterUserVo implements Serializable {
     /**
      * 手机
      */
-    @NotBlank
+    @Mobile
     private String mobile;
 
     /**
@@ -39,6 +41,7 @@ public class ReqRegisterUserVo implements Serializable {
     /**
      * 邮箱
      */
+    @Email
     private String email;
 
     @NotBlank

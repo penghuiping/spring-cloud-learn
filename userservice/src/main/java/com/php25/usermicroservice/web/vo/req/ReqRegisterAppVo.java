@@ -2,6 +2,7 @@ package com.php25.usermicroservice.web.vo.req;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotBlank;
 
@@ -19,6 +20,6 @@ public class ReqRegisterAppVo {
     @NotBlank
     private String appSecret;
 
-    @NotBlank
+    @URL
     private String registeredRedirectUri;
 }

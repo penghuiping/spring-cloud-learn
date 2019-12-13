@@ -1,5 +1,7 @@
 package com.php25.usermicroservice.web.model;
 
+import com.php25.common.db.cnd.GeneratedValue;
+import com.php25.common.db.cnd.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -7,8 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 /**
