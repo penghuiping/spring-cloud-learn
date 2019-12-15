@@ -6,6 +6,7 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdLong;
 import com.php25.usermicroservice.web.dto.RoleCreateDto;
 import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +78,8 @@ public class RoleController extends JSONController {
     @PostMapping("/unableRole")
     public JSONResponse unableRole(@NotBlank @RequestAttribute String appId,
                                    @NotBlank @RequestAttribute String username,
-                                   @Min(0) Long roleId) {
-        Boolean result = roleService.unableRole(appId, username, roleId);
+                                   @Valid @RequestBody ReqIdLong roleId) {
+        Boolean result = roleService.unableRole(appId, username, roleId.getId());
         return succeed(result);
     }
 
@@ -104,8 +104,8 @@ public class RoleController extends JSONController {
     }
 
     @PostMapping("/detailInfo")
-    public JSONResponse detailInfo(@RequestAttribute String appId, @Min(0) Long roleId) {
-        RoleDetailDto roleDetailDto = roleService.detailInfo(roleId);
+    public JSONResponse detailInfo(@RequestAttribute String appId, @Valid @RequestBody ReqIdLong roleId) {
+        RoleDetailDto roleDetailDto = roleService.detailInfo(roleId.getId());
         if (!roleDetailDto.getAppId().equals(appId)) {
             throw Exceptions.throwIllegalStateException("此用户无法查询此角色详细信息");
         }

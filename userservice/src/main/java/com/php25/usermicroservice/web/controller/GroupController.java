@@ -6,6 +6,7 @@ import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdLong;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
 import com.php25.usermicroservice.web.dto.GroupDetailDto;
 import com.php25.usermicroservice.web.dto.GroupPageDto;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,8 +77,9 @@ public class GroupController extends JSONController {
     @PostMapping("/unableGroup")
     public JSONResponse unableGroup(@NotBlank @RequestAttribute String appId,
                                     @NotBlank @RequestAttribute String username,
-                                    @Min(0) Long groupId) {
-        Boolean result = groupService.unableGroup(appId, username, groupId);
+                                    @Valid @RequestBody ReqIdLong groupId
+    ) {
+        Boolean result = groupService.unableGroup(appId, username, groupId.getId());
         return succeed(result);
     }
 
@@ -102,8 +103,8 @@ public class GroupController extends JSONController {
     }
 
     @PostMapping("/detailInfo")
-    public JSONResponse detailInfo(@RequestAttribute String appId, @Min(0) Long groupId) {
-        GroupDetailDto groupDetailDto = groupService.detailInfo(groupId);
+    public JSONResponse detailInfo(@RequestAttribute String appId, @Valid @RequestBody ReqIdLong groupId) {
+        GroupDetailDto groupDetailDto = groupService.detailInfo(groupId.getId());
         if (!groupDetailDto.getAppId().equals(appId)) {
             throw Exceptions.throwIllegalStateException("此用户无法查询此组的详细信息");
         }

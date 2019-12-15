@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdString;
 import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppDetailDto;
 import com.php25.usermicroservice.web.dto.AppPageDto;
@@ -24,11 +25,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,8 +56,8 @@ public class AppClientController extends JSONController {
 
     @PostMapping
     @RequestMapping("/detailInfo")
-    public JSONResponse detailInfo(@NotBlank @RequestParam String appId) {
-        AppDetailDto appDetailDto = appClientService.detailInfo(appId);
+    public JSONResponse detailInfo(@Valid @RequestBody ReqIdString reqIdString) {
+        AppDetailDto appDetailDto = appClientService.detailInfo(reqIdString.getId());
         ResAppDetailVo resAppDetailVo = new ResAppDetailVo();
         BeanUtils.copyProperties(appDetailDto, resAppDetailVo);
         return succeed(resAppDetailVo);
@@ -79,14 +78,14 @@ public class AppClientController extends JSONController {
 
     @PostMapping
     @RequestMapping("/unregister")
-    public JSONResponse unregister(@NotBlank @RequestParam String appId) {
-        Boolean result = appClientService.unregister(appId);
+    public JSONResponse unregister(@Valid @RequestBody ReqIdString reqIdString) {
+        Boolean result = appClientService.unregister(reqIdString.getId());
         return succeed(result);
     }
 
     @PostMapping
     @RequestMapping("/queryPage")
-    public JSONResponse queryPage(@RequestBody SearchVo searchVo) {
+    public JSONResponse queryPage(@Valid @RequestBody SearchVo searchVo) {
         List<SearchParamVo> searchParamVoList = searchVo.getSearchParamVoList();
         List<SearchParam> searchParams;
         if (null == searchParamVoList || searchParamVoList.isEmpty()) {

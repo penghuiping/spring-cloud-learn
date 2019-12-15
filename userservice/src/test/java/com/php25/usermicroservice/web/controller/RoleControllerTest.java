@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdLong;
+import com.php25.common.flux.web.ReqIdString;
 import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqCreateRoleVo;
@@ -23,8 +25,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 /**
  * @author: penghuiping
@@ -136,16 +136,18 @@ public class RoleControllerTest {
 
 
     public void detailInfo(AllTest allTest) throws Exception {
+        ReqIdString reqIdString = new ReqIdString();
+        reqIdString.setId(allTest.roleId.toString());
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/role/detailInfo")
                         .header("Authorization", "Bearer " + allTest.accessToken)
-                        .param("roleId", allTest.roleId + "")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(JsonUtil.toJson(reqIdString))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_detailInfo",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("roleId").description("角色id")
+                        requestFields(
+                                fieldWithPath("id").description("角色id")
                         ), responseFields(
                                 beneathPath("returnObject"),
                                 fieldWithPath("id").description("角色id"),
@@ -166,16 +168,19 @@ public class RoleControllerTest {
     }
 
     public void unableRole(AllTest allTest) throws Exception {
+        ReqIdLong reqIdLong = new ReqIdLong();
+        reqIdLong.setId(allTest.roleId);
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/role/unableRole")
                         .header("Authorization", "Bearer " + allTest.accessToken)
-                        .param("roleId", allTest.roleId + "")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(JsonUtil.toJson(reqIdLong))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_unableRole",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("roleId").description("角色id")
+                        requestFields(
+                                fieldWithPath("id").description("角色id")
                         ), responseFields(
                                 fieldWithPath("errorCode").description("0:成功返回"),
                                 fieldWithPath("returnObject").description("true:成功,false:失败"),

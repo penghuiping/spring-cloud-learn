@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdLong;
 import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqCreateGroupVo;
@@ -23,8 +24,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 /**
  * @author: penghuiping
@@ -136,16 +135,18 @@ public class GroupControllerTest {
 
 
     public void detailInfo(AllTest allTest) throws Exception {
+        ReqIdLong reqIdLong = new ReqIdLong();
+        reqIdLong.setId(allTest.groupId);
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/group/detailInfo")
                         .header("Authorization", "Bearer " + allTest.accessToken)
-                        .param("groupId", allTest.groupId + "")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(JsonUtil.toJson(reqIdLong))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_detailInfo",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("groupId").description("组id")
+                        requestFields(
+                                fieldWithPath("id").description("组id")
                         ), responseFields(
                                 beneathPath("returnObject"),
                                 fieldWithPath("id").description("组id"),
@@ -166,16 +167,20 @@ public class GroupControllerTest {
     }
 
     public void unableGroup(AllTest allTest) throws Exception {
+        ReqIdLong reqIdLong = new ReqIdLong();
+        reqIdLong.setId(allTest.groupId);
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/group/unableGroup")
                         .header("Authorization", "Bearer " + allTest.accessToken)
+                        .content(JsonUtil.toJson(reqIdLong))
                         .param("groupId", allTest.groupId + "")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_unableGroup",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("groupId").description("组id")
+                        requestFields(
+                                fieldWithPath("id").description("组id")
                         ), responseFields(
                                 fieldWithPath("errorCode").description("0:成功返回"),
                                 fieldWithPath("returnObject").description("true:成功,false:失败"),

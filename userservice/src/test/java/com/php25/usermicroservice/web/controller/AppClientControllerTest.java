@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.flux.web.ReqIdString;
 import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqRegisterAppVo;
@@ -20,8 +21,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 /**
  * @author: penghuiping
@@ -110,16 +109,20 @@ public class AppClientControllerTest {
     }
 
     public void detailInfo(AllTest allTest) throws Exception {
+
+        ReqIdString reqIdString = new ReqIdString();
+        reqIdString.setId(ConstantTest.Customer.appId);
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/appClient/detailInfo")
                         .header("Authorization", "Bearer " + allTest.accessToken)
-                        .param("appId", ConstantTest.Customer.appId)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(JsonUtil.toJson(reqIdString))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_detailInfo",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("appId").description("应用id")
+                        requestFields(
+                                fieldWithPath("id").description("应用id")
                         ), responseFields(
                                 beneathPath("returnObject"),
                                 fieldWithPath("appId").description("应用id"),
@@ -135,16 +138,19 @@ public class AppClientControllerTest {
 
 
     public void unregister(AllTest allTest) throws Exception {
+        ReqIdString reqIdString = new ReqIdString();
+        reqIdString.setId(ConstantTest.Customer.appId);
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/appClient/unregister")
                         .header("Authorization", "Bearer " + allTest.accessToken)
-                        .param("appId", ConstantTest.Customer.appId)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(JsonUtil.toJson(reqIdString))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_unregister",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
-                        requestParameters(
-                                parameterWithName("appId").description("应用id")
+                        requestFields(
+                                fieldWithPath("id").description("应用id")
                         ), responseFields(
                                 fieldWithPath("errorCode").description("0:正确"),
                                 fieldWithPath("returnObject").description("true:取消注册成功,false:取消注册失败"),
