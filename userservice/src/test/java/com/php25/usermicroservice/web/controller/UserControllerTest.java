@@ -52,7 +52,7 @@ public class UserControllerTest {
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/user/register")
                         .content(JsonUtil.toJson(reqRegisterUserVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("user_register",
                         requestFields(

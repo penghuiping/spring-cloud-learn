@@ -6,10 +6,6 @@ import com.php25.usermicroservice.web.dto.AppDetailDto;
 import com.php25.usermicroservice.web.dto.AppPageDto;
 import com.php25.usermicroservice.web.dto.AppRegisterDto;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
-import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 
 import java.util.List;
 
@@ -18,7 +14,7 @@ import java.util.List;
  * @date: 2019/7/28 20:37
  * @description:
  */
-public interface AppClientService extends ClientDetailsService, AuthorizationCodeServices {
+public interface AppClientService  {
 
     /**
      * 获取app客户信息详情
@@ -56,10 +52,5 @@ public interface AppClientService extends ClientDetailsService, AuthorizationCod
      * @return
      */
     List<AppPageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction);
-
-
-    @Override
-    ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException;
-
 
 }

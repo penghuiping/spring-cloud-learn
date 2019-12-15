@@ -41,7 +41,7 @@ public class AppClientControllerTest {
                 MockMvcRequestBuilders.post("/appClient/register")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqRegisterAppVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("appClient_register",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),

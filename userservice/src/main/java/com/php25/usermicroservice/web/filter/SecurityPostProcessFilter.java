@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,11 +23,11 @@ public class SecurityPostProcessFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("进入SecurityPostProcessFilter1....");
         Principal principal = request.getUserPrincipal();
-        if (principal instanceof OAuth2Authentication) {
+        if (principal instanceof JwtAuthenticationToken) {
             log.info("进入SecurityPostProcessFilter2....");
-            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) principal;
-            String appId = oAuth2Authentication.getOAuth2Request().getClientId();
-            String username = request.getRemoteUser();
+            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+            String username = (String) jwtAuthenticationToken.getToken().getHeaders().get("username");
+            String appId = (String) jwtAuthenticationToken.getToken().getHeaders().get("appId");
             request.setAttribute("appId", appId);
             request.setAttribute("username", username);
         }

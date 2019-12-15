@@ -20,7 +20,7 @@ public class EventHandler {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @StreamListener(value = Processor.INPUT)
+    @StreamListener(value = Processor.INPUT,condition = "headers['type']=='auditlogservice'")
     public void handler(Message message) {
         log.info("message:{}", message.getPayload().toString());
     }

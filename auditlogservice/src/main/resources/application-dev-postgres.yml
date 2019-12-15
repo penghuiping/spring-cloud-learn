@@ -34,7 +34,7 @@ spring:
     stream:
       bindings:
         input:
-          group: one
+          group: auditlogservice
           destination: data-exchange
           contentType: application/json
           consumer:
@@ -42,10 +42,16 @@ spring:
             auto-bind-dlq: true
             republish-to-dlq: true
             max-attempts: 3
+#            partitioned: false
         output:
           destination: data-exchange
           contentType: application/json
-      instance-count: 3
+#          producer:
+#            partitioned: false
+#            partitionKeyExpression: headers['partitionKey']
+#            partitionCount: 1
+#      instance-count: 1
+#      instance-index: 0
   ########################################################
   ### 调用链监控
   ########################################################
@@ -65,18 +71,16 @@ spring:
         enabled: true
     enabled: true
   ########################################################
-  ### 调用链监控
+  ### mongodb
   ########################################################
   data:
     mongodb:
       host: 121.36.133.130
-      database: test
-      username: root
-      password: root
+      username: test
+      password: test
       port: 27017
-      repositories:
-        type: auto
-########################################################
+      database: test
+######################################################
 ### metrics监控
 ########################################################
 management:

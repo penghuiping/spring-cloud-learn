@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class EventHandler {
 
 
-    @StreamListener(Processor.INPUT)
+    @StreamListener(value = Processor.INPUT, condition = "headers['type']=='userservice'")
     public void handler(Message message) {
         log.info("message:{}", message.getPayload().toString());
     }

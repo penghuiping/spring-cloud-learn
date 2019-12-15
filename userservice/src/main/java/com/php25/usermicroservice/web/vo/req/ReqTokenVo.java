@@ -6,13 +6,13 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @author: penghuiping
- * @date: 2019/8/21 09:53
- * @description:
+ * @author penghuiping
+ * @date 2019/12/14 23:44
  */
 @Setter
 @Getter
-public class ReqRegisterAppVo {
+public class ReqTokenVo {
+
     @NotBlank
     private String appId;
 
@@ -20,5 +20,5 @@ public class ReqRegisterAppVo {
     private String appSecret;
 
     @NotBlank
-    private String registeredRedirectUri;
+    private String code;
 }

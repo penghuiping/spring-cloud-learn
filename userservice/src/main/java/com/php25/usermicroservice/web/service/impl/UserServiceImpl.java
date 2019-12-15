@@ -3,12 +3,21 @@ package com.php25.usermicroservice.web.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.core.util.DigestUtil;
+import com.php25.common.core.util.RandomUtil;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.core.util.crypto.constant.SignAlgorithm;
+import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.common.flux.trace.annotation.Traced;
+import com.php25.common.redis.RedisManager;
 import com.php25.usermicroservice.web.constant.Constants;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.AppRefDto;
 import com.php25.usermicroservice.web.dto.GroupRefDto;
+import com.php25.usermicroservice.web.dto.Oauth2TokenDto;
 import com.php25.usermicroservice.web.dto.RoleRefDto;
 import com.php25.usermicroservice.web.dto.UserChangeDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
@@ -26,9 +35,12 @@ import com.php25.usermicroservice.web.repository.GroupRepository;
 import com.php25.usermicroservice.web.repository.RoleRepository;
 import com.php25.usermicroservice.web.repository.UserRepository;
 import com.php25.usermicroservice.web.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,7 +50,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.PrivateKey;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -67,6 +82,106 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RedisManager redisManager;
+
+    @Autowired
+    private IdGeneratorService idGeneratorService;
+
+    @Value("${jwt.privateKey}")
+    private String jwtPrivateKey;
+
+
+
+    @Override
+    public String authorizeCode(String username, String password, String appId) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if(!passwordEncoder.matches(password,user.getPassword())) {
+                throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
+            }
+            Set<AppRef> appRefs = user.getApps();
+            if (null == appRefs || appRefs.isEmpty()) {
+                throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
+            }
+
+            if (appRefs.stream().noneMatch(appRef -> appRef.getAppId().equals(appId))) {
+                throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
+            }
+            String code = RandomUtil.getRandomLetters(5);
+            redisManager.set("oauth2_code:" + code, username, 60 * 5l);
+            return code;
+        } else {
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public Oauth2TokenDto getAccessToken(String code, String appId, String appSecret) {
+        String username = redisManager.get("oauth2_code:" +code, String.class);
+        if (StringUtil.isBlank(username)) {
+            throw Exceptions.throwBusinessException(UserBusinessError.CODE_NOT_VALID);
+        }
+
+        Optional<App> appOptional = appRepository.findById(appId);
+        if (!appOptional.isPresent()) {
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_NOT_VALID);
+        }
+        App app = appOptional.get();
+
+        if (!passwordEncoder.matches(appSecret,app.getAppSecret())) {
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_SECRET_NOT_VALID);
+        }
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (!userOptional.isPresent()) {
+            throw Exceptions.throwImpossibleException();
+        }
+        User user = userOptional.get();
+        if (user.getApps().stream().noneMatch(appRef -> appRef.getAppId().equals(appId))) {
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_NOT_VALID);
+        }
+
+        //成功
+        //1.移除code
+        redisManager.remove("oauth2_code:" + code);
+
+        Set<RoleRef> roleRefs = user.getRoles();
+
+        List<String> roles = null;
+        if(null == roleRefs || roleRefs.isEmpty()) {
+            roles = new ArrayList<>();
+        }else {
+            List<Long> roleIds= roleRefs.stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+            roles = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toList());
+        }
+
+        //2.生成accessToken，2小时过去
+        String jti = idGeneratorService.getUUID();
+
+        PrivateKey privateKey = SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPrivateKey));
+        String accessToken =  Jwts.builder().signWith(privateKey,SignatureAlgorithm.RS256)
+                .setIssuer("userservice")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
+                .setHeaderParam("scp", roles)
+                .setHeaderParam("username",username)
+                .setHeaderParam("appId",appId)
+                .setSubject(username)
+                .setId(jti)
+                .compact();
+
+
+        Oauth2TokenDto oauth2TokenDto = new Oauth2TokenDto();
+        oauth2TokenDto.setAccessToken(accessToken);
+        //oauth2TokenDto.setRefreshToken();
+        oauth2TokenDto.setExpiresIn("7200");
+        oauth2TokenDto.setJti(jti);
+
+        return oauth2TokenDto;
+    }
 
     @Override
     public Boolean register(UserRegisterDto registerUserDto) {

@@ -3,6 +3,9 @@ package com.php25.auditlogservice.server.model;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
 
 /**
  * @author penghuiping
@@ -14,9 +17,14 @@ public class UserServiceAuditLog {
     @Id
     private ObjectId id;
 
+    @Field
     private String name;
 
-    private Integer age;
+    @Field
+    private LocalDateTime time;
+
+    @Field
+    private String description;
 
     public ObjectId getId() {
         return id;
@@ -34,12 +42,19 @@ public class UserServiceAuditLog {
         this.name = name;
     }
 
-
-    public void setAge(Integer age) {
-        this.age = age;
+    public LocalDateTime getTime() {
+        return time;
     }
 
-    public Integer getAge() {
-        return age;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

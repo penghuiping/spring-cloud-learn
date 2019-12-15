@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.web.service;
 
 import com.php25.common.core.specification.SearchParam;
+import com.php25.usermicroservice.web.dto.Oauth2TokenDto;
 import com.php25.usermicroservice.web.dto.UserChangeDto;
 import com.php25.usermicroservice.web.dto.UserDetailDto;
 import com.php25.usermicroservice.web.dto.UserPageDto;
@@ -20,6 +21,26 @@ import java.util.List;
  * @description:
  */
 public interface UserService extends UserDetailsService {
+
+    /**
+     * 获取auth2的授权码
+     *
+     * @param username
+     * @param password
+     * @param appId
+     * @return
+     */
+    String authorizeCode(String username, String password, String appId);
+
+
+    /**
+     * 获取
+     * @param code
+     * @param appId
+     * @param appSecret
+     * @return
+     */
+    Oauth2TokenDto getAccessToken(String code, String appId, String appSecret);
 
     /**
      * 注册

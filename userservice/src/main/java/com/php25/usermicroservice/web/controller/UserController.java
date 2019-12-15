@@ -22,7 +22,9 @@ import com.php25.usermicroservice.web.vo.res.ResUserPageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +50,9 @@ public class UserController extends JSONController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Processor processor;
 
 
     @PostMapping("/register")
@@ -66,6 +73,10 @@ public class UserController extends JSONController {
     @PostMapping("/detailInfo")
     public JSONResponse detailInfo(@NotBlank @RequestAttribute String username) {
         UserDetailDto userDetailDto = userService.detailInfo(username);
+        Map<String,String> headers = new HashMap<>();
+        headers.put("type","auditlogservice");
+        GenericMessage<String> genericMessage = new GenericMessage(String.format("用户名为:%s，访问了/detailInfo", username),headers);
+        processor.output().send(genericMessage);
         ResUserDetailVo resUserDetailVo = new ResUserDetailVo();
         BeanUtils.copyProperties(userDetailDto, resUserDetailVo);
         return succeed(resUserDetailVo);

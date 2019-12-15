@@ -69,7 +69,7 @@ spring:
     stream:
       bindings:
         input:
-          group: one
+          group: userservice
           destination: data-exchange
           contentType: application/json
           consumer:

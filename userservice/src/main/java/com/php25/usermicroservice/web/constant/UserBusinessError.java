@@ -9,7 +9,10 @@ import com.php25.common.core.exception.BusinessErrorStatus;
  */
 public enum UserBusinessError implements BusinessErrorStatus {
 
-    USER_NOT_FOUND("00000", "用户不存在");
+    USER_NOT_FOUND("00000", "用户不存在"),
+    CODE_NOT_VALID("00001", "code不正确"),
+    APP_ID_NOT_VALID("00002", "appId不正确"),
+    APP_SECRET_NOT_VALID("00003", "appSecret不正确");
 
 
     String code;

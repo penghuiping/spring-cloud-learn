@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="userRegister" name="userRegister" isExecutable="true">
+        <startEvent id="startUserRegister"/>
+
+        <sequenceFlow sourceRef="startUserRegister" targetRef="userConfirmEmailTask"/>
+
+        <userTask id="userConfirmEmailTask" name="userConfirmEmailTask">
+            <documentation>
+                确认注册邮件
+            </documentation>
+            <potentialOwner>
+                <resourceAssignmentExpression>
+                    <formalExpression>user</formalExpression>
+                </resourceAssignmentExpression>
+            </potentialOwner>
+        </userTask>
+
+        <sequenceFlow sourceRef="userConfirmEmailTask" targetRef="endUserRegister"/>
+
+        <endEvent id="endUserRegister"/>
+    </process>
+</definitions>

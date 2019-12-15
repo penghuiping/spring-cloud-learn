@@ -32,11 +32,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.client.BaseClientDetails;
-import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +42,6 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -57,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices implements AppClientService, InitializingBean {
+public class AppClientServiceImpl   implements AppClientService, InitializingBean {
 
     @Autowired
     private AppRepository appRepository;
@@ -86,6 +80,7 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
         redisTemplate1.setValueSerializer(new JdkSerializationRedisSerializer());
         redisTemplate1.afterPropertiesSet();
     }
+
 
     @Override
     public AppDetailDto detailInfo(String appId) {
@@ -196,44 +191,6 @@ public class AppClientServiceImpl extends RandomValueAuthorizationCodeServices i
             return result;
         } else {
             return Lists.newArrayList();
-        }
-    }
-
-    @Override
-    public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-        Optional<App> appOptional = appRepository.findById(clientId);
-        if (!appOptional.isPresent()) {
-            return null;
-        } else {
-            App app = appOptional.get();
-            BaseClientDetails clientDetails = new BaseClientDetails();
-            clientDetails.setClientId(app.getAppId());
-            clientDetails.setClientSecret(app.getAppSecret());
-            clientDetails.setRegisteredRedirectUri(Sets.newHashSet(app.getRegisteredRedirectUri()));
-            clientDetails.setAuthorizedGrantTypes(Lists.newArrayList("authorization_code"));
-            clientDetails.setScope(Lists.newArrayList("authentication"));
-            clientDetails.setAutoApproveScopes(Lists.newArrayList("authentication"));
-            return clientDetails;
-        }
-    }
-
-
-    @Override
-    protected void store(String code, OAuth2Authentication authentication) {
-        String key = OAUTH_CODE_REDIS_PREFIX + code;
-        redisTemplate1.opsForValue().set(key, serialize(authentication), 30, TimeUnit.MINUTES);
-    }
-
-    @Override
-    protected OAuth2Authentication remove(String code) {
-        String key = OAUTH_CODE_REDIS_PREFIX + code;
-        byte[] value = redisTemplate1.opsForValue().get(key);
-        if (null != value) {
-            OAuth2Authentication auth2Authentication = (OAuth2Authentication) deserialize(value);
-            redisTemplate1.delete(key);
-            return auth2Authentication;
-        } else {
-            return null;
         }
     }
 
