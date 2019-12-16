@@ -159,7 +159,8 @@ public class OauthControllerTest {
                                 fieldWithPath("appSecret").description("在认证服务器注册的时候分配的appSecret"),
                                 fieldWithPath("code").description("在/oauth/authorize接口中获取的code")
                         ), responseFields(
-                                fieldWithPath("errorCode").description("oauth2的token,此令牌在请求接口数据需要用到"),
+                                fieldWithPath("errorCode").description("错误码,0:正常，0以外都是非正常"),
+                                fieldWithPath("returnObject").description("返回对象内容"),
                                 fieldWithPath("returnObject.accessToken").description("oauth2的accessToken,此令牌在请求接口数据需要用到"),
                                 fieldWithPath("returnObject.refreshToken").description("oauth2的refreshToken,此令牌在请求接口数据需要用到"),
                                 fieldWithPath("returnObject.expiresIn").description("令牌过期时间"),

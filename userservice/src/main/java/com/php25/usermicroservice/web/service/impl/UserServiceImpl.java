@@ -94,13 +94,12 @@ public class UserServiceImpl implements UserService {
     private String jwtPrivateKey;
 
 
-
     @Override
     public String authorizeCode(String username, String password, String appId) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if(!passwordEncoder.matches(password,user.getPassword())) {
+            if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
             }
             Set<AppRef> appRefs = user.getApps();
@@ -121,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Oauth2TokenDto getAccessToken(String code, String appId, String appSecret) {
-        String username = redisManager.get("oauth2_code:" +code, String.class);
+        String username = redisManager.get("oauth2_code:" + code, String.class);
         if (StringUtil.isBlank(username)) {
             throw Exceptions.throwBusinessException(UserBusinessError.CODE_NOT_VALID);
         }
@@ -132,7 +131,7 @@ public class UserServiceImpl implements UserService {
         }
         App app = appOptional.get();
 
-        if (!passwordEncoder.matches(appSecret,app.getAppSecret())) {
+        if (!appSecret.equals(app.getAppSecret())) {
             throw Exceptions.throwBusinessException(UserBusinessError.APP_SECRET_NOT_VALID);
         }
 
@@ -152,10 +151,10 @@ public class UserServiceImpl implements UserService {
         Set<RoleRef> roleRefs = user.getRoles();
 
         List<String> roles = null;
-        if(null == roleRefs || roleRefs.isEmpty()) {
+        if (null == roleRefs || roleRefs.isEmpty()) {
             roles = new ArrayList<>();
-        }else {
-            List<Long> roleIds= roleRefs.stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+        } else {
+            List<Long> roleIds = roleRefs.stream().map(RoleRef::getRoleId).collect(Collectors.toList());
             roles = Lists.newArrayList(roleRepository.findAllById(roleIds)).stream().map(Role::getName).collect(Collectors.toList());
         }
 

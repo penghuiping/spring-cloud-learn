@@ -1,6 +1,8 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Lists;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
@@ -9,6 +11,7 @@ import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqCreateGroupVo;
 import com.php25.usermicroservice.web.vo.req.ReqGroupChangeInfoVo;
+import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import com.php25.usermicroservice.web.vo.res.ResGroupPageVo;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +45,7 @@ public class GroupControllerTest {
                 MockMvcRequestBuilders.post("/group/create")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqCreateGroupVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_create",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
@@ -65,12 +68,13 @@ public class GroupControllerTest {
         SearchVo searchVo = new SearchVo();
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
+        searchVo.setSearchParamVoList(Lists.newArrayList(new SearchParamVo("name","selfDefineGroup", Operator.EQ)));
 
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/group/queryPage")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(searchVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_queryPage",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
@@ -114,7 +118,7 @@ public class GroupControllerTest {
                 MockMvcRequestBuilders.post("/group/changeInfo")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqGroupChangeInfoVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("group_changeInfo",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),

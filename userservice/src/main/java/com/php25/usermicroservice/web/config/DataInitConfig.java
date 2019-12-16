@@ -54,7 +54,7 @@ public class DataInitConfig {
             App app;
             if (!appOptional.isPresent()) {
                 app = new App();
-                app.setAppSecret(passwordEncoder.encode(Constants.SuperAdmin.appSecret));
+                app.setAppSecret(Constants.SuperAdmin.appSecret);
                 app.setAppName(Constants.SuperAdmin.appName);
                 app.setRegisterDate(LocalDateTime.now());
                 app.setRegisteredRedirectUri(Constants.SuperAdmin.appRedirectUrl);

@@ -1,6 +1,8 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Lists;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
@@ -10,6 +12,7 @@ import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqCreateRoleVo;
 import com.php25.usermicroservice.web.vo.req.ReqRoleChangeInfoVo;
+import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import com.php25.usermicroservice.web.vo.res.ResRolePageVo;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +46,7 @@ public class RoleControllerTest {
                 MockMvcRequestBuilders.post("/role/create")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqCreateRoleVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_create",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
@@ -67,11 +70,13 @@ public class RoleControllerTest {
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
 
+        searchVo.setSearchParamVoList(Lists.newArrayList(new SearchParamVo("name","selfDefineRole", Operator.EQ)));
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/role/queryPage")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(searchVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_queryPage",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
@@ -98,12 +103,12 @@ public class RoleControllerTest {
                 .andReturn().getResponse().getContentAsString();
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
         Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
-        Assertions.assertThat(jsonResponse.getReturnObject()).asList().hasSize(3);
+        Assertions.assertThat(jsonResponse.getReturnObject()).asList().hasSize(1);
         log.info("/role/queryPage:{}", result);
 
         List<ResRolePageVo> resRolePageVos = JsonUtil.fromJson(JsonUtil.toJson(jsonResponse.getReturnObject()), new TypeReference<List<ResRolePageVo>>() {
         });
-        allTest.roleId = resRolePageVos.get(2).getId();
+        allTest.roleId = resRolePageVos.get(0).getId();
     }
 
 
@@ -115,7 +120,7 @@ public class RoleControllerTest {
                 MockMvcRequestBuilders.post("/role/changeInfo")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqRoleChangeInfoVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("role_changeInfo",
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),

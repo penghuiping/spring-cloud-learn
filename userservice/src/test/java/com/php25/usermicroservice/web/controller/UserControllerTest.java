@@ -1,5 +1,7 @@
 package com.php25.usermicroservice.web.controller;
 
+import com.google.common.collect.Lists;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
@@ -13,6 +15,7 @@ import com.php25.usermicroservice.web.vo.req.ReqJoinGroupVo;
 import com.php25.usermicroservice.web.vo.req.ReqLeaveGroupVo;
 import com.php25.usermicroservice.web.vo.req.ReqRegisterUserVo;
 import com.php25.usermicroservice.web.vo.req.ReqRevokeRoleVo;
+import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import com.php25.usermicroservice.web.vo.res.ResUserDetailVo;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +87,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/user/changePassword")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqChangePasswordVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_changePassword",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
@@ -155,11 +158,14 @@ public class UserControllerTest {
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
 
+        SearchParamVo searchParamVo = new SearchParamVo("username","jack", Operator.EQ);
+        searchVo.setSearchParamVoList(Lists.newArrayList(searchParamVo));
+
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/user/admin/queryPage")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(searchVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_admin_queryPage",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
@@ -199,7 +205,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/user/admin/revokeRole")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqRevokeRoleVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_admin_revokeRole",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
@@ -227,7 +233,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/user/admin/authorizeRole")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqAuthorizeRoleVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_admin_authorizeRole",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
@@ -255,7 +261,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/user/admin/joinGroup")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqJoinGroupVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_admin_joinGroup",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),
@@ -284,7 +290,7 @@ public class UserControllerTest {
                 MockMvcRequestBuilders.post("/user/admin/leaveGroup")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(reqLeaveGroupVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("user_admin_leaveGroup",
                         requestHeaders(headerWithName("Authorization").description("放入/oauth/token接口拿到的access_token")),

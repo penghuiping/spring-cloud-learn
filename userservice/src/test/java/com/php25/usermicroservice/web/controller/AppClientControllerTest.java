@@ -1,6 +1,8 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Lists;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
@@ -8,6 +10,7 @@ import com.php25.common.flux.web.ReqIdString;
 import com.php25.usermicroservice.web.AllTest;
 import com.php25.usermicroservice.web.ConstantTest;
 import com.php25.usermicroservice.web.vo.req.ReqRegisterAppVo;
+import com.php25.usermicroservice.web.vo.req.SearchParamVo;
 import com.php25.usermicroservice.web.vo.req.SearchVo;
 import com.php25.usermicroservice.web.vo.res.ResAccountVo;
 import lombok.extern.slf4j.Slf4j;
@@ -75,11 +78,12 @@ public class AppClientControllerTest {
         SearchVo searchVo = new SearchVo();
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
+        searchVo.setSearchParamVoList(Lists.newArrayList(new SearchParamVo("appId", "#ajduund", Operator.EQ)));
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/appClient/queryPage")
                         .header("Authorization", "Bearer " + allTest.accessToken)
                         .content(JsonUtil.toJson(searchVo))
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(document("appClient_queryPage",
@@ -104,7 +108,7 @@ public class AppClientControllerTest {
                 .andReturn().getResponse().getContentAsString();
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
         Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
-        Assertions.assertThat(jsonResponse.getReturnObject()).asList().hasSize(2);
+        Assertions.assertThat(jsonResponse.getReturnObject()).asList().hasSize(1);
         log.info("/appClient/queryPage:{}", result);
     }
 

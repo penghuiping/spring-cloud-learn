@@ -22,23 +22,14 @@ import com.php25.usermicroservice.web.repository.UserRepository;
 import com.php25.usermicroservice.web.service.AppClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +42,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class AppClientServiceImpl   implements AppClientService, InitializingBean {
+public class AppClientServiceImpl   implements AppClientService {
 
     @Autowired
     private AppRepository appRepository;
@@ -63,24 +54,7 @@ public class AppClientServiceImpl   implements AppClientService, InitializingBea
     private UserRepository userRepository;
 
     @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private static final String OAUTH_CODE_REDIS_PREFIX = "oauth2_code:";
-
-    private final RedisTemplate<String, byte[]> redisTemplate1 = new RedisTemplate<>();
-
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        redisTemplate1.setConnectionFactory(redisConnectionFactory);
-        redisTemplate1.setKeySerializer(StringRedisSerializer.UTF_8);
-        redisTemplate1.setValueSerializer(new JdkSerializationRedisSerializer());
-        redisTemplate1.afterPropertiesSet();
-    }
-
 
     @Override
     public AppDetailDto detailInfo(String appId) {
@@ -102,7 +76,7 @@ public class AppClientServiceImpl   implements AppClientService, InitializingBea
         BeanUtils.copyProperties(appRegisterDto, app);
         app.setRegisterDate(LocalDateTime.now());
         app.setAppName(appRegisterDto.getAppName());
-        app.setAppSecret(passwordEncoder.encode(app.getAppSecret()));
+        app.setAppSecret(app.getAppSecret());
         app.setEnable(1);
         appRepository.insert(app);
 
@@ -191,28 +165,6 @@ public class AppClientServiceImpl   implements AppClientService, InitializingBea
             return result;
         } else {
             return Lists.newArrayList();
-        }
-    }
-
-    private byte[] serialize(Object object) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(object);
-            return baos.toByteArray();
-        } catch (Exception e) {
-            throw Exceptions.throwIllegalStateException("序列化对象失败", e);
-        }
-    }
-
-    private Object deserialize(byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(bais)) {
-            return ois.readObject();
-        } catch (Exception e) {
-            throw Exceptions.throwIllegalStateException("反序列化对象失败", e);
         }
     }
 }
