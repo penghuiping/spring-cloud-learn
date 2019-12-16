@@ -12,17 +12,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -44,19 +44,20 @@ public class WebSecurityConfig {
                 .authorizeExchange()
                 .pathMatchers("/mail/**").hasAuthority(Role.NOTIFY_SERVICE_MAIL.name())
                 .pathMatchers("/mobile/**").hasAuthority(Role.NOTIFY_SERVICE_MOBILE.name())
-                .pathMatchers("/actuator/**","/static/**").permitAll()
+                .pathMatchers("/actuator/**", "/static/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2ResourceServer().jwt()
-                .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {
-                    @Override
-                    protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-                        Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
-                        log.info("authorities:{}", authorities);
-                        return authorities.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList());
-                    }
-                }))
+                .jwtAuthenticationConverter(
+                        jwt -> Mono.fromCallable(() -> {
+                            Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
+                            log.info("authorities:{}", authorities);
+                            List<SimpleGrantedAuthority> grantAuthorities = authorities.stream()
+                                    .map(SimpleGrantedAuthority::new)
+                                    .collect(Collectors.toList());
+                            return new JwtAuthenticationToken(jwt, grantAuthorities);
+                        }).subscribeOn(Schedulers.elastic())
+
+                )
                 .and()
 //                .and().csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 //                .and().headers().contentSecurityPolicy("script-src 'self' https://trustedscripts.example.com; object-src https://trustedplugins.example.com; report-uri /csp-report-endpoint/")

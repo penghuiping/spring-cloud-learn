@@ -16,19 +16,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -53,23 +53,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.requiresChannel().requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth2/authorize","/oauth2/token","/user/register", "/static/**","/actuator/**").permitAll()
+                .antMatchers("/oauth2/authorize", "/oauth2/token", "/user/register", "/static/**", "/actuator/**").permitAll()
                 .antMatchers("/appClient/**").hasAnyAuthority(Constants.Role.SUPER_ADMIN)
                 .antMatchers("/role/**").hasAnyAuthority(Constants.Role.ADMIN)
                 .antMatchers("/user/admin/**").hasAnyAuthority(Constants.Role.ADMIN)
                 .antMatchers("/user/**").hasAnyAuthority(Constants.Role.CUSTOMER)
                 .and().addFilterAfter(new SecurityPostProcessFilter(), AnonymousAuthenticationFilter.class)
                 .oauth2ResourceServer().jwt()
-                .decoder(jwtDecoder()).jwtAuthenticationConverter(new JwtAuthenticationConverter() {
-            @Override
-            protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-                Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
-                log.info("authorities:{}", authorities);
-                return authorities.stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-            }
-        })
+                .decoder(jwtDecoder()).jwtAuthenticationConverter(
+                jwt -> {
+                    Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
+                    log.info("authorities:{}", authorities);
+                    List<SimpleGrantedAuthority> grantAuthorities = authorities.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+                    return new JwtAuthenticationToken(jwt, grantAuthorities);
+                }
+        )
                 .and()
                 .and().csrf().disable();
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
