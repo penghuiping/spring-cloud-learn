@@ -26,7 +26,7 @@ include::{snippets}/appClient_register/curl-request.adoc[]
 === 注销app应用
 调用此接口可以，注销已经注册的app应用
 
-note: {note_super_admin_desc}
+NOTE: {note_super_admin_desc}
 
 .请求头参数说明
 include::{snippets}/appClient_unregister/request-headers.adoc[]
@@ -52,7 +52,7 @@ NOTE: {note_super_admin_desc}
 include::{snippets}/appClient_detailInfo/request-headers.adoc[]
 
 .请求体参数说明
-include::{snippets}/appClient_detailInfo/request-parameters.adoc[]
+include::{snippets}/appClient_detailInfo/request-fields.adoc[]
 
 .请求参数样例
 include::{snippets}/appClient_detailInfo/http-request.adoc[]

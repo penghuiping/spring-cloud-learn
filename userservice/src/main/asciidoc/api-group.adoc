@@ -26,7 +26,7 @@ NOTE: {note_admin_desc}
 include::{snippets}/group_unableGroup/request-headers.adoc[]
 
 .请求体参数说明
-include::{snippets}/group_unableGroup/request-parameters.adoc[]
+include::{snippets}/group_unableGroup/request-fields.adoc[]
 
 .请求参数样例
 include::{snippets}/group_unableGroup/http-request.adoc[]
@@ -71,7 +71,7 @@ NOTE: {note_admin_desc}
 include::{snippets}/group_detailInfo/request-headers.adoc[]
 
 .请求体参数说明
-include::{snippets}/group_detailInfo/request-parameters.adoc[]
+include::{snippets}/group_detailInfo/request-fields.adoc[]
 
 .请求参数样例
 include::{snippets}/group_detailInfo/http-request.adoc[]

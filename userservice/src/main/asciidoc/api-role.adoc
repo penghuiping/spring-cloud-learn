@@ -30,7 +30,7 @@ NOTE: {note_admin_desc}
 include::{snippets}/role_unableRole/request-headers.adoc[]
 
 .请求体参数说明
-include::{snippets}/role_unableRole/request-parameters.adoc[]
+include::{snippets}/role_unableRole/request-fields.adoc[]
 
 .请求参数样例
 include::{snippets}/role_unableRole/http-request.adoc[]
@@ -75,7 +75,7 @@ NOTE: {note_admin_desc}
 include::{snippets}/role_detailInfo/request-headers.adoc[]
 
 .请求体参数说明
-include::{snippets}/role_detailInfo/request-parameters.adoc[]
+include::{snippets}/role_detailInfo/request-fields.adoc[]
 
 .请求参数样例
 include::{snippets}/role_detailInfo/http-request.adoc[]
