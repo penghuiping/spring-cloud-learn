@@ -1,6 +1,7 @@
 package com.php25.usermicroservice.web.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.service.IdGeneratorService;
@@ -162,17 +163,25 @@ public class UserServiceImpl implements UserService {
         String jti = idGeneratorService.getUUID();
 
         PrivateKey privateKey = SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPrivateKey));
-        String accessToken =  Jwts.builder().signWith(privateKey,SignatureAlgorithm.RS256)
+
+        final List<String> roles1 = roles;
+
+        String accessToken = Jwts.builder().signWith(privateKey, SignatureAlgorithm.RS256)
+                .setClaims(Maps.toMap(Lists.newArrayList("authorities", "username", "appId"), s -> {
+                    if ("authorities".equals(s)) {
+                        return roles1;
+                    } else if ("username".equals(s)) {
+                        return username;
+                    } else {
+                        return appId;
+                    }
+                }))
                 .setIssuer("userservice")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
-                .setHeaderParam("scp", roles)
-                .setHeaderParam("username",username)
-                .setHeaderParam("appId",appId)
-                .setSubject(username)
+                .setSubject("userservice")
                 .setId(jti)
                 .compact();
-
 
         Oauth2TokenDto oauth2TokenDto = new Oauth2TokenDto();
         oauth2TokenDto.setAccessToken(accessToken);

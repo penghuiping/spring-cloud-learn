@@ -50,7 +50,7 @@ public class WebSecurityConfig {
                 .jwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(new JwtAuthenticationConverter() {
                     @Override
                     protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-                        Collection<String> authorities = (Collection<String>) jwt.getHeaders().get("authorities");
+                        Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
                         log.info("authorities:{}", authorities);
                         return authorities.stream()
                                 .map(SimpleGrantedAuthority::new)

@@ -9,12 +9,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -24,14 +27,17 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: penghuiping
  * @date: 2019/3/27 17:06
  * @description:
  */
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -48,13 +54,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/oauth2/authorize","/oauth2/token","/user/register", "/static/**","/actuator/**").permitAll()
-                .antMatchers("/appClient/**").hasAnyAuthority("SCOPE_" +Constants.Role.SUPER_ADMIN)
-                .antMatchers("/role/**").hasAnyAuthority("SCOPE_" +Constants.Role.ADMIN)
-                .antMatchers("/user/admin/**").hasAnyAuthority("SCOPE_" +Constants.Role.ADMIN)
-                .antMatchers("/user/**").hasAnyAuthority("SCOPE_" +Constants.Role.CUSTOMER)
+                .antMatchers("/appClient/**").hasAnyAuthority(Constants.Role.SUPER_ADMIN)
+                .antMatchers("/role/**").hasAnyAuthority(Constants.Role.ADMIN)
+                .antMatchers("/user/admin/**").hasAnyAuthority(Constants.Role.ADMIN)
+                .antMatchers("/user/**").hasAnyAuthority(Constants.Role.CUSTOMER)
                 .and().addFilterAfter(new SecurityPostProcessFilter(), AnonymousAuthenticationFilter.class)
                 .oauth2ResourceServer().jwt()
-                .decoder(jwtDecoder()).jwtAuthenticationConverter(new JwtAuthenticationConverter())
+                .decoder(jwtDecoder()).jwtAuthenticationConverter(new JwtAuthenticationConverter() {
+            @Override
+            protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+                Collection<String> authorities = (Collection<String>) jwt.getClaims().get("authorities");
+                log.info("authorities:{}", authorities);
+                return authorities.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+            }
+        })
                 .and()
                 .and().csrf().disable();
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());

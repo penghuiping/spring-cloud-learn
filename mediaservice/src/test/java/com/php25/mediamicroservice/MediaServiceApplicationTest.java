@@ -1,6 +1,5 @@
 package com.php25.mediamicroservice;
 
-import com.google.common.collect.Maps;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.crypto.constant.RsaAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
@@ -29,6 +28,8 @@ import org.testcontainers.containers.GenericContainer;
 
 import java.security.PrivateKey;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
@@ -126,14 +127,28 @@ public class MediaServiceApplicationTest {
 
     private String generateJwt() throws Exception {
         PrivateKey privateKey1 = SecretKeyUtil.generatePrivateKey(RsaAlgorithm.RSA.getValue(), DigestUtil.decodeBase64(privateKey));
-        return Jwts.builder().signWith(privateKey1, SignatureAlgorithm.RS256)
-                .setIssuer("www.php25.com")
+        List<String> roles = Lists.newArrayList(Role.MEDIA_SERVICE_IMAGE.name());
+        String username = "jack";
+        String appId = "test";
+        String jti = UUID.randomUUID().toString().replace("-", "");
+
+        String accessToken = Jwts.builder().signWith(privateKey1, SignatureAlgorithm.RS256)
+                .setClaims(org.testcontainers.shaded.com.google.common.collect.Maps.toMap(Lists.newArrayList("authorities", "username", "appId"), s -> {
+                    if ("authorities".equals(s)) {
+                        return roles;
+                    } else if ("username".equals(s)) {
+                        return username;
+                    } else {
+                        return appId;
+                    }
+                }))
+                .setIssuer("userservice")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
-
-                .setHeader(Maps.toMap(Lists.newArrayList("authorities"), s -> Lists.newArrayList(Role.MEDIA_SERVICE_IMAGE.name())))
-                .setSubject("test")
+                .setSubject("userservice")
+                .setId(jti)
                 .compact();
+        return accessToken;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.php25.notifymicroservice;
 
 
-import com.google.common.collect.Maps;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.crypto.constant.RsaAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
@@ -27,9 +26,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.shaded.com.google.common.collect.Maps;
 
 import java.security.PrivateKey;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
@@ -105,6 +107,7 @@ public class NotifyServiceApplicationTest {
     @Test
     public void test() throws Exception {
         jwt = generateJwt();
+        log.info("jwt:{}", jwt);
         mobileMessageServiceTest.sendSMS(this);
         mobileMessageServiceTest.validateSMS(this);
         mailServiceTest.sendSimpleMail(this);
@@ -120,12 +123,29 @@ public class NotifyServiceApplicationTest {
 
     private String generateJwt() throws Exception {
         PrivateKey privateKey1 = SecretKeyUtil.generatePrivateKey(RsaAlgorithm.RSA.getValue(), DigestUtil.decodeBase64(privateKey));
-        return Jwts.builder().signWith(privateKey1, SignatureAlgorithm.RS256)
-                .setIssuer("www.php25.com")
+
+        List<String> roles = Lists.newArrayList(Role.NOTIFY_SERVICE_MAIL.name(), Role.NOTIFY_SERVICE_MOBILE.name());
+        String username = "jack";
+        String appId = "test";
+        String jti = UUID.randomUUID().toString().replace("-", "");
+
+        String accessToken = Jwts.builder().signWith(privateKey1, SignatureAlgorithm.RS256)
+                .setClaims(Maps.toMap(Lists.newArrayList("authorities", "username", "appId"), s -> {
+                    if ("authorities".equals(s)) {
+                        return roles;
+                    } else if ("username".equals(s)) {
+                        return username;
+                    } else {
+                        return appId;
+                    }
+                }))
+                .setIssuer("userservice")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
-                .setClaims(Maps.toMap(Lists.newArrayList("authorities"), s -> Lists.newArrayList(Role.NOTIFY_SERVICE_MAIL.name(), Role.NOTIFY_SERVICE_MOBILE.name())))
-                .setSubject("test")
+                .setSubject("userservice")
+                .setId(jti)
                 .compact();
+
+        return accessToken;
     }
 }

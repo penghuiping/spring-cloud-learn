@@ -26,8 +26,8 @@ public class SecurityPostProcessFilter extends HttpFilter {
         if (principal instanceof JwtAuthenticationToken) {
             log.info("进入SecurityPostProcessFilter2....");
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-            String username = (String) jwtAuthenticationToken.getToken().getHeaders().get("username");
-            String appId = (String) jwtAuthenticationToken.getToken().getHeaders().get("appId");
+            String username = (String) jwtAuthenticationToken.getToken().getClaims().get("username");
+            String appId = (String) jwtAuthenticationToken.getToken().getClaims().get("appId");
             request.setAttribute("appId", appId);
             request.setAttribute("username", username);
         }
