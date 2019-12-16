@@ -7,6 +7,7 @@ import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.flux.web.ReqIdLong;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
 import com.php25.usermicroservice.web.dto.GroupDetailDto;
 import com.php25.usermicroservice.web.dto.GroupPageDto;
@@ -106,7 +107,7 @@ public class GroupController extends JSONController {
     public JSONResponse detailInfo(@RequestAttribute String appId, @Valid @RequestBody ReqIdLong groupId) {
         GroupDetailDto groupDetailDto = groupService.detailInfo(groupId.getId());
         if (!groupDetailDto.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此用户无法查询此组的详细信息");
+            throw Exceptions.throwBusinessException(UserBusinessError.NO_ACCESS);
         }
         ResGroupDetailVo resGroupDetailVo = new ResGroupDetailVo();
         BeanUtils.copyProperties(groupDetailDto, resGroupDetailVo);

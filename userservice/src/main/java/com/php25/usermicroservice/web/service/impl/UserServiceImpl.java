@@ -195,17 +195,17 @@ public class UserServiceImpl implements UserService {
     public Boolean register(UserRegisterDto registerUserDto) {
         Optional<User> userOptional = userRepository.findByMobile(registerUserDto.getMobile());
         if (userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("手机号:%s在系统中已经存在,无法注册", registerUserDto.getMobile()));
+            throw Exceptions.throwBusinessException(UserBusinessError.MOBILE_ALREADY_EXISTS);
         }
 
         Optional<User> userOptional1 = userRepository.findByUsername(registerUserDto.getUsername());
         if (userOptional1.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("用户名:%s在系统中已经存在,无法注册", registerUserDto.getUsername()));
+            throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_ALREADY_EXISTS);
         }
 
         Optional<App> appOptional = appRepository.findById(registerUserDto.getAppId());
         if (!appOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("应用id:%s在系统中不存在", registerUserDto.getAppId()));
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_NOT_VALID);
         }
 
         User user = new User();
@@ -245,12 +245,12 @@ public class UserServiceImpl implements UserService {
     public Boolean changePasswordByUsername(String username, String oldPassword, String newPassword) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("无法通过用户名:%s找到相关的用户信息", username));
+            throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_NOT_VALID);
         }
 
         User user = userOptional.get();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw Exceptions.throwIllegalStateException(String.format("输入的原密码:%s与数据库的密码:%s不一样", oldPassword, user.getPassword()));
+            throw Exceptions.throwBusinessException(UserBusinessError.PASSWORD_NOT_VALID);
         }
         user.setPassword(newPassword);
         userRepository.save(user);
@@ -264,7 +264,7 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getEnable() != 1) {
-                throw Exceptions.throwIllegalStateException("无法通过username:" + username + "找到对应的用户");
+                throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_NOT_VALID);
             }
             UserDetailDto userDetailDto = new UserDetailDto();
             BeanUtils.copyProperties(user, userDetailDto, "roles", "groups", "apps");
@@ -302,7 +302,7 @@ public class UserServiceImpl implements UserService {
             userDetailDto.setGroups(groupRefDtoSet);
             return userDetailDto;
         } else {
-            throw Exceptions.throwIllegalStateException("无法通过username:" + username + "找到对应的用户");
+            throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_NOT_VALID);
         }
     }
 
@@ -310,7 +310,7 @@ public class UserServiceImpl implements UserService {
     public Boolean changeUserInfo(String username, UserChangeDto userChangeDto) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过username:" + username + "找到对应的用户");
+            throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_NOT_VALID);
         } else {
             User user = userOptional.get();
             boolean result = userRepository.changUserBasicInfo(user.getId(), userChangeDto.getNickname(), userChangeDto.getMobile(), userChangeDto.getEmail(), userChangeDto.getHeadImageId());
@@ -341,7 +341,7 @@ public class UserServiceImpl implements UserService {
     public Boolean authorizeRole(String appId, Long userId, Long roleId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过userId:" + userId + "找到对应的用户");
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
         User user = userOptional.get();
         //判断此用户是否具有此角色，如果有直接返回成功
@@ -353,18 +353,18 @@ public class UserServiceImpl implements UserService {
         //判断userId 是否是这个app下的
         Optional<AppRef> appRefOptional = user.getApps().stream().filter(appRef -> appRef.getAppId().equals(appId)).findFirst();
         if (!appRefOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("此用户id:" + userId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
 
         //判断roleId 是否在这个app下的
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (!roleOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的角色");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         Role role = roleOptional.get();
         if (!appId.equals(role.getAppId())) {
-            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         //新增对应的角色
@@ -383,27 +383,27 @@ public class UserServiceImpl implements UserService {
         //先根据userId查出用户
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("无法根据userId:%d，查询出对应的用户信息", userId));
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
         User user = userOptional.get();
 
         //判断 userId是appId下的
         Optional<AppRef> appRefOptional = user.getApps().stream().filter(appRef -> appRef.getAppId().equals(appId)).findFirst();
         if (!appRefOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("此用户userId:%d,不属于appId为:%s的应用", userId, appId));
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
 
 
         //查看roleId在系统中是否存在
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (!roleOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的角色");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         //判断roleId是appId下的
         Role role = roleOptional.get();
         if (!appId.equals(role.getAppId())) {
-            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         //移除对应的角色
@@ -418,7 +418,7 @@ public class UserServiceImpl implements UserService {
     public Boolean joinGroup(String appId, Long userId, Long groupId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过userId:" + userId + "找到对应的用户");
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
         User user = userOptional.get();
         //判断此用户是否具有此组，如果有直接返回成功
@@ -430,18 +430,18 @@ public class UserServiceImpl implements UserService {
         //判断userId 是否是这个app下的
         Optional<AppRef> appRefOptional = user.getApps().stream().filter(appRef -> appRef.getAppId().equals(appId)).findFirst();
         if (!appRefOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("此用户id:" + userId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
 
         //判断groupId 是否在这个app下的
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (!groupOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过groupId:" + groupId + "找到对应的组");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         Group group = groupOptional.get();
         if (!appId.equals(group.getAppId())) {
-            throw Exceptions.throwIllegalStateException("此groupId:" + groupId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         //新增对应的组
@@ -460,27 +460,27 @@ public class UserServiceImpl implements UserService {
         //先根据userId查出用户
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("无法根据userId:%d，查询出对应的用户信息", userId));
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
         User user = userOptional.get();
 
         //判断 userId是appId下的
         Optional<AppRef> appRefOptional = user.getApps().stream().filter(appRef -> appRef.getAppId().equals(appId)).findFirst();
         if (!appRefOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("此用户userId:%d,不属于appId为:%s的应用", userId, appId));
+            throw Exceptions.throwBusinessException(UserBusinessError.USER_ID_NOT_VALID);
         }
 
 
         //查看groupId在系统中是否存在
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (!groupOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过groupId:" + groupId + "找到对应的组");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         //判断groupId是否在appId下
         Group group = groupOptional.get();
         if (!appId.equals(group.getAppId())) {
-            throw Exceptions.throwIllegalStateException("此组id:" + groupId + "不属于appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         //移除对应的角色

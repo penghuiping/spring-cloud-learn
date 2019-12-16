@@ -70,6 +70,7 @@ public class AppClientController extends JSONController {
         appRegisterDto.setAppId(reqRegisterAppVo.getAppId());
         appRegisterDto.setAppSecret(reqRegisterAppVo.getAppSecret());
         appRegisterDto.setRegisteredRedirectUri(reqRegisterAppVo.getRegisteredRedirectUri());
+        appRegisterDto.setAppName(reqRegisterAppVo.getAppName());
         AccountDto accountDto = appClientService.register(appRegisterDto);
         ResAccountVo resAccountVo = new ResAccountVo();
         BeanUtils.copyProperties(accountDto, resAccountVo);

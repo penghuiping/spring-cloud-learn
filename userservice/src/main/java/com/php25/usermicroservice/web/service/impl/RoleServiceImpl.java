@@ -5,6 +5,7 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.Constants;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.RoleCreateDto;
 import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
@@ -60,21 +61,21 @@ public class RoleServiceImpl implements RoleService {
     public Boolean unableRole(String appId, String username, Long roleId) {
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (!roleOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的数据");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
         Role role = roleOptional.get();
         //判断role是否是appId下的角色
         if (!role.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId + "的应用");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         //customer与admin角色是系统自动创建的角色，不能删除
         if(Constants.Role.ADMIN.equals(role.getName())) {
-            throw Exceptions.throwIllegalStateException(Constants.Role.ADMIN+"角色是授权服务内置角色，无法删除，请删除其他自定义角色");
+            throw Exceptions.throwBusinessException(UserBusinessError.SYSTEM_ROLE_NOT_DELETE);
         }
 
         if(Constants.Role.CUSTOMER.equals(role.getName())) {
-            throw Exceptions.throwIllegalStateException(Constants.Role.CUSTOMER+"角色是授权服务内置角色，无法删除，请删除其他自定义角色");
+            throw Exceptions.throwBusinessException(UserBusinessError.SYSTEM_ROLE_NOT_DELETE);
         }
 
         role.setLastModifiedUserId(username);
@@ -101,12 +102,12 @@ public class RoleServiceImpl implements RoleService {
     public Boolean changeInfo(String appId, String username, Long roleId, String roleDescription) {
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (!roleOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过roleId:" + roleId + "找到对应的数据");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
         Role role = roleOptional.get();
         //判断role是否是appId下的角色
         if (!role.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此角色id:" + roleId + "不属于appId:" + appId + "的应用");
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         }
 
         role.setDescription(roleDescription);
@@ -120,7 +121,7 @@ public class RoleServiceImpl implements RoleService {
     public RoleDetailDto detailInfo(Long roleId) {
         Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (!roleOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("无法通过id:%d找到对应的角色记录", roleId));
+            throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         } else {
             Role role = roleOptional.get();
             RoleDetailDto roleDetailDto = new RoleDetailDto();

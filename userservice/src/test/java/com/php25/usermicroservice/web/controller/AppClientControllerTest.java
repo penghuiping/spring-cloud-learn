@@ -37,6 +37,7 @@ public class AppClientControllerTest {
     public void register(AllTest allTest) throws Exception {
         ReqRegisterAppVo reqRegisterAppVo = new ReqRegisterAppVo();
         reqRegisterAppVo.setAppId(ConstantTest.Customer.appId);
+        reqRegisterAppVo.setAppName(ConstantTest.Customer.appName);
         reqRegisterAppVo.setAppSecret(ConstantTest.Customer.appSecret);
         reqRegisterAppVo.setRegisteredRedirectUri(ConstantTest.Customer.appRedirectUrl);
         String result = allTest.mockMvc.perform(
@@ -49,6 +50,7 @@ public class AppClientControllerTest {
                         requestHeaders(headerWithName("Authorization").description(ConstantTest.AUTHORIZATION_DESC)),
                         requestFields(
                                 fieldWithPath("appId").description("应用id"),
+                                fieldWithPath("appName").description("应用名"),
                                 fieldWithPath("appSecret").description("应用秘钥"),
                                 fieldWithPath("registeredRedirectUri").description("应用获取code回调地址")
                         ), responseFields(
@@ -130,6 +132,7 @@ public class AppClientControllerTest {
                         ), responseFields(
                                 beneathPath("returnObject"),
                                 fieldWithPath("appId").description("应用id"),
+                                fieldWithPath("appName").description("应用名"),
                                 fieldWithPath("appSecret").description("应用秘钥"),
                                 fieldWithPath("registeredRedirectUri").description("应用获取code回调地址"))))
                 .andReturn().getResponse().getContentAsString();

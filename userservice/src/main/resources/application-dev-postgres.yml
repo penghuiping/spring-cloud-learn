@@ -148,7 +148,7 @@ logging:
     root: INFO
     org.springframework.web: INFO
     org.springframework.jdbc: debug
-    org.springframework.security.web: debug
+    org.springframework.security.web: INFO
     org.hibernate: INFO
     com.php25: INFO
   config: classpath:logback-dev.xml

@@ -17,6 +17,9 @@ public class ReqRegisterAppVo {
     private String appId;
 
     @NotBlank
+    private String appName;
+
+    @NotBlank
     private String appSecret;
 
     @NotBlank

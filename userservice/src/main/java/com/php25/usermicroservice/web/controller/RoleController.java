@@ -7,6 +7,7 @@ import com.php25.common.core.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.flux.web.ReqIdLong;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.RoleCreateDto;
 import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
@@ -107,7 +108,7 @@ public class RoleController extends JSONController {
     public JSONResponse detailInfo(@RequestAttribute String appId, @Valid @RequestBody ReqIdLong roleId) {
         RoleDetailDto roleDetailDto = roleService.detailInfo(roleId.getId());
         if (!roleDetailDto.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此用户无法查询此角色详细信息");
+            throw Exceptions.throwBusinessException(UserBusinessError.NO_ACCESS);
         }
         return succeed(roleDetailDto);
     }

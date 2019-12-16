@@ -7,6 +7,7 @@ import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.usermicroservice.web.constant.Constants;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.AccountDto;
 import com.php25.usermicroservice.web.dto.AppDetailDto;
 import com.php25.usermicroservice.web.dto.AppPageDto;
@@ -60,7 +61,7 @@ public class AppClientServiceImpl   implements AppClientService {
     public AppDetailDto detailInfo(String appId) {
         Optional<App> appOptional = appRepository.findById(appId);
         if (!appOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法找到对应oauth2客户端,appId:" + appId);
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_NOT_VALID);
         } else {
             App app = appOptional.get();
             AppDetailDto appDetailDto = new AppDetailDto();

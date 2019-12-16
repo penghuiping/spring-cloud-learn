@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
 import com.php25.usermicroservice.web.dto.GroupDetailDto;
 import com.php25.usermicroservice.web.dto.GroupPageDto;
@@ -60,12 +61,12 @@ public class GroupServiceImpl implements GroupService {
     public Boolean unableGroup(String appId,String username, Long groupId) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (!groupOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过groupId:" + groupId + "找到对应的数据");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
         Group group = groupOptional.get();
         //判断group是否是appId下的组
         if (!group.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此groupId:" + groupId + "不属于appId:" + appId + "的应用");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         group.setLastModifiedUserId(username);
@@ -92,12 +93,12 @@ public class GroupServiceImpl implements GroupService {
     public Boolean changeInfo(String appId, String username,Long groupId, String groupDescription) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (!groupOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException("无法通过groupId:" + groupId + "找到对应的数据");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
         Group group = groupOptional.get();
         //判断group是否是appId下的角色
         if (!group.getAppId().equals(appId)) {
-            throw Exceptions.throwIllegalStateException("此groupId:" + groupId + "不属于appId:" + appId + "的应用");
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         }
 
         group.setDescription(groupDescription);
@@ -111,7 +112,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupDetailDto detailInfo(Long groupId) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (!groupOptional.isPresent()) {
-            throw Exceptions.throwIllegalStateException(String.format("无法通过id:%d找到对应的组记录", groupId));
+            throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         } else {
             Group group = groupOptional.get();
             GroupDetailDto groupDetailDto = new GroupDetailDto();
