@@ -2,6 +2,7 @@ package com.php25.usermicroservice.web.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.UserBusinessError;
@@ -39,7 +40,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupPageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction) {
-        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
+        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams)
+                .append(SearchParam.of("enable", Operator.EQ,1));
         Pageable pageable = PageRequest.of(pageNum, pageSize, direction, property);
         Page<Group> groupPage = groupRepository.findAll(searchParamBuilder, pageable);
         if (null != groupPage && groupPage.getTotalElements() > 0) {
@@ -110,7 +112,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupDetailDto detailInfo(Long groupId) {
-        Optional<Group> groupOptional = groupRepository.findById(groupId);
+        Optional<Group> groupOptional = groupRepository.findByIdEnable(groupId);
         if (!groupOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserBusinessError.GROUP_ID_NOT_VALID);
         } else {

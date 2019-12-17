@@ -3,6 +3,7 @@ package com.php25.usermicroservice.web.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.RandomUtil;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class AppClientServiceImpl   implements AppClientService {
+public class AppClientServiceImpl implements AppClientService {
 
     @Autowired
     private AppRepository appRepository;
@@ -59,7 +60,7 @@ public class AppClientServiceImpl   implements AppClientService {
 
     @Override
     public AppDetailDto detailInfo(String appId) {
-        Optional<App> appOptional = appRepository.findById(appId);
+        Optional<App> appOptional = appRepository.findByIdEnable(appId);
         if (!appOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_NOT_VALID);
         } else {
@@ -73,6 +74,11 @@ public class AppClientServiceImpl   implements AppClientService {
     @Transactional
     @Override
     public AccountDto register(AppRegisterDto appRegisterDto) {
+        Optional<App> appOptional = appRepository.findById(appRegisterDto.getAppId());
+        if (appOptional.isPresent()) {
+            throw Exceptions.throwBusinessException(UserBusinessError.APP_ID_ALREADY_EXISTS);
+        }
+
         App app = new App();
         BeanUtils.copyProperties(appRegisterDto, app);
         app.setRegisterDate(LocalDateTime.now());
@@ -153,7 +159,7 @@ public class AppClientServiceImpl   implements AppClientService {
 
     @Override
     public List<AppPageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction) {
-        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
+        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams).append(SearchParam.of("enable", Operator.EQ,1));
         Sort sort = Sort.by(direction, property);
         PageRequest page = PageRequest.of(pageNum, pageSize, sort);
         Page<App> appPage = appRepository.findAll(searchParamBuilder, page);

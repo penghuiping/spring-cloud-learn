@@ -12,4 +12,7 @@ public interface AppExRepository extends JdbcDbRepository<App, String> {
 
 
     boolean insert(App app);
+
+
+
 }

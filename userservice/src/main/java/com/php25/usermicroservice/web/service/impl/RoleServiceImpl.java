@@ -2,6 +2,7 @@ package com.php25.usermicroservice.web.service.impl;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.specification.Operator;
 import com.php25.common.core.specification.SearchParam;
 import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.Constants;
@@ -40,7 +41,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RolePageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction) {
-        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams);
+        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder().append(searchParams)
+                .append(SearchParam.of("enable", Operator.EQ,1));
         Pageable pageable = PageRequest.of(pageNum, pageSize, direction, property);
         Page<Role> rolePage = roleRepository.findAll(searchParamBuilder, pageable);
         if (null != rolePage && rolePage.getTotalElements() > 0) {
@@ -119,7 +121,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDetailDto detailInfo(Long roleId) {
-        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        Optional<Role> roleOptional = roleRepository.findByIdEnable(roleId);
         if (!roleOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserBusinessError.ROLE_ID_NOT_VALID);
         } else {

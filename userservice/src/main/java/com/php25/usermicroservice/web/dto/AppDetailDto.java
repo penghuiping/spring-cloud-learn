@@ -17,6 +17,8 @@ public class AppDetailDto extends BaseDto implements Serializable {
 
     private String appId;
 
+    private String appName;
+
     private String appSecret;
 
     private String registeredRedirectUri;

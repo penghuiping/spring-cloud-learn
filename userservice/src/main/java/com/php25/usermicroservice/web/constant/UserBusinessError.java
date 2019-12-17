@@ -18,6 +18,7 @@ public enum UserBusinessError implements BusinessErrorStatus {
     SYSTEM_ROLE_NOT_DELETE("00006", "系统内置角色无法删除"),
     USER_ID_NOT_VALID("00007", "userId不正确"),
     NO_ACCESS("00008", "无权限访问"),
+    APP_ID_ALREADY_EXISTS("00009", "appId已存在"),
     MOBILE_ALREADY_EXISTS("01000", "手机号在系统中已存在"),
     USERNAME_ALREADY_EXISTS("01001", "用户名在系统中已存在"),
     USERNAME_NOT_VALID("01002", "用户名在系统中已存在"),

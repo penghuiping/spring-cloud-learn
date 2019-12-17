@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
@@ -80,27 +81,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String publicKeyBase64 = jwtPublicKey;
         RSAPublicKey publicKey = (RSAPublicKey) SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(publicKeyBase64));
         return s -> {
-            JwtParser jwtParser = Jwts.parser().setSigningKey(publicKey);
-            Jws<Claims> jwt = jwtParser.parseClaimsJws(s);
+            try {
+                JwtParser jwtParser = Jwts.parser().setSigningKey(publicKey);
+                Jws<Claims> jwt = jwtParser.parseClaimsJws(s);
 
-            Instant issueAt = jwt.getBody().getIssuedAt().toInstant();
-            Instant expiration = jwt.getBody().getExpiration().toInstant();
+                Instant issueAt = jwt.getBody().getIssuedAt().toInstant();
+                Instant expiration = jwt.getBody().getExpiration().toInstant();
 
-            Map<String, Object> headers = new HashMap<>();
-            if (null != jwt.getHeader() && !jwt.getHeader().isEmpty()) {
-                jwt.getHeader().forEach((Object key, Object value) -> {
-                    headers.put((String) key, value);
-                });
+                Map<String, Object> headers = new HashMap<>();
+                if (null != jwt.getHeader() && !jwt.getHeader().isEmpty()) {
+                    jwt.getHeader().forEach((Object key, Object value) -> {
+                        headers.put((String) key, value);
+                    });
+                }
+
+                Map<String, Object> bodys = new HashMap<>();
+                if (null != jwt.getBody() && !jwt.getBody().isEmpty()) {
+                    jwt.getBody().forEach((Object key, Object value) -> {
+                        bodys.put((String) key, value);
+                    });
+                }
+                bodys.put("scp", headers.get("scp"));
+                return new Jwt(s, issueAt, expiration, headers, bodys);
+            }catch (Exception e) {
+                throw new JwtException("jwt不合法",e);
             }
-
-            Map<String, Object> bodys = new HashMap<>();
-            if (null != jwt.getBody() && !jwt.getBody().isEmpty()) {
-                jwt.getBody().forEach((Object key, Object value) -> {
-                    bodys.put((String) key, value);
-                });
-            }
-            bodys.put("scp", headers.get("scp"));
-            return new Jwt(s, issueAt, expiration, headers, bodys);
         };
 
     }
