@@ -1,10 +1,11 @@
 package com.php25.usermicroservice.web.service.impl;
 
+import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.specification.Operator;
-import com.php25.common.core.specification.SearchParam;
-import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.db.specification.Operator;
+import com.php25.common.db.specification.SearchParam;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
 import com.php25.usermicroservice.web.dto.GroupDetailDto;
@@ -37,6 +38,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private UidGenerator uidGenerator;
 
     @Override
     public List<GroupPageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction) {
@@ -74,6 +78,7 @@ public class GroupServiceImpl implements GroupService {
         group.setLastModifiedUserId(username);
         group.setLastModifiedDate(LocalDateTime.now());
         group.setEnable(2);
+        group.setNew(false);
 
         groupRepository.save(group);
         return true;
@@ -83,10 +88,12 @@ public class GroupServiceImpl implements GroupService {
     public Boolean create(String appId,String username, GroupCreateDto groupCreateDto) {
         Group group = new Group();
         BeanUtils.copyProperties(groupCreateDto, group);
+        group.setId(uidGenerator.getUID());
         group.setAppId(appId);
         group.setCreateDate(LocalDateTime.now());
         group.setCreateUserId(username);
         group.setEnable(1);
+        group.setNew(true);
         groupRepository.save(group);
         return true;
     }
@@ -106,6 +113,7 @@ public class GroupServiceImpl implements GroupService {
         group.setDescription(groupDescription);
         group.setLastModifiedUserId(username);
         group.setLastModifiedDate(LocalDateTime.now());
+        group.setNew(false);
         groupRepository.save(group);
         return true;
     }

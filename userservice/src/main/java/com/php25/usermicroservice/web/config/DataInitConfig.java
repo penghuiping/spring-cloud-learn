@@ -1,7 +1,9 @@
 package com.php25.usermicroservice.web.config;
 
+import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.service.IdGenerator;
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.model.App;
 import com.php25.usermicroservice.web.model.AppRef;
@@ -43,6 +45,12 @@ public class DataInitConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UidGenerator uidGenerator;
+
+    @Autowired
+    private IdGenerator idGenerator;
+
     @PostConstruct
     private void initData() {
 
@@ -54,12 +62,14 @@ public class DataInitConfig {
             App app;
             if (!appOptional.isPresent()) {
                 app = new App();
+                app.setAppId(idGenerator.getUUID());
                 app.setAppSecret(Constants.SuperAdmin.appSecret);
                 app.setAppName(Constants.SuperAdmin.appName);
                 app.setRegisterDate(LocalDateTime.now());
                 app.setRegisteredRedirectUri(Constants.SuperAdmin.appRedirectUrl);
                 app.setEnable(1);
                 app.setAppId(Constants.SuperAdmin.appId);
+                app.setNew(true);
                 appRepository.insert(app);
             } else {
                 app = appOptional.get();
@@ -70,6 +80,7 @@ public class DataInitConfig {
             User user;
             if (!userOptional.isPresent()) {
                 user = new User();
+                user.setId(uidGenerator.getUID());
                 user.setUsername(Constants.SuperAdmin.username);
                 user.setPassword(passwordEncoder.encode(Constants.SuperAdmin.password));
                 user.setEmail(Constants.SuperAdmin.email);
@@ -78,6 +89,7 @@ public class DataInitConfig {
                 user.setEnable(1);
                 user.setCreateDate(LocalDateTime.now());
                 user.setLastModifiedDate(LocalDateTime.now());
+                user.setNew(true);
                 AppRef appRef = new AppRef();
                 appRef.setAppId(app.getAppId());
                 user.setApps(Sets.newHashSet(appRef));
@@ -91,6 +103,7 @@ public class DataInitConfig {
             Role superAdminRole;
             if (!roleOptional.isPresent()) {
                 Role role = new Role();
+                role.setId(uidGenerator.getUID());
                 role.setName(Constants.Role.SUPER_ADMIN);
                 role.setAppId(app.getAppId());
                 role.setCreateUserId(user.getUsername());
@@ -99,6 +112,7 @@ public class DataInitConfig {
                 role.setLastModifiedUserId(user.getUsername());
                 role.setLastModifiedDate(LocalDateTime.now());
                 role.setEnable(1);
+                role.setNew(true);
                 superAdminRole = roleRepository.save(role);
             } else {
                 superAdminRole = roleOptional.get();
@@ -109,6 +123,7 @@ public class DataInitConfig {
                 RoleRef roleRef = new RoleRef();
                 roleRef.setRoleId(superAdminRole.getId());
                 user.setRoles(Sets.newHashSet(roleRef));
+                user.setNew(false);
                 userRepository.save(user);
             }
             return true;

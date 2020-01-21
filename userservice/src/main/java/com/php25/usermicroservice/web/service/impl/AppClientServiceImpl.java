@@ -1,12 +1,13 @@
 package com.php25.usermicroservice.web.service.impl;
 
+import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.specification.Operator;
-import com.php25.common.core.specification.SearchParam;
-import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.RandomUtil;
+import com.php25.common.db.specification.Operator;
+import com.php25.common.db.specification.SearchParam;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.AccountDto;
@@ -58,6 +59,9 @@ public class AppClientServiceImpl implements AppClientService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UidGenerator uidGenerator;
+
     @Override
     public AppDetailDto detailInfo(String appId) {
         Optional<App> appOptional = appRepository.findByIdEnable(appId);
@@ -84,6 +88,7 @@ public class AppClientServiceImpl implements AppClientService {
         app.setRegisterDate(LocalDateTime.now());
         app.setAppName(appRegisterDto.getAppName());
         app.setAppSecret(app.getAppSecret());
+        app.setNew(true);
         app.setEnable(1);
         appRepository.insert(app);
 
@@ -91,6 +96,7 @@ public class AppClientServiceImpl implements AppClientService {
         String password = RandomUtil.getRandomNumbersAndLetters(8);
 
         User user = new User();
+        user.setId(uidGenerator.getUID());
         user.setUsername(app.getAppId() + RandomUtil.getRandomNumbersAndLetters(6));
         user.setPassword(passwordEncoder.encode(password));
         user.setCreateDate(LocalDateTime.now());
@@ -99,6 +105,7 @@ public class AppClientServiceImpl implements AppClientService {
         user.setMobile("11111111111");
         user.setEmail("123@qq.com");
         user.setNickname(user.getUsername());
+        user.setNew(true);
         AppRef appRef = new AppRef();
         appRef.setAppId(app.getAppId());
         user.setApps(Sets.newHashSet(appRef));
@@ -109,11 +116,13 @@ public class AppClientServiceImpl implements AppClientService {
         Role adminRole;
         if (!adminRoleOptional.isPresent()) {
             Role role1 = new Role();
+            role1.setId(uidGenerator.getUID());
             role1.setName(Constants.Role.ADMIN);
             role1.setAppId(app.getAppId());
             role1.setCreateUserId(user.getUsername());
             role1.setCreateDate(LocalDateTime.now());
             role1.setDescription("管理员权限");
+            role1.setNew(true);
             role1.setEnable(1);
             adminRole = roleRepository.save(role1);
         } else {
@@ -124,11 +133,13 @@ public class AppClientServiceImpl implements AppClientService {
         Optional<Role> customerRoleOptional = roleRepository.findByNameAndAppId(Constants.Role.CUSTOMER, app.getAppId());
         if (!customerRoleOptional.isPresent()) {
             Role role2 = new Role();
+            role2.setId(uidGenerator.getUID());
             role2.setName(Constants.Role.CUSTOMER);
             role2.setAppId(app.getAppId());
             role2.setCreateUserId(user.getUsername());
             role2.setCreateDate(LocalDateTime.now());
             role2.setDescription("普通用户权限");
+            role2.setNew(true);
             role2.setEnable(1);
             roleRepository.save(role2);
         }
@@ -136,6 +147,7 @@ public class AppClientServiceImpl implements AppClientService {
         RoleRef roleRef = new RoleRef();
         roleRef.setRoleId(adminRole.getId());
         user.setRoles(Sets.newHashSet(roleRef));
+        user.setNew(false);
         userRepository.save(user);
 
         AccountDto accountDto = new AccountDto();
@@ -150,6 +162,7 @@ public class AppClientServiceImpl implements AppClientService {
         if (appOptional.isPresent()) {
             App app = appOptional.get();
             app.setEnable(2);
+            app.setNew(false);
             appRepository.save(app);
             return true;
         } else {

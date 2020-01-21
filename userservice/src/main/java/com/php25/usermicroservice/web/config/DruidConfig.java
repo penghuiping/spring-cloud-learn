@@ -1,28 +1,16 @@
 package com.php25.usermicroservice.web.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.baidu.fsg.uid.UidGenerator;
-import com.php25.common.core.service.IdGeneratorService;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
-import com.php25.usermicroservice.web.model.App;
-import com.php25.usermicroservice.web.model.Group;
-import com.php25.usermicroservice.web.model.Role;
-import com.php25.usermicroservice.web.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.InlineShardingStrategyConfiguration;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.data.relational.core.conversion.BasicRelationalConverter;
-import org.springframework.data.relational.core.conversion.RelationalConverter;
-import org.springframework.data.relational.core.mapping.RelationalMappingContext;
-import org.springframework.data.relational.core.mapping.event.BeforeSaveEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -40,7 +28,6 @@ import java.util.Properties;
  */
 @Slf4j
 @Configuration
-@EnableJdbcRepositories(basePackages = "com.php25.usermicroservice.web.repository")
 public class DruidConfig {
 
     @Autowired
@@ -114,46 +101,10 @@ public class DruidConfig {
 
     @Bean
     public Db db(JdbcTemplate jdbcTemplate) {
-        return new Db(jdbcTemplate, DbType.POSTGRES);
+        Db db =  new Db(DbType.POSTGRES);
+        db.setJdbcOperations(jdbcTemplate);
+        db.scanPackage("com.php25.usermicroservice.web.model");
+        return db;
     }
 
-    @Bean
-    public RelationalMappingContext relationalMappingContext() {
-        return new RelationalMappingContext();
-    }
-
-    @Bean
-    public RelationalConverter relationalConverter() {
-        return new BasicRelationalConverter(relationalMappingContext());
-    }
-
-    @Bean
-    public ApplicationListener<BeforeSaveEvent> timeStampingSaveTime(@Autowired IdGeneratorService idGeneratorService,
-                                                                     @Autowired UidGenerator uidGenerator) {
-
-        return event -> {
-            Object entity = event.getEntity();
-            if (entity instanceof User) {
-                if (null == ((User) entity).getId()) {
-                    User user = (User) entity;
-                    user.setId(uidGenerator.getUID());
-                }
-            } else if (entity instanceof Role) {
-                if (null == ((Role) entity).getId()) {
-                    Role role = (Role) entity;
-                    role.setId(uidGenerator.getUID());
-                }
-            } else if (entity instanceof App) {
-                if (null == ((App) entity).getAppId()) {
-                    App app = (App) entity;
-                    app.setAppId(idGeneratorService.getJUID());
-                }
-            } else if (entity instanceof Group) {
-                if (null == ((Group) entity).getId()) {
-                    Group group = (Group) entity;
-                    group.setId(uidGenerator.getUID());
-                }
-            }
-        };
-    }
 }

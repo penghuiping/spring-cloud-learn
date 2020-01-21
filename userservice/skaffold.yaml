@@ -3,7 +3,9 @@ kind: Config
 build:
   artifacts:
     - image: penghuiping/userservice
-      jib: {}
+      jib:
+        args: ['-DskipTests']
+
 
 deploy:
   kustomize:

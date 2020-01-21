@@ -1,9 +1,9 @@
 package com.php25.usermicroservice.web.model;
 
+import com.php25.common.db.cnd.annotation.Column;
+import com.php25.common.db.cnd.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * @author: penghuiping

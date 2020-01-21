@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.web.controller;
 
 import com.google.common.collect.Lists;
-import com.php25.common.core.specification.SearchParam;
+import com.php25.common.db.specification.SearchParam;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.usermicroservice.web.dto.UserChangeDto;

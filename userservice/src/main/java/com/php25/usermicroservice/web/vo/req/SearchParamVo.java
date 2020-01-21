@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.web.vo.req;
 
-import com.php25.common.core.specification.Operator;
+import com.php25.common.db.specification.Operator;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

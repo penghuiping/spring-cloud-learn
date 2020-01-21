@@ -2,8 +2,8 @@ package com.php25.usermicroservice.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
-import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.db.specification.Operator;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.flux.web.ReqIdLong;
@@ -70,7 +70,7 @@ public class RoleControllerTest {
         searchVo.setPageNum(1);
         searchVo.setPageSize(5);
 
-        searchVo.setSearchParamVoList(Lists.newArrayList(new SearchParamVo("name","selfDefineRole", Operator.EQ)));
+        searchVo.setSearchParamVoList(Lists.newArrayList(new SearchParamVo("name",ConstantTest.Customer.roleName, Operator.EQ)));
 
         String result = allTest.mockMvc.perform(
                 MockMvcRequestBuilders.post("/role/queryPage")
@@ -102,10 +102,9 @@ public class RoleControllerTest {
                         )))
                 .andReturn().getResponse().getContentAsString();
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        log.info("/role/queryPage:{}", result);
         Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
         Assertions.assertThat(jsonResponse.getReturnObject()).asList().hasSize(1);
-        log.info("/role/queryPage:{}", result);
-
         List<ResRolePageVo> resRolePageVos = JsonUtil.fromJson(JsonUtil.toJson(jsonResponse.getReturnObject()), new TypeReference<List<ResRolePageVo>>() {
         });
         allTest.roleId = resRolePageVos.get(0).getId();
@@ -134,9 +133,10 @@ public class RoleControllerTest {
                         ))).andReturn().getResponse().getContentAsString();
 
         JSONResponse jsonResponse = JsonUtil.fromJson(result, JSONResponse.class);
+        log.info("/role/changeInfo:{}", result);
         Assertions.assertThat(jsonResponse.getErrorCode()).isEqualTo(ApiErrorCode.ok.value);
         Assertions.assertThat(jsonResponse.getReturnObject()).isEqualTo(true);
-        log.info("/role/changeInfo:{}", result);
+
     }
 
 

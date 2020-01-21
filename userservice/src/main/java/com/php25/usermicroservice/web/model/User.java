@@ -1,10 +1,12 @@
 package com.php25.usermicroservice.web.model;
 
+import com.php25.common.db.cnd.annotation.Column;
+import com.php25.common.db.cnd.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,10 +15,10 @@ import java.util.Set;
  * 后台管理用户实体类
  * Created by penghuiping on 11/30/14.
  */
-@Setter
 @Getter
+@Setter
 @Table("t_user")
-public class User {
+public class User implements Persistable<Long> {
     /**
      * 主键id
      */
@@ -88,5 +90,17 @@ public class User {
     @Column(value = "head_image_id")
     private String headImageId;
 
+    @Transient
+    private boolean isNew = true;
+
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
+    }
+
+    @Override
+    public boolean isNew() {
+        return this.isNew;
+    }
 
 }

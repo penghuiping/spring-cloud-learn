@@ -1,17 +1,18 @@
 package com.php25.usermicroservice.web.service.impl;
 
+import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.service.IdGeneratorService;
-import com.php25.common.core.specification.SearchParam;
-import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.core.service.IdGenerator;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.crypto.constant.SignAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
+import com.php25.common.db.specification.SearchParam;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.flux.trace.annotation.Traced;
 import com.php25.common.redis.RedisManager;
 import com.php25.usermicroservice.web.constant.Constants;
@@ -88,7 +89,10 @@ public class UserServiceImpl implements UserService {
     private RedisManager redisManager;
 
     @Autowired
-    private IdGeneratorService idGeneratorService;
+    private IdGenerator idGenerator;
+
+    @Autowired
+    private UidGenerator uidGenerator;
 
     @Value("${jwt.privateKey}")
     private String jwtPrivateKey;
@@ -111,7 +115,7 @@ public class UserServiceImpl implements UserService {
                 throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
             }
             String code = RandomUtil.getRandomLetters(5);
-            redisManager.set("oauth2_code:" + code, username, 60 * 5l);
+            redisManager.string().set("oauth2_code:" + code, username, 60 * 5l);
             return code;
         } else {
             throw Exceptions.throwBusinessException(UserBusinessError.USER_NOT_FOUND);
@@ -120,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Oauth2TokenDto getAccessToken(String code, String appId, String appSecret) {
-        String username = redisManager.get("oauth2_code:" + code, String.class);
+        String username = redisManager.string().get("oauth2_code:" + code, String.class);
         if (StringUtil.isBlank(username)) {
             throw Exceptions.throwBusinessException(UserBusinessError.CODE_NOT_VALID);
         }
@@ -159,7 +163,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //2.生成accessToken，2小时过去
-        String jti = idGeneratorService.getUUID();
+        String jti = idGenerator.getUUID();
 
         PrivateKey privateKey = SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(jwtPrivateKey));
 
@@ -211,10 +215,12 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         BeanUtils.copyProperties(registerUserDto, user);
         //刚注册的用户都是合法用户
+        user.setId(uidGenerator.getUID());
         user.setEnable(1);
         user.setCreateDate(LocalDateTime.now());
         user.setLastModifiedDate(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setNew(true);
 
         AppRef appRef = new AppRef();
         appRef.setAppId(registerUserDto.getAppId());
@@ -253,6 +259,7 @@ public class UserServiceImpl implements UserService {
             throw Exceptions.throwBusinessException(UserBusinessError.PASSWORD_NOT_VALID);
         }
         user.setPassword(newPassword);
+        user.setNew(false);
         userRepository.save(user);
         return true;
     }
@@ -270,36 +277,43 @@ public class UserServiceImpl implements UserService {
             BeanUtils.copyProperties(user, userDetailDto, "roles", "groups", "apps");
             //加入角色信息
             List<Long> roleIds = user.getRoles().stream().map(RoleRef::getRoleId).collect(Collectors.toList());
-            Iterable<Role> roles = roleRepository.findAllById(roleIds);
-            Set<RoleRefDto> roleRefDtoSet = Lists.newArrayList(roles).stream().map(role -> {
-                RoleRefDto roleRefDto = new RoleRefDto();
-                roleRefDto.setName(role.getName());
-                roleRefDto.setRoleId(role.getId());
-                return roleRefDto;
-            }).collect(Collectors.toSet());
-            userDetailDto.setRoles(roleRefDtoSet);
+            if(!roleIds.isEmpty()) {
+                Iterable<Role> roles = roleRepository.findAllById(roleIds);
+                Set<RoleRefDto> roleRefDtoSet = Lists.newArrayList(roles).stream().map(role -> {
+                    RoleRefDto roleRefDto = new RoleRefDto();
+                    roleRefDto.setName(role.getName());
+                    roleRefDto.setRoleId(role.getId());
+                    return roleRefDto;
+                }).collect(Collectors.toSet());
+                userDetailDto.setRoles(roleRefDtoSet);
+            }
 
             //加入app信息
             List<String> appIds = user.getApps().stream().map(AppRef::getAppId).collect(Collectors.toList());
-            Iterable<App> apps = appRepository.findAllById(appIds);
-            Set<AppRefDto> appRefDtoSet = Lists.newArrayList(apps).stream().map(app -> {
-                AppRefDto appRefDto = new AppRefDto();
-                appRefDto.setAppName(app.getAppName());
-                appRefDto.setAppId(app.getAppId());
-                return appRefDto;
-            }).collect(Collectors.toSet());
-            userDetailDto.setApps(appRefDtoSet);
+            if(!appIds.isEmpty()) {
+                Iterable<App> apps = appRepository.findAllById(appIds);
+                Set<AppRefDto> appRefDtoSet = Lists.newArrayList(apps).stream().map(app -> {
+                    AppRefDto appRefDto = new AppRefDto();
+                    appRefDto.setAppName(app.getAppName());
+                    appRefDto.setAppId(app.getAppId());
+                    return appRefDto;
+                }).collect(Collectors.toSet());
+                userDetailDto.setApps(appRefDtoSet);
+            }
 
             //加入group信息
             List<Long> groupIds = user.getGroups().stream().map(GroupRef::getGroupId).collect(Collectors.toList());
-            Iterable<Group> groups = groupRepository.findAllById(groupIds);
-            Set<GroupRefDto> groupRefDtoSet = Lists.newArrayList(groups).stream().map(group -> {
-                GroupRefDto groupRefDto = new GroupRefDto();
-                groupRefDto.setName(group.getName());
-                groupRefDto.setGroupId(group.getId());
-                return groupRefDto;
-            }).collect(Collectors.toSet());
-            userDetailDto.setGroups(groupRefDtoSet);
+            if(!groupIds.isEmpty()) {
+                Iterable<Group> groups = groupRepository.findAllById(groupIds);
+                Set<GroupRefDto> groupRefDtoSet = Lists.newArrayList(groups).stream().map(group -> {
+                    GroupRefDto groupRefDto = new GroupRefDto();
+                    groupRefDto.setName(group.getName());
+                    groupRefDto.setGroupId(group.getId());
+                    return groupRefDto;
+                }).collect(Collectors.toSet());
+                userDetailDto.setGroups(groupRefDtoSet);
+            }
+
             return userDetailDto;
         } else {
             throw Exceptions.throwBusinessException(UserBusinessError.USERNAME_NOT_VALID);
@@ -372,7 +386,7 @@ public class UserServiceImpl implements UserService {
         RoleRef roleRef = new RoleRef();
         roleRef.setRoleId(roleId);
         roleRefs.add(roleRef);
-
+        user.setNew(false);
         user.setRoles(roleRefs);
         userRepository.save(user);
         return true;
@@ -410,6 +424,7 @@ public class UserServiceImpl implements UserService {
         Set<RoleRef> roleRefs = user.getRoles();
         Set<RoleRef> roleRefs1 = roleRefs.stream().filter(roleRef -> !roleRef.getRoleId().equals(roleId)).collect(Collectors.toSet());
         user.setRoles(roleRefs1);
+        user.setNew(false);
         userRepository.save(user);
         return true;
     }
@@ -451,6 +466,7 @@ public class UserServiceImpl implements UserService {
         groupRefs.add(groupRef);
 
         user.setGroups(groupRefs);
+        user.setNew(false);
         userRepository.save(user);
         return true;
     }
@@ -487,6 +503,7 @@ public class UserServiceImpl implements UserService {
         Set<GroupRef> groupRefs = user.getGroups();
         Set<GroupRef> groupRefs1 = groupRefs.stream().filter(groupRef -> !groupRef.getGroupId().equals(groupId)).collect(Collectors.toSet());
         user.setGroups(groupRefs1);
+        user.setNew(false);
         userRepository.save(user);
         return true;
     }

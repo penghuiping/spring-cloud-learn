@@ -1,10 +1,12 @@
 package com.php25.usermicroservice.web.model;
 
+import com.php25.common.db.cnd.annotation.Column;
+import com.php25.common.db.cnd.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +15,10 @@ import java.time.LocalDateTime;
  * @date: 2019/8/11 23:25
  * @description:
  */
-@Setter
 @Getter
+@Setter
 @Table("t_group")
-public class Group {
+public class Group implements Persistable<Long> {
 
     @Id
     @Column
@@ -45,4 +47,16 @@ public class Group {
 
     @Column
     private Integer enable;
+
+    @Transient
+    private boolean isNew=true;
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
+    }
+
+    @Override
+    public boolean isNew() {
+        return this.isNew;
+    }
 }

@@ -1,10 +1,12 @@
 package com.php25.usermicroservice.web.model;
 
+import com.php25.common.db.cnd.annotation.Column;
+import com.php25.common.db.cnd.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
  * 后台管理操作实体类
  * Created by penghuiping on 1/13/15.
  */
-@Setter
 @Getter
+@Setter
 @Table("t_role")
-public class Role implements GrantedAuthority,Serializable {
+public class Role implements GrantedAuthority,Serializable, Persistable<Long> {
 
     /**
      * 主键id
@@ -67,5 +69,15 @@ public class Role implements GrantedAuthority,Serializable {
     @Override
     public String getAuthority() {
         return this.getName();
+    }
+
+    @Transient
+    private boolean isNew=true;
+
+
+
+    @Override
+    public boolean isNew() {
+        return this.isNew;
     }
 }

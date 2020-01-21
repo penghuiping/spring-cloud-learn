@@ -1,10 +1,11 @@
 package com.php25.usermicroservice.web.service.impl;
 
+import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.specification.Operator;
-import com.php25.common.core.specification.SearchParam;
-import com.php25.common.core.specification.SearchParamBuilder;
+import com.php25.common.db.specification.Operator;
+import com.php25.common.db.specification.SearchParam;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.constant.UserBusinessError;
 import com.php25.usermicroservice.web.dto.RoleCreateDto;
@@ -38,6 +39,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UidGenerator uidGenerator;
 
     @Override
     public List<RolePageDto> queryPage(Integer pageNum, Integer pageSize, List<SearchParam> searchParams, String property, Sort.Direction direction) {
@@ -83,6 +87,7 @@ public class RoleServiceImpl implements RoleService {
         role.setLastModifiedUserId(username);
         role.setLastModifiedDate(LocalDateTime.now());
         role.setEnable(2);
+        role.setNew(false);
 
         roleRepository.save(role);
         return true;
@@ -92,9 +97,11 @@ public class RoleServiceImpl implements RoleService {
     public Boolean create(String appId, String username, RoleCreateDto roleCreateDto) {
         Role role = new Role();
         BeanUtils.copyProperties(roleCreateDto, role);
+        role.setId(uidGenerator.getUID());
         role.setAppId(appId);
         role.setCreateDate(LocalDateTime.now());
         role.setCreateUserId(username);
+        role.setNew(true);
         role.setEnable(1);
         roleRepository.save(role);
         return true;
@@ -115,6 +122,7 @@ public class RoleServiceImpl implements RoleService {
         role.setDescription(roleDescription);
         role.setLastModifiedUserId(username);
         role.setLastModifiedDate(LocalDateTime.now());
+        role.setNew(false);
         roleRepository.save(role);
         return true;
     }

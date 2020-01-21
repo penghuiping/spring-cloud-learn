@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: penghuiping
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class ReqRoleChangeInfoVo {
 
+    @NotNull
     @Min(0)
     Long roleId;
 

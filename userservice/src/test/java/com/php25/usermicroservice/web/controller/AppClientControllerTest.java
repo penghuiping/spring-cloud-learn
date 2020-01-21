@@ -2,8 +2,8 @@ package com.php25.usermicroservice.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
-import com.php25.common.core.specification.Operator;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.db.specification.Operator;
 import com.php25.common.flux.web.ApiErrorCode;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.flux.web.ReqIdString;

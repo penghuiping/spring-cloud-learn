@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.web.service;
 
-import com.php25.common.core.specification.SearchParam;
+import com.php25.common.db.specification.SearchParam;
 import com.php25.usermicroservice.web.dto.GroupCreateDto;
 import com.php25.usermicroservice.web.dto.GroupDetailDto;
 import com.php25.usermicroservice.web.dto.GroupPageDto;

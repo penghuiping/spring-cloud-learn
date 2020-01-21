@@ -1,6 +1,6 @@
 package com.php25.usermicroservice.web.service;
 
-import com.php25.common.core.specification.SearchParam;
+import com.php25.common.db.specification.SearchParam;
 import com.php25.usermicroservice.web.dto.RoleCreateDto;
 import com.php25.usermicroservice.web.dto.RoleDetailDto;
 import com.php25.usermicroservice.web.dto.RolePageDto;
