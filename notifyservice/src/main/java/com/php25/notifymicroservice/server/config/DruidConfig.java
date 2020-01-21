@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.relational.core.conversion.BasicRelationalConverter;
-import org.springframework.data.relational.core.conversion.RelationalConverter;
-import org.springframework.data.relational.core.mapping.RelationalMappingContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -85,16 +82,10 @@ public class DruidConfig {
 
     @Bean
     public Db db(JdbcTemplate jdbcTemplate) {
-        return new Db(jdbcTemplate, DbType.POSTGRES);
+        Db db =  new Db(DbType.POSTGRES);
+        db.setJdbcOperations(jdbcTemplate);
+        return db;
     }
 
-    @Bean
-    public RelationalMappingContext relationalMappingContext() {
-        return new RelationalMappingContext();
-    }
 
-    @Bean
-    public RelationalConverter relationalConverter() {
-        return new BasicRelationalConverter(relationalMappingContext());
-    }
 }

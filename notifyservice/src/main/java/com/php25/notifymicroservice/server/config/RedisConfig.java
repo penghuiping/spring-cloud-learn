@@ -1,7 +1,7 @@
 package com.php25.notifymicroservice.server.config;
 
 import com.php25.common.redis.RedisManager;
-import com.php25.common.redis.RedisSpringBootManagerImpl;
+import com.php25.common.redis.RedisManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ public class RedisConfig {
 
     @Bean
     public RedisManager redisService(@Autowired StringRedisTemplate stringRedisTemplate) {
-       return new RedisSpringBootManagerImpl(stringRedisTemplate);
+        return new RedisManagerImpl(stringRedisTemplate);
     }
 
     @Bean

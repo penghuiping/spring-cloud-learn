@@ -1,9 +1,10 @@
 package com.php25.mediamicroservice.server.model;
 
+import com.php25.common.db.cnd.annotation.Column;
+import com.php25.common.db.cnd.annotation.Table;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.domain.Persistable;
 
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @Table("mediaservice_img")
-public class Img {
+public class Img implements Persistable<String> {
 
     @Id
     private String id;
@@ -49,4 +50,14 @@ public class Img {
      */
     @Column
     private Integer enable;
+
+
+    private boolean isNew = true;
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+
 }

@@ -39,7 +39,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
                 String mobile = sendSMSDto.getMobile();
                 log.info("手机号为:{}", mobile);
                 String message = "1111";
-                redisManager.set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
+                redisManager.string().set("sms" + mobile, message, Constant.SMS_EXPIRE_TIME);
                 return true;
             });
         }).subscribeOn(Schedulers.elastic());
@@ -54,7 +54,7 @@ public class MobileMessageServiceImpl implements MobileMessageService {
         String code = validateSMSDto.getMsgCode();
 
         return Mono.fromCallable(() -> {
-            String mobileCode = redisManager.get("sms" + mobile, String.class);
+            String mobileCode = redisManager.string().get("sms" + mobile, String.class);
             if (!StringUtil.isBlank(mobileCode) && mobileCode.equals(code)) {
                 redisManager.remove("sms" + mobile);
                 return true;
