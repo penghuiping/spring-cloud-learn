@@ -28,7 +28,7 @@ public class RoleRepositoryImpl extends BaseDbRepositoryImpl<Role, Long> impleme
 
     @Override
     public Optional<Role> findByNameAndAppId(String name, String appId) {
-        Role role = db.cndJdbc(Role.class).whereEq("name", name).andEq("appId", appId).andEq("enable", 1).single();
+        Role role = db.cndJdbc(Role.class).ignoreCollection(false).whereEq("name", name).andEq("appId", appId).andEq("enable", 1).single();
         if (null != role) {
             return Optional.of(role);
         } else {

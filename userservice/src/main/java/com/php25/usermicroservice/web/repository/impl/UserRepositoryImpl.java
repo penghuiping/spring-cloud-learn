@@ -23,7 +23,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public Optional<User> findByUsernameAndPassword(String username, String password) {
-        User user = db.cndJdbc(User.class).whereEq("username", username).andEq("password", password).single();
+        User user = db.cndJdbc(User.class).ignoreCollection(false).whereEq("username", username).andEq("password", password).single();
         if (null != user) {
             return Optional.of(user);
         } else {
@@ -43,7 +43,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public Optional<User> findByUsername(String username) {
-        User user = db.cndJdbc(User.class).whereEq("username", username).andEq("enable", 1).single();
+        User user = db.cndJdbc(User.class).ignoreCollection(false).whereEq("username", username).andEq("enable", 1).single();
         if (null != user) {
             return Optional.of(user);
         } else {
@@ -53,7 +53,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public Optional<User> findByMobile(String mobile) {
-        User user = db.cndJdbc(User.class).whereEq("mobile", mobile).andEq("enable", 1).single();
+        User user = db.cndJdbc(User.class).ignoreCollection(false).whereEq("mobile", mobile).andEq("enable", 1).single();
         if (null != user) {
             return Optional.of(user);
         } else {
@@ -63,7 +63,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public Optional<User> findByEmail(String email) {
-        User user = db.cndJdbc(User.class).whereEq("email", email).andEq("enable", 1).single();
+        User user = db.cndJdbc(User.class).ignoreCollection(false).whereEq("email", email).andEq("enable", 1).single();
         if (null != user) {
             return Optional.of(user);
         } else {
