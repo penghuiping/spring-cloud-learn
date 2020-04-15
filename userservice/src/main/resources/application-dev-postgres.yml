@@ -73,14 +73,19 @@ spring:
           destination: data-exchange
           contentType: application/json
           consumer:
-            acknowledgeMode: AUTO
-            auto-bind-dlq: true
-            republish-to-dlq: true
             max-attempts: 3
         output:
           destination: data-exchange
           contentType: application/json
       instance-count: 3
+      ## 下面配置的是rabbit的专用属性,用于设置dlq
+      rabbit:
+        bindings:
+          input:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
   ########################################################
   ### redis
   ########################################################
