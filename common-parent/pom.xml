@@ -36,7 +36,7 @@
         <thumbnailator>0.4.8</thumbnailator>
         <swaggerui>3.0.0-SNAPSHOT</swaggerui>
         <sharding-jdbc.version>4.0.0-RC3</sharding-jdbc.version>
-        <jjwt>0.10.7</jjwt>
+        <jjwt>0.11.2</jjwt>
         <beetl>2.8.5</beetl>
         <apollo>1.3.0</apollo>
         <jsms-client>1.2.0</jsms-client>
@@ -277,7 +277,7 @@
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
-                <version>2.3.7.RELEASE</version>
+                <version>2.4.1.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>
@@ -302,7 +302,7 @@
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.1.0.Final</version>
+                <version>6.1.3.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
