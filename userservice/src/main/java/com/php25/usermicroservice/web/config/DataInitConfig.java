@@ -3,7 +3,7 @@ package com.php25.usermicroservice.web.config;
 import com.baidu.fsg.uid.UidGenerator;
 import com.google.common.collect.Sets;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.service.IdGenerator;
+import com.php25.common.core.mess.IdGenerator;
 import com.php25.usermicroservice.web.constant.Constants;
 import com.php25.usermicroservice.web.model.App;
 import com.php25.usermicroservice.web.model.AppRef;

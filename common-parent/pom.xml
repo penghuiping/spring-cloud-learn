@@ -18,23 +18,36 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-        <java.version>8</java.version>
         <spring.boot.version>2.2.0.RELEASE</spring.boot.version>
+        <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
+        <spring-cloud-dependencies>Hoxton.SR6</spring-cloud-dependencies>
+        <guava.version>29.0-jre</guava.version>
+        <jackson.version>2.11.1</jackson.version>
+        <okhttp.version>4.8.0</okhttp.version>
+        <easypoi.version>4.1.0</easypoi.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.10</commons-lang3.version>
+        <jmh.version>1.21</jmh.version>
+        <jfairy.version>0.5.9</jfairy.version>
+        <hikari.version>3.3.1</hikari.version>
+        <bouncycastle.version>1.60</bouncycastle.version>
+        <hibernate-validator>6.1.5.Final</hibernate-validator>
+        <oracle>11.2.0.3</oracle>
+        <testcontainer>1.12.2</testcontainer>
+        <java-uuid-generator>3.2.0</java-uuid-generator>
+        <mysql-testcontainer>1.12.3</mysql-testcontainer>
+        <postgres-testcontainer>1.12.3</postgres-testcontainer>
+        <oracle-testcontainer>1.12.3</oracle-testcontainer>
+
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
-        <guava.version>24.1.1-android</guava.version>
-        <jackson.version>2.10.1</jackson.version>
-        <okhttp.version>3.6.0</okhttp.version>
         <commons-lang3.version>3.7</commons-lang3.version>
-        <druid.version>1.1.20</druid.version>
-        <easypoi.version>3.1.0</easypoi.version>
         <jmh.version>1.21</jmh.version>
         <jfairy.version>0.5.9</jfairy.version>
         <javafaker>1.0.0</javafaker>
         <simplemagic.version>1.12</simplemagic.version>
-        <dubbo.starter.version>0.2.0</dubbo.starter.version>
         <commons-fileupload>1.3.3</commons-fileupload>
         <thumbnailator>0.4.8</thumbnailator>
-        <swaggerui>3.0.0-SNAPSHOT</swaggerui>
         <sharding-jdbc.version>4.0.0-RC3</sharding-jdbc.version>
         <jjwt>0.10.7</jjwt>
         <beetl>2.8.5</beetl>
@@ -42,20 +55,18 @@
         <jsms-client>1.2.0</jsms-client>
         <flowable.version>6.4.2</flowable.version>
 
-        <php-common.es>2.2.0-SNAPSHOT</php-common.es>
-        <php-common.db>2.2.0-SNAPSHOT</php-common.db>
-        <php-common.jpa>2.2.0-SNAPSHOT</php-common.jpa>
-        <php-common.core>2.2.0-SNAPSHOT</php-common.core>
-        <php-common.mvc>2.2.0-SNAPSHOT</php-common.mvc>
-        <php-common.redis>2.2.0-SNAPSHOT</php-common.redis>
-        <php-common.validation>2.2.0-SNAPSHOT</php-common.validation>
-        <php25.common>2.2.0-SNAPSHOT</php25.common>
-        <uid-generator>2.2.0-SNAPSHOT</uid-generator>
+        <php-common.db>2.3.2-SNAPSHOT</php-common.db>
+        <php-common.core>2.3.2-SNAPSHOT</php-common.core>
+        <php-common.mvc>2.3.2-SNAPSHOT</php-common.mvc>
+        <php-common.redis>2.3.2-SNAPSHOT</php-common.redis>
+        <php-common.validation>2.3.2-SNAPSHOT</php-common.validation>
+        <php-common.auditlog>2.3.2-SNAPSHOT</php-common.auditlog>
+        <php-common.time-tasks>2.3.2-SNAPSHOT</php-common.time-tasks>
+        <uid-generator>2.3.2-SNAPSHOT</uid-generator>
 
         <maven-source>3.0.0</maven-source>
         <maven-compiler-plugin>3.8.1</maven-compiler-plugin>
         <spring-boot-maven-plugin>2.1.6.RELEASE</spring-boot-maven-plugin>
-        <spring-cloud-dependencies>Hoxton.RELEASE</spring-cloud-dependencies>
     </properties>
 
     <dependencyManagement>
@@ -124,12 +135,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>${druid.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -268,6 +273,11 @@
                 <groupId>com.ctrip.framework.apollo</groupId>
                 <artifactId>apollo-client</artifactId>
                 <version>${apollo}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>

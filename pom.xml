@@ -11,7 +11,6 @@
         <module>common-parent</module>
         <module>userservice</module>
         <module>notifyservice</module>
-        <module>auditlogservice</module>
         <module>mediaservice</module>
         <module>workflowservice</module>
         <module>gateway</module>

@@ -1,7 +1,7 @@
 package com.php25.usermicroservice.web.config;
 
-import com.php25.common.core.service.IdGenerator;
-import com.php25.common.core.service.IdGeneratorImpl;
+import com.php25.common.core.mess.IdGenerator;
+import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.redis.RedisManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;

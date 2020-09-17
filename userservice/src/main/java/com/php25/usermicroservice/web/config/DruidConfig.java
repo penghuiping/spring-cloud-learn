@@ -1,8 +1,8 @@
 package com.php25.usermicroservice.web.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
@@ -34,37 +34,19 @@ public class DruidConfig {
     private DbProperties dbProperties;
 
     public DataSource druidDataSource() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        druidDataSource.setDriverClassName(dbProperties.getDriverClassName());
-        druidDataSource.setUrl(dbProperties.getUrl());
-        druidDataSource.setUsername(dbProperties.getUsername());
-        druidDataSource.setPassword(dbProperties.getPassword());
-        druidDataSource.setInitialSize(dbProperties.getInitSize());
-        druidDataSource.setMinIdle(dbProperties.getMinIdle());
-        druidDataSource.setMaxActive(dbProperties.getMaxActive());
-        druidDataSource.setMaxWait(dbProperties.getMaxWait());
-        druidDataSource.setTimeBetweenEvictionRunsMillis(dbProperties.getTimeBetweenEvictionRunsMillis());
-        druidDataSource.setMinEvictableIdleTimeMillis(dbProperties.getMinEvictableIdleTimeMillis());
-        druidDataSource.setValidationQuery(dbProperties.getValidationQuery());
-        druidDataSource.setTestWhileIdle(dbProperties.getTestWhileIdle());
-        druidDataSource.setTestOnBorrow(dbProperties.getTestOnBorrow());
-        druidDataSource.setTestOnReturn(dbProperties.getTestOnReturn());
-        druidDataSource.setPoolPreparedStatements(dbProperties.getPoolPreparedStatements());
-        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(dbProperties.getMaxPoolPreparedStatementPerConnectionSize());
-        try {
-//            druidDataSource.setFilters("stat, wall");
-            druidDataSource.setFilters("config");
-        } catch (SQLException e) {
-            log.error("druid设置过滤器失败", e);
-        }
-
-        Properties properties = new Properties();
-        //properties.setProperty("druid.stat.mergeSql", "true");
-        //properties.setProperty("druid.stat.slowSqlMillis", "5000");
-        properties.setProperty("config.decrypt", dbProperties.getDecrypt());
-        properties.setProperty("config.decrypt.key", dbProperties.getPublicKey());
-        druidDataSource.setConnectProperties(properties);
-        return druidDataSource;
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setDriverClassName(dbProperties.getDriverClassName());
+        hikariDataSource.setJdbcUrl(dbProperties.getUrl());
+        hikariDataSource.setUsername(dbProperties.getUsername());
+        hikariDataSource.setPassword(dbProperties.getPassword());
+        hikariDataSource.setAutoCommit(true);
+        hikariDataSource.setConnectionTimeout(30000);
+        hikariDataSource.setIdleTimeout(300000);
+        hikariDataSource.setMinimumIdle(dbProperties.getMinIdle());
+        hikariDataSource.setMaxLifetime(1800000);
+        hikariDataSource.setMaximumPoolSize(15);
+        hikariDataSource.setPoolName("hikariDataSource");
+        return hikariDataSource;
     }
 
 
