@@ -28,7 +28,7 @@ import java.util.Properties;
  */
 @Slf4j
 @Configuration
-public class DruidConfig {
+public class DbConfig {
 
     @Autowired
     private DbProperties dbProperties;

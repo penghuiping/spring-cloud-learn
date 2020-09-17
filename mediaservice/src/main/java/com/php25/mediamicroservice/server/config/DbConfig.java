@@ -1,4 +1,4 @@
-package com.php25.notifymicroservice.server.config;
+package com.php25.mediamicroservice.server.config;
 
 import com.php25.common.db.Db;
 import com.php25.common.db.DbType;
@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  */
 @Slf4j
 @Configuration
-public class DruidConfig {
+public class DbConfig {
 
     @Autowired
     private DbProperties dbProperties;
@@ -44,7 +44,6 @@ public class DruidConfig {
         return hikariDataSource;
     }
 
-
     @Bean
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
@@ -64,6 +63,7 @@ public class DruidConfig {
     public Db db(JdbcTemplate jdbcTemplate) {
         Db db = new Db(DbType.POSTGRES);
         db.setJdbcOperations(jdbcTemplate);
+        db.scanPackage("com.php25.mediamicroservice.server.model");
         return db;
     }
 
