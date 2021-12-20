@@ -49,7 +49,7 @@
         <commons-fileupload>1.3.3</commons-fileupload>
         <thumbnailator>0.4.8</thumbnailator>
         <sharding-jdbc.version>4.0.0-RC3</sharding-jdbc.version>
-        <jjwt>0.10.7</jjwt>
+        <jjwt>0.11.1</jjwt>
         <beetl>2.8.5</beetl>
         <apollo>1.3.0</apollo>
         <jsms-client>1.2.0</jsms-client>
