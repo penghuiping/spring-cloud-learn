@@ -51,7 +51,7 @@
         <sharding-jdbc.version>4.0.0-RC3</sharding-jdbc.version>
         <jjwt>0.10.7</jjwt>
         <beetl>2.8.5</beetl>
-        <apollo>1.3.0</apollo>
+        <apollo>2.0.1</apollo>
         <jsms-client>1.2.0</jsms-client>
         <flowable.version>6.4.2</flowable.version>
 
