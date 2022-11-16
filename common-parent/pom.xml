@@ -22,7 +22,7 @@
         <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
         <spring-cloud-dependencies>Hoxton.SR6</spring-cloud-dependencies>
         <guava.version>29.0-jre</guava.version>
-        <jackson.version>2.11.1</jackson.version>
+        <jackson.version>2.12.7.1</jackson.version>
         <okhttp.version>4.8.0</okhttp.version>
         <easypoi.version>4.1.0</easypoi.version>
         <commons-collections.version>3.2.2</commons-collections.version>
